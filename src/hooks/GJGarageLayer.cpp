@@ -28,7 +28,7 @@ void CACGarageLayer::OnMenuBtnClicked(CCObject*){
     auto catsLayer = CatsLayer::create();
     if (!catsLayer){
         auto dobj = DialogObject::create("The Cat Master", "You need to beat an <cr>extreme demon</c> to open this door...", 32, 1, true, ccColor3B{ 255, 255, 255 });
-        auto dlayer = DialogLayer::create(dobj, 6);
+        auto dlayer = DialogLayer::createDialogLayer(dobj, nullptr, 6);
         dlayer->setZOrder(100);
         dlayer->m_mainLayer->setScale(0);
         dlayer->m_mainLayer->runAction(CCEaseBackOut::create(CCScaleTo::create(0.5f, 1)));
