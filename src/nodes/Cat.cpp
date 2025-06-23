@@ -27,7 +27,8 @@ bool Cat::init(CCNode* wanderArea) {
     this->setZOrder(100 / size + 1);
     this->setScale(size);
 
-    auto btn = CCMenuItem::create(this, menu_selector(Cat::OnCatClicked));
+    auto btn = CCMenuItem::create();
+    btn->setTarget(this, menu_selector(Cat::OnCatClicked));
     btn->setContentSize(this->getContentSize());
     btn->setPosition(this->getContentSize() / 2);
     btn->setID("general-kitty-btn");
