@@ -1,19 +1,39 @@
 #pragma once
 
 #include <Geode/Geode.hpp>
+#include "../nodes/GroundLoader.hpp"
+#include "../nodes/BGLoader.hpp"
+#include "../nodes/Cat.hpp"
 
 using namespace geode::prelude;
 
 class CatsLayer : public CCLayer {
-private:
-    virtual bool init();
+    public:
+        static CatsLayer* create();
 
-    virtual void keyBackClicked();
+        static CatsLayer* activeCatLayer();
 
-public:
-    static CatsLayer* create();
+        void onBackClicked(CCObject*);
+        void onCatsMenuClicked(CCObject*);
+        void onSettingsClicked(CCObject*);
 
-    ScrollLayer* ScrollNode;
+        ScrollLayer* ScrollNode;
 
-    void update(float dt);
+        GroundLoader* groundLoader;
+        BGLoader* bgLoader;
+
+        std::vector<GJGameLevel*> beatenExtremes{};
+
+        std::map<int, Cat*> spawnedCats{};
+        void addCat(GJGameLevel* catLevel);
+        void removeCat(int catID);
+
+    private:
+        virtual bool init();
+
+        virtual void keyBackClicked();
+
+        static CatsLayer* sharedInstance;
+
+        void update(float dt);
 };

@@ -1,10 +1,10 @@
 #include "Cat.hpp"
 
-#include "../utils/utils.hpp"
+#include "../utils/Save.hpp"
 
-Cat* Cat::create(CCNode* wanderArea) {
+Cat* Cat::create(CCNode* wanderArea, GJGameLevel* relatedLevel) {
     auto ret = new Cat();
-    if (ret->init(wanderArea)) {
+    if (ret->init(wanderArea, relatedLevel)) {
         ret->autorelease();
         return ret;
     }
@@ -12,10 +12,21 @@ Cat* Cat::create(CCNode* wanderArea) {
     return nullptr;
 }
 
-bool Cat::init(CCNode* wanderArea) {
+bool Cat::init(CCNode* wanderArea, GJGameLevel* relatedLevel) {
     if (!CCNode::init()) return false;
 
     this->wanderArea = wanderArea;
+
+    auto didLoadCat = Save::loadCat(relatedLevel);
+    if (didLoadCat.isErr()){
+        stats = CatStats::createDefault(relatedLevel);
+        auto didSaveWork = Save::saveCat(this);
+        if (didSaveWork.isErr()){
+            log::info("Failed to load cat!\n{}", didSaveWork.unwrapErr());
+            return false;
+        }
+    }
+    else stats = didLoadCat.unwrap();
 
     auto menu = CCMenu::create();
     menu->setPosition({0, 0});
@@ -24,8 +35,7 @@ bool Cat::init(CCNode* wanderArea) {
 
     this->setContentSize({60, 60});
 
-    this->setZOrder(100 / size + 1);
-    this->setScale(size);
+    this->setSize(1);
 
     auto btn = CCMenuItem::create(this, menu_selector(Cat::OnCatClicked));
     btn->setContentSize(this->getContentSize());
@@ -50,7 +60,7 @@ void Cat::OnCatClicked(CCObject*){
 void Cat::ChangeCatWanderState(){
 
     if (currentWanderState == CatWanderStates::Idle){
-        int decision = rand() % 4;
+        int decision = Utils::GetRandomInt(0, 1);
         if (decision == 0){
             currentWanderState = CatWanderStates::Sleeping;
 
@@ -78,7 +88,15 @@ void Cat::update(float dt){
     else
         ChangeCatWanderState();
 
-    if (currentWanderState == CatWanderStates::Walking){
+    if (currentWanderState == CatWanderStates::Walking && movementAllowed){
         setPositionX(std::clamp(getPositionX() + walkDirection * 0.25f, 0.0f, wanderArea->getContentWidth() - getScaledContentWidth()));
     }
 }
+
+void Cat::setSize(float newSize){
+    newSize = std::clamp(newSize, 0.5f, 3.0f);
+    this->setZOrder(100 / stats.size + 1);
+    this->setScale(stats.size);
+}
+
+CatStats Cat::getStats() { return stats; }

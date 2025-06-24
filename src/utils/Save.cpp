@@ -1,0 +1,71 @@
+#include "Save.hpp"
+
+std::filesystem::path Save::savesPath = Mod::get()->getSaveDir() / "cats";
+
+Result<> Save::saveCat(Cat* cat){
+    return saveCat(cat->getStats());
+}
+
+Result<> Save::saveCat(const CatStats& stats){
+    if (!std::filesystem::exists(savesPath))
+    GEODE_UNWRAP(file::createDirectory(savesPath));
+
+    std::filesystem::path mySavePath = savesPath / getCatSaveFileName(stats.relatedLevel);
+
+    if (!std::filesystem::exists(mySavePath)) {
+        std::ofstream saveFile(mySavePath);
+        saveFile.close();
+    }
+
+    auto json = matjson::Value(stats).dump(matjson::NO_INDENTATION);
+    GEODE_UNWRAP(file::writeString(mySavePath, json));
+
+    return Ok();
+}
+
+Result<CatStats> Save::loadCat(GJGameLevel* relatedLevel){
+
+    std::filesystem::path mySavePath = savesPath / getCatSaveFileName(relatedLevel);
+
+    GEODE_UNWRAP_INTO(auto json, file::readJson(mySavePath));
+    GEODE_UNWRAP_INTO(auto stats, json.as<CatStats>());
+    stats.relatedLevel = relatedLevel;
+    return Ok(stats);
+}
+
+std::string Save::getCatSaveFileName(GJGameLevel* relatedLevel){
+    return fmt::format("{}.json", relatedLevel->m_levelID.value());
+}
+
+std::vector<int> Save::getPlacedCats(){
+    return Mod::get()->getSavedValue<std::vector<int>>("placedCats", {});
+}
+void Save::setPlacedCats(const std::vector<int>& catIDs){
+    Mod::get()->setSavedValue("placedCats", catIDs);
+}
+void Save::addPlacedCat(int catID){
+    auto placedCats = getPlacedCats();
+    for (int i = 0; i < placedCats.size(); i++)
+    {
+        if (placedCats[i] == catID) return;
+    }
+
+    placedCats.push_back(catID);
+
+    setPlacedCats(placedCats);
+}
+void Save::removePlacedCats(int catID){
+    auto placedCats = getPlacedCats();
+
+    bool didFindCat = false;
+    for (int i = 0; i < placedCats.size(); i++)
+    {
+        if (placedCats[i] != catID) continue;
+        
+        placedCats.erase(placedCats.begin() + i);
+        didFindCat = true;
+        break;
+    }
+
+    if (didFindCat) setPlacedCats(placedCats);
+}
