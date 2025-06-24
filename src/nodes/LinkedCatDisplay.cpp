@@ -2,9 +2,9 @@
 
 #include "../layers/CatsLayer.hpp"
 
-LinkedCatDisplay* LinkedCatDisplay::create() {
+LinkedCatDisplay* LinkedCatDisplay::create(CatStats* catStats) {
     auto ret = new LinkedCatDisplay();
-    if (ret->init()) {
+    if (ret->init(catStats)) {
         ret->autorelease();
         return ret;
     }
@@ -12,11 +12,18 @@ LinkedCatDisplay* LinkedCatDisplay::create() {
     return nullptr;
 }
 
-bool LinkedCatDisplay::init() {
+bool LinkedCatDisplay::init(CatStats* catStats) {
     if (!CCNode::init()) return false;
 
+    if (catStats != nullptr)
+        setCat(*catStats);
+
+    return true;
+}
+
+void LinkedCatDisplay::setCat(const CatStats& catStats){
     auto catsLayer = CatsLayer::activeCatLayer();
-    if (!catsLayer) return false;
+    if (!catsLayer) return;
 
     auto kittyColonThreeSprite = CCSprite::createWithSpriteFrameName("colourPickerShadow.png");
     kittyColonThreeSprite->setPosition(kittyColonThreeSprite->getContentSize() / 2);
@@ -33,7 +40,4 @@ bool LinkedCatDisplay::init() {
     shadow->setColor({0,0,0});
     shadow->setOpacity(150);
     this->addChild(shadow);
-
-
-    return true;
 }

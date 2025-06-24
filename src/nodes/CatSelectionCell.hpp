@@ -22,4 +22,9 @@ private:
     void onSelectedToggled(CCObject*);
 
     CatsLayer* catsLayer;
+
+    void onStatsChanged(const CatStats& newStats);
+
+    CCLabelBMFont* nameLabel;
+    CCLabelBMFont* levelNameLabel;
 };

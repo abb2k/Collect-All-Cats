@@ -25,11 +25,13 @@ class Cat : public CCNode {
 public:
     static Cat* create(CCNode* wanderArea, GJGameLevel* relatedLevel);
 
-    void setSize(float newSize);
+    void updateSize();
 
     CatStats getStats();
 
     bool movementAllowed = true;
+
+    void setCatStats(const CatStats& newStats);
 
 private:
     virtual bool init(CCNode* wanderArea, GJGameLevel* relatedLevel);
@@ -55,4 +57,7 @@ private:
     void ChangeCatWanderState();
 
     void update(float dt);
+
+    CCLabelBMFont* nameLabel;
+    CCLabelBMFont* levelNameLabel;
 };

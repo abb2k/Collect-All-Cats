@@ -36,8 +36,7 @@ bool Cat::init(CCNode* wanderArea, GJGameLevel* relatedLevel) {
     this->addChild(menu);
 
     this->setContentSize({60, 60});
-
-    this->setSize(1);
+    this->setAnchorPoint({.5f, 0});
 
     auto btn = CCMenuItem::create(this, menu_selector(Cat::OnCatClicked));
     btn->setContentSize(this->getContentSize());
@@ -49,7 +48,21 @@ bool Cat::init(CCNode* wanderArea, GJGameLevel* relatedLevel) {
     kittyColonThreeSprite->setPosition(this->getContentSize() / 2);
     kittyColonThreeSprite->setScale(.7f);
     this->addChild(kittyColonThreeSprite);
+    
+    updateSize();
 
+    nameLabel = CCLabelBMFont::create(stats.name.c_str(), "bigFont.fnt");
+    nameLabel->setPosition({this->getContentWidth() / 2, 80});
+    nameLabel->setScale(.5f);
+    this->addChild(nameLabel);
+    levelNameLabel = CCLabelBMFont::create(stats.relatedLevel->m_levelName.c_str(), "goldFont.fnt");
+    levelNameLabel->setPosition({this->getContentWidth() / 2, 70});
+    levelNameLabel->setScale(.25f);
+    this->addChild(levelNameLabel);
+
+    if (stats.name == stats.relatedLevel->m_levelName)
+        levelNameLabel->setString("");
+    
     scheduleUpdate();
 
     return true;
@@ -60,6 +73,7 @@ void Cat::OnCatClicked(CCObject*){
 
     CatsLayer::activeCatLayer()->catSettingsNode->setToCat(stats);
     CatsLayer::activeCatLayer()->catSettingsNode->show();
+    CatsLayer::activeCatLayer()->catSettingsNode->onCatApplyCallback(std::bind(&Cat::setCatStats, this, std::placeholders::_1));
 }
 
 void Cat::ChangeCatWanderState(){
@@ -98,10 +112,24 @@ void Cat::update(float dt){
     }
 }
 
-void Cat::setSize(float newSize){
-    newSize = std::clamp(newSize, 0.5f, 3.0f);
-    this->setZOrder(100 / stats.size + 1);
+void Cat::updateSize(){
+    this->setZOrder(1000 / stats.size + 1);
     this->setScale(stats.size);
 }
 
 CatStats Cat::getStats() { return stats; }
+
+void Cat::setCatStats(const CatStats& newStats){
+    stats = newStats;
+
+    updateSize();
+
+    nameLabel->setString(stats.name.c_str());
+
+    if (stats.name == stats.relatedLevel->m_levelName)
+        levelNameLabel->setString("");
+    else
+        levelNameLabel->setString(stats.relatedLevel->m_levelName.c_str());
+
+    auto _ = Save::saveCat(stats);
+}

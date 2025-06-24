@@ -170,6 +170,6 @@ void CatsLayer::removeCat(int catID){
 
 void CatsLayer::createCatSettingsNode(CCScene* scene){
     if (catSettingsNode != nullptr) return;
-    catSettingsNode = CatSettingsNode::create();
+    catSettingsNode = CatSettingsLayer::create();
     scene->addChild(catSettingsNode, 100);
 }

@@ -1,14 +1,14 @@
 #pragma once
 
 #include <Geode/Geode.hpp>
-#include "Cat.hpp"
-#include "LinkedCatDisplay.hpp"
+#include "../nodes/Cat.hpp"
+#include "../nodes/LinkedCatDisplay.hpp"
 
 using namespace geode::prelude;
 
-class CatSettingsNode : public CCLayer {
+class CatSettingsLayer : public CCLayer {
 public:
-    static CatSettingsNode* create();
+    static CatSettingsLayer* create();
 
     void show();
     void hide();
@@ -24,13 +24,18 @@ private:
         cocos2d::CCTouchDispatcher::get()->addTargetedDelegate(this, -500, false);
     }
 
-    ~CatSettingsNode() override{
+    ~CatSettingsLayer() override{
         CCTouchDispatcher::get()->unregisterForcePrio(this);
     }
 
     virtual void keyBackClicked() override;
 
     void onBackClicked(CCObject*);
+    void onSizeValueChanged(CCObject*);
+    Slider* sizeScroll;
+    TextInput* sizeInputField;
+
+    TextInput* nameInputField;
 
     bool isOpen;
 
@@ -42,4 +47,6 @@ private:
     LinkedCatDisplay* catDisplay;
 
     bool doSwallow;
+
+    void applyChanges(CCObject*);
 };

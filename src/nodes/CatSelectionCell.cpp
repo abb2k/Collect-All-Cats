@@ -32,21 +32,23 @@ bool CatSelectionCell::init(GJGameLevel* level) {
     }
     else myCatStats = didLoadCat.unwrap();
 
-    auto nameLabel = CCLabelBMFont::create(myCatStats.name.c_str(), "bigFont.fnt");
+    nameLabel = CCLabelBMFont::create(myCatStats.name.c_str(), "bigFont.fnt");
     nameLabel->setPosition({this->getContentWidth() / 2, 110});
     nameLabel->setAlignment(CCTextAlignment::kCCTextAlignmentCenter);
     nameLabel->setScale(std::min(0.75f, 100 / nameLabel->getContentWidth()));
     this->addChild(nameLabel);
 
-    if (myCatStats.name != myCatStats.relatedLevel->m_levelName){
-        auto levelNameLabel = CCLabelBMFont::create(myCatStats.relatedLevel->m_levelName.c_str(), "goldFont.fnt");
-        levelNameLabel->setPosition({this->getContentWidth() / 2, 100});
-        levelNameLabel->setAlignment(CCTextAlignment::kCCTextAlignmentCenter);
-        levelNameLabel->setScale(std::min(0.5f, 75 / levelNameLabel->getContentWidth()));
-        this->addChild(levelNameLabel);
+    levelNameLabel = CCLabelBMFont::create(myCatStats.relatedLevel->m_levelName.c_str(), "goldFont.fnt");
+    levelNameLabel->setPosition({this->getContentWidth() / 2, 95});
+    levelNameLabel->setAlignment(CCTextAlignment::kCCTextAlignmentCenter);
+    levelNameLabel->setScale(std::min(0.5f, 75 / levelNameLabel->getContentWidth()));
+    this->addChild(levelNameLabel);
+
+    if (myCatStats.name == myCatStats.relatedLevel->m_levelName){
+        levelNameLabel->setString("");
     }
 
-    auto catDisplay = LinkedCatDisplay::create();
+    auto catDisplay = LinkedCatDisplay::create(&myCatStats);
     catDisplay->setScale(60.5f / catDisplay->getContentHeight());
     catDisplay->setPosition({this->getContentWidth() / 2, 55});
     this->addChild(catDisplay);
@@ -100,6 +102,7 @@ bool CatSelectionCell::init(GJGameLevel* level) {
 void CatSelectionCell::onCatSettingsClicked(CCObject*){
     CatsLayer::activeCatLayer()->catSettingsNode->setToCat(myCatStats);
     CatsLayer::activeCatLayer()->catSettingsNode->show();
+    CatsLayer::activeCatLayer()->catSettingsNode->onCatApplyCallback(std::bind(&CatSelectionCell::onStatsChanged, this, std::placeholders::_1));
 }
 
 void CatSelectionCell::onSelectedToggled(CCObject*){
@@ -128,4 +131,21 @@ void CatSelectionCell::togglePlaced(bool placed, bool changeToggleSprite){
 
     if (changeToggleSprite)
         selectedToggle->toggle(containsMe);
+}
+
+void CatSelectionCell::onStatsChanged(const CatStats& newStats){
+    myCatStats = newStats;
+    nameLabel->setString(newStats.name.c_str());
+    nameLabel->setScale(std::min(0.75f, 100 / nameLabel->getContentWidth()));
+    
+    if (myCatStats.name != myCatStats.relatedLevel->m_levelName){
+        levelNameLabel->setString(myCatStats.relatedLevel->m_levelName.c_str());
+        levelNameLabel->setScale(std::min(0.5f, 75 / levelNameLabel->getContentWidth()));
+    }
+    else levelNameLabel->setString("");
+
+    if (catsLayer->spawnedCats.contains(myCatStats.relatedLevel->m_levelID.value())){
+        catsLayer->spawnedCats[myCatStats.relatedLevel->m_levelID.value()]->setCatStats(myCatStats);
+    }
+    else auto _ = Save::saveCat(myCatStats);
 }
