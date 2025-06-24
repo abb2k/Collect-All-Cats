@@ -1,6 +1,5 @@
 #include "CatsLayer.hpp"
 
-#include "../nodes/popup/CatSelectionPopup.hpp"
 #include "../nodes/popup/RoomSettingsPopup.hpp"
 #include "../utils/Save.hpp"
 
@@ -110,7 +109,7 @@ bool CatsLayer::init() {
     {
         addCat(level);
     }
-    
+
     scheduleUpdate();
 
     return true;
@@ -118,6 +117,7 @@ bool CatsLayer::init() {
 
 void CatsLayer::keyBackClicked(){
     CCDirector::get()->popSceneWithTransition(.5f, PopTransition::kPopTransitionFade);
+    catSettingsNode->hide();
     sharedInstance = nullptr;
 }
 
@@ -132,9 +132,9 @@ void CatsLayer::update(float dt){
 void CatsLayer::onBackClicked(CCObject*) { keyBackClicked(); }
 
 void CatsLayer::onCatsMenuClicked(CCObject*){
-    auto selectionPopup = CatSelectionPopup::create();
-    if (!selectionPopup) log::info("Failed to open cat selection menu!");
-    selectionPopup->show();
+    currentSelectionPopup= CatSelectionPopup::create();
+    if (!currentSelectionPopup) log::info("Failed to open cat selection menu!");
+    currentSelectionPopup->show();
 }
 
 void CatsLayer::onSettingsClicked(CCObject*){
@@ -166,4 +166,10 @@ void CatsLayer::removeCat(int catID){
     cat = spawnedCats[catID];
     cat->removeMeAndCleanup();
     spawnedCats.erase(catID);
+}
+
+void CatsLayer::createCatSettingsNode(CCScene* scene){
+    if (catSettingsNode != nullptr) return;
+    catSettingsNode = CatSettingsNode::create();
+    scene->addChild(catSettingsNode, 100);
 }

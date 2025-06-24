@@ -98,7 +98,8 @@ bool CatSelectionCell::init(GJGameLevel* level) {
 }
 
 void CatSelectionCell::onCatSettingsClicked(CCObject*){
-
+    CatsLayer::activeCatLayer()->catSettingsNode->setToCat(myCatStats);
+    CatsLayer::activeCatLayer()->catSettingsNode->show();
 }
 
 void CatSelectionCell::onSelectedToggled(CCObject*){

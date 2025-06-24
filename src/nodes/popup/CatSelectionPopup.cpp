@@ -1,5 +1,5 @@
 #include "CatSelectionPopup.hpp"
-
+#include "../../layers/CatsLayer.hpp"
 #include"../CatSelectionCell.hpp"
 
 CatSelectionPopup* CatSelectionPopup::create() {
@@ -19,9 +19,7 @@ bool CatSelectionPopup::setup() {
     
     m_bgSprite->setOpacity(220);
     m_closeBtn->setPosition({m_closeBtn->getPositionX() + m_closeBtn->getContentWidth() / 2, m_closeBtn->getPositionY() - m_closeBtn->getContentHeight() / 2});
-    auto backSprite = CCSprite::createWithSpriteFrameName("GJ_arrow_02_001.png");
-    backSprite->setScale(.75f);
-    m_closeBtn->setSprite(backSprite);
+    setCloseButtonSpr(CCSprite::createWithSpriteFrameName("GJ_arrow_02_001.png"), .75f);
 
     catsScrollLayer = ScrollLayer::create({375, 250});
     catsScrollLayer->setPosition((m_size - catsScrollLayer->getContentSize()) / 2 - ccp(3.5f, 15));
@@ -70,6 +68,11 @@ bool CatSelectionPopup::setup() {
     return true;
 }
 
+void CatSelectionPopup::show(){
+    Popup<>::show();
+    this->setZOrder(this->getZOrder() - 10);
+}
+
 void CatSelectionPopup::onSelectAllClicked(CCObject*){
     for (const auto& catSelCell : CCArrayExt<CatSelectionCell*>(catsScrollLayer->m_contentLayer->getChildren()))
         catSelCell->togglePlaced(true, true);
@@ -78,4 +81,14 @@ void CatSelectionPopup::onSelectAllClicked(CCObject*){
 void CatSelectionPopup::onDeselectAllClicked(CCObject*){
     for (const auto& catSelCell : CCArrayExt<CatSelectionCell*>(catsScrollLayer->m_contentLayer->getChildren()))
         catSelCell->togglePlaced(false, true);
+}
+
+void CatSelectionPopup::onClose(CCObject*){
+    CatsLayer::activeCatLayer()->catSettingsNode->hide();
+    CatsLayer::activeCatLayer()->currentSelectionPopup = nullptr;
+    Popup<>::onClose(nullptr);
+}
+
+void CatSelectionPopup::easeHorizontal(CCMoveBy* move){
+    m_mainLayer->runAction(CCEaseInOut::create(move, 2));
 }

@@ -1,6 +1,8 @@
 #include "Cat.hpp"
 
 #include "../utils/Save.hpp"
+#include "../layers/CatsLayer.hpp"
+
 
 Cat* Cat::create(CCNode* wanderArea, GJGameLevel* relatedLevel) {
     auto ret = new Cat();
@@ -55,6 +57,9 @@ bool Cat::init(CCNode* wanderArea, GJGameLevel* relatedLevel) {
 
 void Cat::OnCatClicked(CCObject*){
     kittyColonThreeSprite->runAction(CCSequence::create(CCTintTo::create(0, 0, 255, 0), CCTintTo::create(0.5f, 255, 255, 255), nullptr));
+
+    CatsLayer::activeCatLayer()->catSettingsNode->setToCat(stats);
+    CatsLayer::activeCatLayer()->catSettingsNode->show();
 }
 
 void Cat::ChangeCatWanderState(){

@@ -37,6 +37,7 @@ void CACGarageLayer::OnMenuBtnClicked(CCObject*){
         return;
     }
     scene->addChild(catsLayer);
-
+    
     CCDirector::get()->pushScene(CCTransitionFade::create(0.5f, scene));
+    catsLayer->createCatSettingsNode(scene);
 }

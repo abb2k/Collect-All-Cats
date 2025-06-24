@@ -4,6 +4,8 @@
 #include "../nodes/GroundLoader.hpp"
 #include "../nodes/BGLoader.hpp"
 #include "../nodes/Cat.hpp"
+#include "../nodes/CatSettingsNode.hpp"
+#include "../nodes/popup/CatSelectionPopup.hpp"
 
 using namespace geode::prelude;
 
@@ -24,10 +26,14 @@ class CatsLayer : public CCLayer {
 
         std::vector<GJGameLevel*> beatenExtremes{};
 
+        CatSettingsNode* catSettingsNode = nullptr;
+        CatSelectionPopup* currentSelectionPopup = nullptr;
+
         std::map<int, Cat*> spawnedCats{};
         void addCat(GJGameLevel* catLevel);
         void removeCat(int catID);
 
+        void createCatSettingsNode(CCScene* scene);
     private:
         virtual bool init();
 
