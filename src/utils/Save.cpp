@@ -1,23 +1,24 @@
 #include "Save.hpp"
+#include "../types/CatStatsSerializer.hpp"
 
 std::filesystem::path Save::savesPath = Mod::get()->getSaveDir() / "cats";
 
 Result<> Save::saveCat(Cat* cat){
-    return saveCat(cat->getStats());
+    return saveCat(&cat->getStats());
 }
 
-Result<> Save::saveCat(const CatStats& stats){
+Result<> Save::saveCat(CatStats* stats){
     if (!std::filesystem::exists(savesPath))
     GEODE_UNWRAP(file::createDirectory(savesPath));
 
-    std::filesystem::path mySavePath = savesPath / getCatSaveFileName(stats.relatedLevel);
+    std::filesystem::path mySavePath = savesPath / getCatSaveFileName(stats->getLevel());
 
     if (!std::filesystem::exists(mySavePath)) {
         std::ofstream saveFile(mySavePath);
         saveFile.close();
     }
 
-    auto json = matjson::Value(stats).dump(matjson::NO_INDENTATION);
+    auto json = matjson::Value(*stats).dump(matjson::NO_INDENTATION);
     GEODE_UNWRAP(file::writeString(mySavePath, json));
 
     return Ok();
@@ -26,10 +27,10 @@ Result<> Save::saveCat(const CatStats& stats){
 Result<CatStats> Save::loadCat(GJGameLevel* relatedLevel){
 
     std::filesystem::path mySavePath = savesPath / getCatSaveFileName(relatedLevel);
-
+    
     GEODE_UNWRAP_INTO(auto json, file::readJson(mySavePath));
-    GEODE_UNWRAP_INTO(auto stats, json.as<CatStats>());
-    stats.relatedLevel = relatedLevel;
+    GEODE_UNWRAP_INTO(auto stats, CatStats::createFromJsonWithLevel(json, relatedLevel));
+    
     return Ok(stats);
 }
 
@@ -45,10 +46,8 @@ void Save::setPlacedCats(const std::vector<int>& catIDs){
 }
 void Save::addPlacedCat(int catID){
     auto placedCats = getPlacedCats();
-    for (int i = 0; i < placedCats.size(); i++)
-    {
-        if (placedCats[i] == catID) return;
-    }
+    for (const auto& catID : placedCats)
+        if (catID == catID) return;
 
     placedCats.push_back(catID);
 

@@ -24,7 +24,7 @@ bool CatSelectionCell::init(GJGameLevel* level) {
     auto didLoadCat = Save::loadCat(level);
     if (didLoadCat.isErr()){
         myCatStats = CatStats::createDefault(level);
-        auto didCatSave = Save::saveCat(myCatStats);
+        auto didCatSave = Save::saveCat(&myCatStats);
         if (didCatSave.isErr()){
             log::info("Failed to load cat!\n{}", didCatSave.unwrapErr());
             return false;
@@ -38,13 +38,13 @@ bool CatSelectionCell::init(GJGameLevel* level) {
     nameLabel->setScale(std::min(0.75f, 100 / nameLabel->getContentWidth()));
     this->addChild(nameLabel);
 
-    levelNameLabel = CCLabelBMFont::create(myCatStats.relatedLevel->m_levelName.c_str(), "goldFont.fnt");
+    levelNameLabel = CCLabelBMFont::create(myCatStats.getLevel()->m_levelName.c_str(), "goldFont.fnt");
     levelNameLabel->setPosition({this->getContentWidth() / 2, 95});
     levelNameLabel->setAlignment(CCTextAlignment::kCCTextAlignmentCenter);
     levelNameLabel->setScale(std::min(0.5f, 75 / levelNameLabel->getContentWidth()));
     this->addChild(levelNameLabel);
 
-    if (myCatStats.name == myCatStats.relatedLevel->m_levelName){
+    if (myCatStats.name == myCatStats.getLevel()->m_levelName){
         levelNameLabel->setString("");
     }
 
@@ -85,7 +85,7 @@ bool CatSelectionCell::init(GJGameLevel* level) {
 
     for (const auto& catID : placedCats)
     {
-        if (catID == myCatStats.relatedLevel->m_levelID.value()){
+        if (catID == myCatStats.getLevel()->m_levelID.value()){
             selectedToggle->toggle(true);
             break;
         }
@@ -112,19 +112,19 @@ void CatSelectionCell::onSelectedToggled(CCObject*){
 void CatSelectionCell::togglePlaced(bool placed, bool changeToggleSprite){
     auto placedCats = Save::getPlacedCats();
     std::set<int> placedCatsSet(placedCats.begin(), placedCats.end());
-    bool containsMe = placedCatsSet.contains(myCatStats.relatedLevel->m_levelID.value());
+    bool containsMe = placedCatsSet.contains(myCatStats.getLevel()->m_levelID.value());
 
     if (placed){
         if (!containsMe){
-            Save::addPlacedCat(myCatStats.relatedLevel->m_levelID.value());
-            catsLayer->addCat(myCatStats.relatedLevel);
+            Save::addPlacedCat(myCatStats.getLevel()->m_levelID.value());
+            catsLayer->addCat(myCatStats.getLevel());
 
             containsMe = true;
         }
     }
     else{
-        Save::removePlacedCats(myCatStats.relatedLevel->m_levelID.value());
-        catsLayer->removeCat(myCatStats.relatedLevel->m_levelID.value());
+        Save::removePlacedCats(myCatStats.getLevel()->m_levelID.value());
+        catsLayer->removeCat(myCatStats.getLevel()->m_levelID.value());
 
         containsMe = false;
     }
@@ -138,14 +138,14 @@ void CatSelectionCell::onStatsChanged(const CatStats& newStats){
     nameLabel->setString(newStats.name.c_str());
     nameLabel->setScale(std::min(0.75f, 100 / nameLabel->getContentWidth()));
     
-    if (myCatStats.name != myCatStats.relatedLevel->m_levelName){
-        levelNameLabel->setString(myCatStats.relatedLevel->m_levelName.c_str());
+    if (myCatStats.name != myCatStats.getLevel()->m_levelName){
+        levelNameLabel->setString(myCatStats.getLevel()->m_levelName.c_str());
         levelNameLabel->setScale(std::min(0.5f, 75 / levelNameLabel->getContentWidth()));
     }
     else levelNameLabel->setString("");
 
-    if (catsLayer->spawnedCats.contains(myCatStats.relatedLevel->m_levelID.value())){
-        catsLayer->spawnedCats[myCatStats.relatedLevel->m_levelID.value()]->setCatStats(myCatStats);
+    if (catsLayer->spawnedCats.contains(myCatStats.getLevel()->m_levelID.value())){
+        catsLayer->spawnedCats[myCatStats.getLevel()->m_levelID.value()]->setCatStats(myCatStats);
     }
-    else auto _ = Save::saveCat(myCatStats);
+    else auto _ = Save::saveCat(&myCatStats);
 }

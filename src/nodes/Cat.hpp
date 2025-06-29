@@ -2,24 +2,9 @@
 
 #include <Geode/Geode.hpp>
 #include "../utils/Utils.hpp"
+#include "../types/CatStats.hpp"
 
 using namespace geode::prelude;
-
-struct CatStats{
-    std::string name;
-    GJGameLevel* relatedLevel;
-    unsigned int catTypeID;
-    float size = 1;
-
-    static CatStats createDefault(GJGameLevel* relatedLevel){
-        CatStats newStats;
-        newStats.relatedLevel = relatedLevel;
-        newStats.name = relatedLevel->m_levelName;
-        newStats.catTypeID = Utils::GetRandomInt(0, 10);
-
-        return newStats;
-    }
-};
 
 class Cat : public CCNode {
 public:
@@ -36,11 +21,11 @@ public:
 private:
     virtual bool init(CCNode* wanderArea, GJGameLevel* relatedLevel);
 
-    CatStats stats;
+    CatStats stats = CatStats::createEmpty();
 
     CCNode* wanderArea;
 
-    void OnCatClicked(CCObject*);
+    void onCatClicked(CCObject*);
 
     enum CatWanderStates{
         Walking,

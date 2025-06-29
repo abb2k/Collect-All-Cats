@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Geode/Geode.hpp>
-#include "../nodes/Cat.hpp"
 #include "../nodes/LinkedCatDisplay.hpp"
 
 using namespace geode::prelude;
@@ -39,7 +38,7 @@ private:
 
     bool isOpen;
 
-    CatStats catToModify;
+    CatStats catToModify = CatStats::createEmpty();
 
     std::function<void(const CatStats&)> callback = NULL;
     CCMenu* buttonsMenu;

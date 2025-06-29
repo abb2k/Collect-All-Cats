@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Geode/Geode.hpp>
-#include "Cat.hpp"
+#include "../types/CatStats.hpp"
 #include "../layers/CatsLayer.hpp"
 
 using namespace geode::prelude;
@@ -15,7 +15,7 @@ public:
 private:
     virtual bool init(GJGameLevel* level);
 
-    CatStats myCatStats;
+    CatStats myCatStats = CatStats::createEmpty();
     CCMenuItemToggler* selectedToggle;
 
     void onCatSettingsClicked(CCObject*);

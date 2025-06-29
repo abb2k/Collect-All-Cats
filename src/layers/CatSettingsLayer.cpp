@@ -21,6 +21,7 @@ bool CatSettingsLayer::init() {
     this->setPositionX(winSize.width);
     this->setAnchorPoint({0, 0});
 
+    // @geode-ignore(unknown-resource)
     auto BG = CCScale9Sprite::create("geode.loader/GE_square03.png");
     BG->setAnchorPoint({0, 0});
     BG->setContentSize(this->getContentSize());
@@ -66,12 +67,11 @@ bool CatSettingsLayer::init() {
         if (numRes.isErr()) return;
         float realNum = numRes.unwrap();
 
-        if (realNum < 0.5f){
+        if (realNum < 0.5f)
             realNum = 0.5f;
-        }
-        if (realNum > 2.0f){
+
+        if (realNum > 2.0f)
             realNum = 2.0f;
-        }
 
         sizeScroll->setValue((realNum - 0.5f) / (2.0f - 0.5f));
         catToModify.size = realNum;

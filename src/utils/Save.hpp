@@ -5,28 +5,7 @@
 using namespace geode::prelude;
 
 #include "../nodes/Cat.hpp"
-
-template <>
-struct matjson::Serialize<CatStats> {
-    static Result<CatStats> fromJson(const matjson::Value& value) {
-
-        CatStats stats;
-        GEODE_UNWRAP_INTO(stats.catTypeID, value["type"].asUInt());
-        GEODE_UNWRAP_INTO(stats.name, value["name"].asString());
-        GEODE_UNWRAP_INTO(stats.size, value["size"].asDouble());
-
-        return Ok(stats);
-    }
-
-    static matjson::Value toJson(const CatStats& value) {
-        matjson::Value obj = matjson::makeObject({
-            { "type", value.catTypeID },
-            { "name", value.name },
-            { "size", value.size }
-        });
-        return obj;
-    }
-};
+#include "../types/CatStats.hpp"
 
 class Save{
     private:
@@ -36,7 +15,7 @@ class Save{
 
     public:
         static Result<> saveCat(Cat* cat);
-        static Result<> saveCat(const CatStats& stats);
+        static Result<> saveCat(CatStats* stats);
 
         static Result<CatStats> loadCat(GJGameLevel* relatedLevel);
 
