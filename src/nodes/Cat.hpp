@@ -6,6 +6,8 @@
 
 using namespace geode::prelude;
 
+class CatAIStateBase;
+
 class Cat : public CCNode {
 public:
     static Cat* create(CCNode* wanderArea, GJGameLevel* relatedLevel);
@@ -27,15 +29,7 @@ private:
 
     void onCatClicked(CCObject*);
 
-    enum CatWanderStates{
-        Walking,
-        Idle,
-        Sleeping
-    };
-
-    CatWanderStates currentWanderState;
-    float walkDirection;
-    float stateChangeTimer;
+    std::vector<CatAIStateBase*> possibleAIStates{};
 
     CCSprite* kittyColonThreeSprite;
 

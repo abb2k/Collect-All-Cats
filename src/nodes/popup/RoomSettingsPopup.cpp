@@ -2,6 +2,7 @@
 
 RoomSettingsPopup* RoomSettingsPopup::create() {
     auto ret = new RoomSettingsPopup();
+    // @geode-ignore(unknown-resource)
     if (ret->initAnchored(400, 300, "geode.loader/GE_square03.png")) {
         ret->autorelease();
         return ret;

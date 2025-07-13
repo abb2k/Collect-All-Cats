@@ -14,6 +14,7 @@ CatSelectionCell* CatSelectionCell::create(GJGameLevel* level) {
 }
 
 bool CatSelectionCell::init(GJGameLevel* level) {
+    // @geode-ignore(unknown-resource)
     if (!CCScale9Sprite::initWithFile("geode.loader/GE_square01.png")) return false;
 
     catsLayer = CatsLayer::activeCatLayer();

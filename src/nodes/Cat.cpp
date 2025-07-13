@@ -2,6 +2,7 @@
 
 #include "../utils/Save.hpp"
 #include "../layers/CatsLayer.hpp"
+#include "../utils/CatAIStateBase.hpp"
 
 Cat* Cat::create(CCNode* wanderArea, GJGameLevel* relatedLevel) {
     auto ret = new Cat();
@@ -64,6 +65,12 @@ bool Cat::init(CCNode* wanderArea, GJGameLevel* relatedLevel) {
     
     scheduleUpdate();
 
+    for (const auto& AIState : possibleAIStates)
+    {
+        AIState->setTargetCat(this);
+    }
+    
+
     return true;
 }
 
@@ -77,38 +84,10 @@ void Cat::onCatClicked(CCObject*){
 
 void Cat::ChangeCatWanderState(){
 
-    if (currentWanderState == CatWanderStates::Idle){
-        int decision = Utils::GetRandomInt(0, 1);
-        if (decision == 0){
-            currentWanderState = CatWanderStates::Sleeping;
-
-            stateChangeTimer = Utils::GetRandomFloat(5, 10);
-
-            kittyColonThreeSprite->setScale(.5f);
-        }
-        else{
-            currentWanderState = CatWanderStates::Walking;
-
-            stateChangeTimer = Utils::GetRandomFloat(4, 10);
-            walkDirection = Utils::GetRandomFloat(-1, 1);
-        }
-    }
-    else{
-        stateChangeTimer = Utils::GetRandomFloat(2, 5);
-        currentWanderState = CatWanderStates::Idle;
-        kittyColonThreeSprite->setScale(.7f);
-    }
 }
 
 void Cat::update(float dt){
-    if (stateChangeTimer > 0)
-        stateChangeTimer -= dt;
-    else
-        ChangeCatWanderState();
 
-    if (currentWanderState == CatWanderStates::Walking && movementAllowed){
-        setPositionX(std::clamp(getPositionX() + walkDirection * 0.25f, 0.0f, wanderArea->getContentWidth() - getScaledContentWidth()));
-    }
 }
 
 void Cat::updateSize(){
