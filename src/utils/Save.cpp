@@ -68,3 +68,46 @@ void Save::removePlacedCats(int catID){
 
     if (didFindCat) setPlacedCats(placedCats);
 }
+
+
+void Save::saveBackground(int BGID){
+    Mod::get()->setSavedValue("Background", BGID);
+}
+
+int Save::getBackground(){
+    return Mod::get()->getSavedValue<int>("Background", 1);
+}
+
+
+void Save::saveGround(int GroundID){
+    Mod::get()->setSavedValue("Ground", GroundID);
+}
+
+int Save::getGround(){
+    return Mod::get()->getSavedValue<int>("Ground", 1);
+}
+
+void Save::saveBackgroundColor(ccColor3B color){
+    Mod::get()->setSavedValue("BackgroundColor", color);
+}
+
+ccColor3B Save::getBackgroundColor(){
+    return Mod::get()->getSavedValue<ccColor3B>("BackgroundColor", { 40, 125, 255 });
+}
+
+
+void Save::saveGroundColor(ccColor3B color){
+    Mod::get()->setSavedValue("GroundColor", color);
+}
+
+ccColor3B Save::getGroundColor(){
+    return Mod::get()->getSavedValue<ccColor3B>("GroundColor", { 0, 102, 255 });
+}
+
+void Save::saveGroundOutlineColor(ccColor3B color){
+    Mod::get()->setSavedValue("GroundColor", color);
+}
+
+ccColor3B Save::getGroundOutlineColor(){
+    return Mod::get()->getSavedValue<ccColor3B>("GroundColor", { 0, 102, 255 });
+}

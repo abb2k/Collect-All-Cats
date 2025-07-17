@@ -1,8 +1,8 @@
 #include "BGLoader.hpp"
 
-BGLoader* BGLoader::create(float width, const char* sprite) {
+BGLoader* BGLoader::create(float width, int BGID) {
     auto ret = new BGLoader();
-    if (ret->init(width, sprite)) {
+    if (ret->init(width, BGID)) {
         ret->autorelease();
         return ret;
     }
@@ -10,11 +10,11 @@ BGLoader* BGLoader::create(float width, const char* sprite) {
     return nullptr;
 }
 
-bool BGLoader::init(float width, const char* sprite) {
+bool BGLoader::init(float width, int BGID) {
     if (!CCNode::init()) return false;
 
     this->width = width;
-    this->sprite = sprite;
+    this->BGID = BGID;
 
 
     while (overallSize < width)
@@ -32,10 +32,10 @@ void BGLoader::setColor(ccColor3B color){
     this->color = color;
 }
 
-void BGLoader::setBackground(const char* newSprite){
+void BGLoader::setBackground(int BGID){
     this->removeAllChildrenWithCleanup(true);
 
-    this->sprite = newSprite;
+    this->BGID = BGID;
 
     overallSize = 0;
 
@@ -46,7 +46,12 @@ void BGLoader::setBackground(const char* newSprite){
 }
 
 void BGLoader::createBG(){
-    auto BG = CCSprite::create(sprite);
+    std::string BGName;
+    if (BGID < 10)
+        BGName = fmt::format("game_bg_0{}_001.png", BGID);
+    else
+        BGName = fmt::format("game_bg_{}_001.png", BGID);
+    auto BG = CCSprite::create(BGName.c_str());
     BG->setColor({ 19, 120, 179 });
     BG->setPositionX(overallSize);
     BG->setAnchorPoint({0, 0});

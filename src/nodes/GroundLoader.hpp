@@ -6,19 +6,19 @@ using namespace geode::prelude;
 
 class GroundLoader : public CCNode {
 public:
-    static GroundLoader* create(float width, const char* sprite, int extraAmount = 0);
+    static GroundLoader* create(float width, int GroundID, int extraAmount = 0);
 
-    void setGround(const char* newSprite);
+    void setGround(int GroundID);
 
     void setColor(ccColor3B color);
     void setOutlineColor(ccColor3B color);
 
 private:
-    virtual bool init(float width, const char* sprite, int extraAmount);
+    virtual bool init(float width, int GroundID, int extraAmount);
 
     void createGround();
     float width;
-    const char* sprite;
+    int GroundID;
     int extraAmount;
     float overallSize;
     float floorLength;

@@ -37,13 +37,19 @@ bool CatsLayer::init() {
 
     ScrollNode->m_contentLayer->setContentWidth(1600);
 
-    groundLoader = GroundLoader::create(ScrollNode->m_contentLayer->getContentWidth(), "groundSquare_05_001.png", 2);
-    groundLoader->setColor({ 0, 102, 255 });
+    int currGround = Save::getGround();
+    ccColor3B currGroundColor = Save::getGroundColor();
+    
+    groundLoader = GroundLoader::create(ScrollNode->m_contentLayer->getContentWidth(), currGround, 2);
+    groundLoader->setColor(currGroundColor);
     groundLoader->setContentHeight(1);
     ScrollNode->m_contentLayer->addChild(groundLoader);
 
-    bgLoader = BGLoader::create(ScrollNode->m_contentLayer->getContentWidth(), "game_bg_01_001.png");
-    bgLoader->setColor({ 40, 125, 255 });
+    int currBG = Save::getBackground();
+    ccColor3B currBGColor = Save::getBackgroundColor();
+    
+    bgLoader = BGLoader::create(ScrollNode->m_contentLayer->getContentWidth(), currBG);
+    bgLoader->setColor(currBGColor);
     bgLoader->setZOrder(-10);
     bgLoader->setContentHeight(1);
     ScrollNode->m_contentLayer->addChild(bgLoader);

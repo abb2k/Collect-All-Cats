@@ -6,16 +6,16 @@ using namespace geode::prelude;
 
 class BGLoader : public CCNode {
 public:
-    static BGLoader* create(float width, const char* sprite);
+    static BGLoader* create(float width, int BGID);
 
-    void setBackground(const char* newSprite);
+    void setBackground(int BGID);
 
     void setColor(ccColor3B color);
 
 private:
-    virtual bool init(float width, const char* sprite);
+    virtual bool init(float width, int BGID);
     float width;
-    const char* sprite;
+    int BGID;
     float overallSize;
 
     std::vector<CCSprite*> toRecolor{};

@@ -1,8 +1,8 @@
 #include "GroundLoader.hpp"
 
-GroundLoader* GroundLoader::create(float width, const char* sprite, int extraAmount) {
+GroundLoader* GroundLoader::create(float width, int GroundID, int extraAmount) {
     auto ret = new GroundLoader();
-    if (ret->init(width, sprite, extraAmount)) {
+    if (ret->init(width, GroundID, extraAmount)) {
         ret->autorelease();
         return ret;
     }
@@ -10,11 +10,11 @@ GroundLoader* GroundLoader::create(float width, const char* sprite, int extraAmo
     return nullptr;
 }
 
-bool GroundLoader::init(float width, const char* sprite, int extraAmount) {
+bool GroundLoader::init(float width, int GroundID, int extraAmount) {
     if (!CCNode::init()) return false;
 
     this->width = width;
-    this->sprite = sprite;
+    this->GroundID = GroundID;
     this->extraAmount = extraAmount;
 
     while (overallSize < width)
@@ -31,7 +31,12 @@ bool GroundLoader::init(float width, const char* sprite, int extraAmount) {
 }
 
 void GroundLoader::createGround(){
-    auto floor = CCSprite::create(sprite);
+    std::string groundName;
+    if (GroundID < 10)
+        groundName = fmt::format("groundSquare_0{}_001.png", GroundID);
+    else
+        groundName = fmt::format("groundSquare_{}_001.png", GroundID);
+    auto floor = CCSprite::create(groundName.c_str());
     floor->setSkewX(60);
     floor->setColor({ 48, 100, 129 });
     floor->setPositionX(overallSize);
@@ -42,11 +47,12 @@ void GroundLoader::createGround(){
     floor->setColor(color);
     floorLength = floor->getContentWidth();
     grounds.push_back(floor);
+    floor->setZOrder(-1);
 
     auto line = CCSprite::createWithSpriteFrameName("blockOutline_14new_001.png");
     line->setPosition(ccp(floor->getContentWidth() / 2 + overallSize, floor->getPositionY() +  floor->getScaledContentHeight() / 2));
     line->setSkewX(60);
-    line->setZOrder(1);
+    line->setZOrder(2);
     line->setScaleX(7.4f);
     this->addChild(line);
     line->setColor(outlineColor);
@@ -54,11 +60,11 @@ void GroundLoader::createGround(){
     outlines.push_back(line);
 }
 
-void GroundLoader::setGround(const char* newSprite){
+void GroundLoader::setGround(int GroundID){
 
     this->removeAllChildrenWithCleanup(true);
 
-    this->sprite = newSprite;
+    this->GroundID = GroundID;
 
     floorLength = 0;
     overallSize = 0;
