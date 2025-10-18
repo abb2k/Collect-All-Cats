@@ -14,7 +14,7 @@ float Utils::GetRandomFloat(float min, float max)
 
 /// @brief 
 /// returns a random number between min and max inclusive [min, max]
-int Utils::GetRandomInt(int min, int max){
+int Utils::GetRandomInt(int min, int max){    
     if (max != INT_MAX)
         max++;
     return min + rand() % (max - min);

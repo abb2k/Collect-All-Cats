@@ -3,6 +3,7 @@
 #include <nodes/popup/RoomSettingsPopup.hpp>
 #include <utils/Save.hpp>
 #include <utils/Utils.hpp>
+#include <kittyAI/CatWanderState.hpp>
 
 CatsLayer* CatsLayer::sharedInstance = nullptr;
 
@@ -162,6 +163,10 @@ void CatsLayer::addCat(GJGameLevel* catLevel){
     if (cat == nullptr) return;
     cat->setPositionY(20);
     cat->setPositionX(Utils::GetRandomFloat(0, ScrollNode->content->getContentWidth() - cat->getScaledContentWidth()));
+    cat->addAIState("wander", CatWanderState::create());
+    cat->addAIStateTransition("wander", "wander");
+    cat->setDefaultState("wander");
+    cat->startAI();
     ScrollNode->content->addChild(cat);
     spawnedCats.insert({catLevel->m_levelID.value(), cat});
 }

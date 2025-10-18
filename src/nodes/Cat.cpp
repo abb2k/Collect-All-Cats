@@ -3,7 +3,7 @@
 #include <utils/Utils.hpp>
 #include <utils/Save.hpp>
 #include <layers/CatsLayer.hpp>
-#include <utils/CatAIStateBase.hpp>
+#include <kittyAI/CatAIStateBase.hpp>
 #include <utils/Utils.hpp>
 
 Cat* Cat::create(CCNode* wanderArea, GJGameLevel* relatedLevel) {
@@ -69,14 +69,8 @@ bool Cat::init(CCNode* wanderArea, GJGameLevel* relatedLevel) {
 
     if (stats.name == stats.getLevel()->m_levelName)
         levelNameLabel->setString("");
-    
-    scheduleUpdate();
 
-    for (const auto& AIState : possibleAIStates)
-    {
-        AIState->setTargetCat(this);
-    }
-    
+    this->scheduleUpdate();
 
     return true;
 }
@@ -87,14 +81,6 @@ void Cat::onCatClicked(CCObject*){
     CatsLayer::activeCatLayer()->catSettingsNode->setToCat(stats);
     CatsLayer::activeCatLayer()->catSettingsNode->show();
     CatsLayer::activeCatLayer()->catSettingsNode->onCatApplyCallback(std::bind(&Cat::setCatStats, this, std::placeholders::_1));
-}
-
-void Cat::ChangeCatWanderState(){
-
-}
-
-void Cat::update(float dt){
-    
 }
 
 void Cat::updateSize(){
@@ -117,4 +103,67 @@ void Cat::setCatStats(const CatStats& newStats){
         levelNameLabel->setString(stats.getLevel()->m_levelName.c_str());
 
     auto _ = Save::saveCat(&stats);
+}
+
+void Cat::addAIState(const std::string& stateName, std::shared_ptr<CatAIStateBase> state){
+    if (possibleAIStates.contains(stateName)) return;
+
+    state->setTargetCat(this);
+    
+    state->name = stateName;
+    possibleAIStates.insert({stateName, state});
+}
+void Cat::addAIStateTransition(const std::string& originStateName, const std::string& targetStateName){
+    if (!possibleAIStates.contains(originStateName) || !possibleAIStates.contains(targetStateName)) return;
+
+    if (!AIStatesTransitions.contains(originStateName))
+        AIStatesTransitions[targetStateName] = {};
+
+    for (const auto& existingTarget : AIStatesTransitions[originStateName])
+        if (existingTarget == targetStateName) return;
+    
+    AIStatesTransitions[originStateName].push_back(targetStateName);
+}
+
+void Cat::setDefaultState(const std::string& stateName){
+    defaultState = stateName;
+}
+
+void Cat::startAI(){
+    if (!possibleAIStates.contains(defaultState)) return;
+
+    Cat::moveToState(defaultState);
+}
+
+void Cat::stopAI(){
+    if (currentAIState != nullptr)
+        currentAIState->endState();
+    currentAIState = nullptr;
+}
+
+void Cat::moveToState(const std::string& stateName){
+    if (!possibleAIStates.contains(stateName)) return;
+
+    if (currentAIState != nullptr)
+        currentAIState->endState();
+
+    currentAIState = possibleAIStates[stateName];
+
+    currentAIState->startState();
+    currentAIState->onStateEndedCallback([&](CatAIStateBase* state){
+        if (!AIStatesTransitions.contains(state->name)) return;
+
+        auto possibleOthers = AIStatesTransitions[state->name];
+
+        Cat::moveToState(possibleOthers[Utils::GetRandomInt(0, possibleOthers.size() - 1)]);
+    });
+}
+
+void Cat::update(float dt){
+    Cat::AIUpdate(dt);
+}
+
+void Cat::AIUpdate(float dt){
+    if (currentAIState != nullptr)
+        currentAIState->update(dt);
 }

@@ -19,6 +19,18 @@ public:
 
     void setCatStats(const CatStats& newStats);
 
+    void addAIState(const std::string& stateName, std::shared_ptr<CatAIStateBase> state);
+    void addAIStateTransition(const std::string& originStateName, const std::string& targetStateName);
+
+    void setDefaultState(const std::string& stateName);
+
+    void moveToState(const std::string& stateName);
+
+    void startAI();
+    void stopAI();
+
+    void update(float dt) override;
+
 private:
     virtual bool init(CCNode* wanderArea, GJGameLevel* relatedLevel);
 
@@ -28,13 +40,13 @@ private:
 
     void onCatClicked(CCObject*);
 
-    std::vector<CatAIStateBase*> possibleAIStates{};
+    std::map<std::string, std::shared_ptr<CatAIStateBase>> possibleAIStates{};
+    std::map<std::string, std::vector<std::string>> AIStatesTransitions{};
+    std::string defaultState;
+    std::shared_ptr<CatAIStateBase> currentAIState = nullptr;
+    void AIUpdate(float dt);
 
     CCSprite* kittyColonThreeSprite;
-
-    void ChangeCatWanderState();
-
-    void update(float dt);
 
     CCLabelBMFont* nameLabel;
     CCLabelBMFont* levelNameLabel;
