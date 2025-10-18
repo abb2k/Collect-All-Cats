@@ -31,7 +31,7 @@ bool Cat::init(CCNode* wanderArea, GJGameLevel* relatedLevel) {
 
         auto didSaveWork = Save::saveCat(this);
         if (didSaveWork.isErr()){
-            log::info("Failed to load cat!\n{}", didSaveWork.unwrapErr());
+            log::error("Failed to load cat!\n{}", didSaveWork.unwrapErr());
             return false;
         }
     }
@@ -94,7 +94,7 @@ void Cat::ChangeCatWanderState(){
 }
 
 void Cat::update(float dt){
-
+    
 }
 
 void Cat::updateSize(){
