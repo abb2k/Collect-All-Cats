@@ -10,7 +10,7 @@ class CatSelectionPopup : public Popup<> {
 
         virtual void show() override;
 
-        void easeHorizontal(CCMoveBy* move);
+        void fadeTo(GLubyte opacity, float time);
     private:
         virtual bool setup() override;
 
@@ -20,4 +20,7 @@ class CatSelectionPopup : public Popup<> {
         virtual void onClose(CCObject*) override;
 
         ScrollLayer* catsScrollLayer;
+
+        ButtonSprite* selAllBtnSprite;
+        ButtonSprite* deselAllBtnSprite;
 };

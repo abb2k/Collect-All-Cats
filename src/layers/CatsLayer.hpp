@@ -1,11 +1,13 @@
 #pragma once
 
-#include <Geode/Geode.hpp>
-#include "../nodes/GroundLoader.hpp"
-#include "../nodes/BGLoader.hpp"
-#include "../nodes/Cat.hpp"
 #include "CatSettingsLayer.hpp"
-#include "../nodes/popup/CatSelectionPopup.hpp"
+
+#include <Geode/Geode.hpp>
+#include <nodes/GroundLoader.hpp>
+#include <nodes/BGLoader.hpp>
+#include <nodes/Cat.hpp>
+#include <nodes/popup/CatSelectionPopup.hpp>
+#include <nodes/AdvancedScrollLayer.hpp>
 
 using namespace geode::prelude;
 
@@ -19,7 +21,7 @@ class CatsLayer : public CCLayer {
         void onCatsMenuClicked(CCObject*);
         void onSettingsClicked(CCObject*);
 
-        ScrollLayer* ScrollNode;
+        AdvancedScrollLayer* ScrollNode;
 
         GroundLoader* groundLoader;
         BGLoader* bgLoader;
@@ -34,6 +36,9 @@ class CatsLayer : public CCLayer {
         void removeCat(int catID);
 
         void createCatSettingsNode(CCScene* scene);
+
+        void setFollowTarget(Cat* cat);
+        Cat* getCatFromStats(CatStats& stats);
     private:
         virtual bool init();
 
@@ -42,4 +47,8 @@ class CatsLayer : public CCLayer {
         static CatsLayer* sharedInstance;
 
         void update(float dt);
+
+        Cat* followTarget = nullptr;
+
+        void followUpdate(float dt);
 };

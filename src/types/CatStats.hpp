@@ -10,6 +10,9 @@ struct CatStats{
         unsigned int catTypeID;
         float size = 1;
 
+        static const float MIN_SIZE;
+        static const float MAX_SIZE;
+
         static CatStats createDefault(GJGameLevel* relatedLevel);
 
         static Result<CatStats> createFromJson(const matjson::Value& value);

@@ -1,6 +1,6 @@
 #include "LinkedCatDisplay.hpp"
 
-#include "../layers/CatsLayer.hpp"
+#include <layers/CatsLayer.hpp>
 
 LinkedCatDisplay* LinkedCatDisplay::create(CatStats* catStats) {
     auto ret = new LinkedCatDisplay();
@@ -13,10 +13,12 @@ LinkedCatDisplay* LinkedCatDisplay::create(CatStats* catStats) {
 }
 
 bool LinkedCatDisplay::init(CatStats* catStats) {
-    if (!CCNode::init()) return false;
+    if (!CCMenu::init()) return false;
 
     if (catStats != nullptr)
         setCat(*catStats);
+
+    ignoreAnchorPointForPosition(false);
 
     return true;
 }

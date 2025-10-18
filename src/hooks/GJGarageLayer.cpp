@@ -1,6 +1,6 @@
 #include "GJGarageLayer.hpp"
 
-#include "../layers/CatsLayer.hpp"
+#include <layers/CatsLayer.hpp>
 
 bool CACGarageLayer::init(){
     if (!GJGarageLayer::init()) return false;

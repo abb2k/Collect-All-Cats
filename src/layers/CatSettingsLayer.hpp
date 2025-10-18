@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Geode/Geode.hpp>
-#include "../nodes/LinkedCatDisplay.hpp"
+#include <nodes/LinkedCatDisplay.hpp>
 
 using namespace geode::prelude;
 
@@ -12,12 +12,12 @@ public:
     void show();
     void hide();
 
-    void setToCat(const CatStats& stats);
+    void setToCat(CatStats& stats);
 
     void onCatApplyCallback(const std::function<void(const CatStats&)>& callback);
 
 private:
-    virtual bool init();
+    virtual bool init() override;
 
     void registerWithTouchDispatcher() override {
         cocos2d::CCTouchDispatcher::get()->addTargetedDelegate(this, -500, false);

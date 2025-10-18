@@ -1,5 +1,5 @@
 #include "CatSettingsLayer.hpp"
-#include "CatsLayer.hpp"
+#include <layers/CatsLayer.hpp>
 
 CatSettingsLayer* CatSettingsLayer::create() {
     auto ret = new CatSettingsLayer();
@@ -67,13 +67,13 @@ bool CatSettingsLayer::init() {
         if (numRes.isErr()) return;
         float realNum = numRes.unwrap();
 
-        if (realNum < 0.5f)
-            realNum = 0.5f;
+        if (realNum < CatStats::MIN_SIZE)
+            realNum = CatStats::MIN_SIZE;
 
-        if (realNum > 2.0f)
-            realNum = 2.0f;
+        if (realNum > CatStats::MAX_SIZE)
+            realNum = CatStats::MAX_SIZE;
 
-        sizeScroll->setValue((realNum - 0.5f) / (2.0f - 0.5f));
+        sizeScroll->setValue((realNum - CatStats::MIN_SIZE) / (CatStats::MAX_SIZE - CatStats::MIN_SIZE));
         catToModify.size = realNum;
     });
     this->addChild(sizeInputField);
@@ -134,13 +134,15 @@ void CatSettingsLayer::show(){
     auto selPopup = CatsLayer::activeCatLayer()->currentSelectionPopup;
     if (!selPopup) return;
 
-    selPopup->easeHorizontal(CCMoveBy::create(0.3f, ccp(-60, 0)));
+    selPopup->fadeTo(10, 0.3f);
 }
 
 void CatSettingsLayer::hide(){
     if (!isOpen) return;
     isOpen = false;
     this->runAction(CCEaseBackIn::create(CCMoveBy::create(0.4f, ccp(this->getContentWidth() - 30, 0))));
+
+    CatsLayer::activeCatLayer()->setFollowTarget(nullptr);
 
     this->setTouchEnabled(false);
     this->setKeyboardEnabled(false);
@@ -150,21 +152,25 @@ void CatSettingsLayer::hide(){
     auto selPopup = CatsLayer::activeCatLayer()->currentSelectionPopup;
     if (!selPopup) return;
 
-    selPopup->easeHorizontal(CCMoveBy::create(0.3f, ccp(60, 0)));
+    selPopup->fadeTo(255, 0.3f);
 }
 
 void CatSettingsLayer::keyBackClicked(){
     hide();
 }
 
-void CatSettingsLayer::setToCat(const CatStats& stats){
+void CatSettingsLayer::setToCat(CatStats& stats){
     catToModify = stats;
     catDisplay->setCat(stats);
     catDisplay->setScale(110.0f / catDisplay->getContentHeight());
     catDisplay->setPosition({buttonsMenu->getContentWidth() / 2, buttonsMenu->getContentHeight() - catDisplay->getScaledContentHeight() / 2 - 10});
-    sizeScroll->setValue((stats.size - 0.5f) / (2.0f - 0.5f));
+    sizeScroll->setValue((stats.size - CatStats::MIN_SIZE) / (CatStats::MAX_SIZE - CatStats::MIN_SIZE));
     sizeInputField->setString(fmt::format("{:.2f}", stats.size));
     nameInputField->setString(stats.name);
+
+    auto catsLayer = CatsLayer::activeCatLayer();
+
+    catsLayer->setFollowTarget(catsLayer->getCatFromStats(stats));
 }
 
 void CatSettingsLayer::onCatApplyCallback(const std::function<void(const CatStats&)>& callback){
@@ -176,7 +182,7 @@ void CatSettingsLayer::onBackClicked(CCObject*){
 }
 
 void CatSettingsLayer::onSizeValueChanged(CCObject*){
-    catToModify.size = 0.5f + sizeScroll->getValue() * (2.0f - 0.5f);
+    catToModify.size = CatStats::MIN_SIZE + sizeScroll->getValue() * (CatStats::MAX_SIZE - CatStats::MIN_SIZE);
     sizeInputField->setString(fmt::format("{:.2f}", catToModify.size));
 }
 

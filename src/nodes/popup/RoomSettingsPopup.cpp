@@ -1,6 +1,7 @@
 #include "RoomSettingsPopup.hpp"
-#include "../../utils/Save.hpp"
-#include "../../layers/CatsLayer.hpp"
+
+#include <utils/Save.hpp>
+#include <layers/CatsLayer.hpp>
 
 RoomSettingsPopup* RoomSettingsPopup::create() {
     auto ret = new RoomSettingsPopup();

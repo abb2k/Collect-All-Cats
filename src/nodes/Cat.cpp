@@ -1,8 +1,10 @@
 #include "Cat.hpp"
 
-#include "../utils/Save.hpp"
-#include "../layers/CatsLayer.hpp"
-#include "../utils/CatAIStateBase.hpp"
+#include <utils/Utils.hpp>
+#include <utils/Save.hpp>
+#include <layers/CatsLayer.hpp>
+#include <utils/CatAIStateBase.hpp>
+#include <utils/Utils.hpp>
 
 Cat* Cat::create(CCNode* wanderArea, GJGameLevel* relatedLevel) {
     auto ret = new Cat();
@@ -22,6 +24,11 @@ bool Cat::init(CCNode* wanderArea, GJGameLevel* relatedLevel) {
     auto didLoadCat = Save::loadCat(relatedLevel);
     if (didLoadCat.isErr()){
         stats = CatStats::createDefault(relatedLevel);
+
+        float randomSizeOffset = .2f;
+
+        stats.size = Utils::GetRandomFloat(CatStats::MIN_SIZE + randomSizeOffset, CatStats::MAX_SIZE - randomSizeOffset);
+
         auto didSaveWork = Save::saveCat(this);
         if (didSaveWork.isErr()){
             log::info("Failed to load cat!\n{}", didSaveWork.unwrapErr());
@@ -44,7 +51,7 @@ bool Cat::init(CCNode* wanderArea, GJGameLevel* relatedLevel) {
     btn->setID("general-kitty-btn");
     menu->addChild(btn);
 
-    kittyColonThreeSprite = CCSprite::createWithSpriteFrameName("colourPickerShadow.png");
+    kittyColonThreeSprite = CCSprite::createWithSpriteFrameName("default_cat.png"_spr);
     kittyColonThreeSprite->setPosition(this->getContentSize() / 2);
     kittyColonThreeSprite->setScale(.7f);
     this->addChild(kittyColonThreeSprite);

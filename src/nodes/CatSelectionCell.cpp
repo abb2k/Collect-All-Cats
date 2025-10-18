@@ -1,7 +1,7 @@
 #include "CatSelectionCell.hpp"
 
-#include "../utils/Save.hpp"
-#include "LinkedCatDisplay.hpp"
+#include <utils/Save.hpp>
+#include <nodes/LinkedCatDisplay.hpp>
 
 CatSelectionCell* CatSelectionCell::create(GJGameLevel* level) {
     auto ret = new CatSelectionCell();
@@ -14,13 +14,19 @@ CatSelectionCell* CatSelectionCell::create(GJGameLevel* level) {
 }
 
 bool CatSelectionCell::init(GJGameLevel* level) {
-    // @geode-ignore(unknown-resource)
-    if (!CCScale9Sprite::initWithFile("geode.loader/GE_square01.png")) return false;
+    if (!CCMenu::init()) return false;
 
     catsLayer = CatsLayer::activeCatLayer();
     if (!catsLayer) return false;
 
     this->setContentSize({122.5f, 122.5f});
+
+    // @geode-ignore(unknown-resource)
+    auto BG = CCScale9Sprite::create("geode.loader/GE_square01.png");
+    BG->setContentSize(this->getContentSize());
+    BG->setZOrder(-1);
+    BG->setAnchorPoint({0, 0});
+    this->addChild(BG);
 
     auto didLoadCat = Save::loadCat(level);
     if (didLoadCat.isErr()){
@@ -69,28 +75,24 @@ bool CatSelectionCell::init(GJGameLevel* level) {
     catSettingsBtn->setPosition(catSettingsBtn->getContentSize() / 2 + ccp(4, 6));
     buttonsMenu->addChild(catSettingsBtn);
 
-    auto selectedToggleOnSprite = CCSprite::createWithSpriteFrameName("GJ_checkOn_001.png");
-    selectedToggleOnSprite->setScale(.5f);
-    auto selectedToggleOffSprite = CCSprite::createWithSpriteFrameName("GJ_checkOff_001.png");
-    selectedToggleOffSprite->setScale(.5f);
-    selectedToggle = CCMenuItemToggler::create(
-        selectedToggleOffSprite,
-        selectedToggleOnSprite,
-        this,
-        menu_selector(CatSelectionCell::onSelectedToggled)
-    );
-    selectedToggle->setPosition({108, 15});
-    buttonsMenu->addChild(selectedToggle);
-
     auto placedCats = Save::getPlacedCats();
+    bool catPlaced = false;
 
     for (const auto& catID : placedCats)
     {
         if (catID == myCatStats.getLevel()->m_levelID.value()){
-            selectedToggle->toggle(true);
+            catPlaced = true;
             break;
         }
     }
+
+    selectedToggle = SimpleToggler::createWithDefaults(
+        .5f,
+        catPlaced
+    );
+    selectedToggle->setCallback([&](bool state){CatSelectionCell::togglePlaced(state, false);});
+    selectedToggle->setPosition({108, 15});
+    buttonsMenu->addChild(selectedToggle);
 
     auto toggleLabel = CCLabelBMFont::create("Placed", "bigFont.fnt");
     toggleLabel->setScale(.2f);
@@ -104,10 +106,6 @@ void CatSelectionCell::onCatSettingsClicked(CCObject*){
     CatsLayer::activeCatLayer()->catSettingsNode->setToCat(myCatStats);
     CatsLayer::activeCatLayer()->catSettingsNode->show();
     CatsLayer::activeCatLayer()->catSettingsNode->onCatApplyCallback(std::bind(&CatSelectionCell::onStatsChanged, this, std::placeholders::_1));
-}
-
-void CatSelectionCell::onSelectedToggled(CCObject*){
-    togglePlaced(!selectedToggle->isToggled(), false);
 }
 
 void CatSelectionCell::togglePlaced(bool placed, bool changeToggleSprite){

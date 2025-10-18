@@ -1,12 +1,13 @@
 #pragma once
 
 #include <Geode/Geode.hpp>
-#include "../types/CatStats.hpp"
-#include "../layers/CatsLayer.hpp"
+#include <types/CatStats.hpp>
+#include <layers/CatsLayer.hpp>
+#include <nodes/SimpleToggler.hpp>
 
 using namespace geode::prelude;
 
-class CatSelectionCell : public CCScale9Sprite {
+class CatSelectionCell : public CCMenu {
 public:
     static CatSelectionCell* create(GJGameLevel* level);
 
@@ -16,10 +17,9 @@ private:
     virtual bool init(GJGameLevel* level);
 
     CatStats myCatStats = CatStats::createEmpty();
-    CCMenuItemToggler* selectedToggle;
+    SimpleToggler* selectedToggle;
 
     void onCatSettingsClicked(CCObject*);
-    void onSelectedToggled(CCObject*);
 
     CatsLayer* catsLayer;
 

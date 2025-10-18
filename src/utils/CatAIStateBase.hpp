@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../nodes/Cat.hpp"
+#include <nodes/Cat.hpp>
 
 class CatAIStateBase : public CCObject{
     public:

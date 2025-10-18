@@ -1,7 +1,10 @@
 #include "CatStats.hpp"
 
-#include "../utils/utils.hpp"
-#include "CatStatsSerializer.hpp"
+#include <utils/Utils.hpp>
+#include <types/CatStatsSerializer.hpp>
+
+const float CatStats::MIN_SIZE = .5f;
+const float CatStats::MAX_SIZE = 2.0f;
 
 CatStats CatStats::createDefault(GJGameLevel* relatedLevel){
     CatStats newStats;

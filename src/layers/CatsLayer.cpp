@@ -1,7 +1,8 @@
 #include "CatsLayer.hpp"
 
-#include "../nodes/popup/RoomSettingsPopup.hpp"
-#include "../utils/Save.hpp"
+#include <nodes/popup/RoomSettingsPopup.hpp>
+#include <utils/Save.hpp>
+#include <utils/Utils.hpp>
 
 CatsLayer* CatsLayer::sharedInstance = nullptr;
 
@@ -32,27 +33,29 @@ bool CatsLayer::init() {
 
     auto winSize = CCDirector::get()->getWinSize();
 
-    ScrollNode = ScrollLayer::create(winSize, true, false);
-    this->addChild(ScrollNode);
+    CCSize size = winSize;
+    size.width = 1600;
 
-    ScrollNode->m_contentLayer->setContentWidth(1600);
+    ScrollNode = AdvancedScrollLayer::create(winSize, size + ccp(1, 1));
+    ScrollNode->zoomToMinimum();
+    this->addChild(ScrollNode);
 
     int currGround = Save::getGround();
     ccColor3B currGroundColor = Save::getGroundColor();
     
-    groundLoader = GroundLoader::create(ScrollNode->m_contentLayer->getContentWidth(), currGround, 2);
+    groundLoader = GroundLoader::create(ScrollNode->content->getContentWidth(), currGround, 2);
     groundLoader->setColor(currGroundColor);
     groundLoader->setContentHeight(1);
-    ScrollNode->m_contentLayer->addChild(groundLoader);
+    ScrollNode->content->addChild(groundLoader);
 
     int currBG = Save::getBackground();
     ccColor3B currBGColor = Save::getBackgroundColor();
     
-    bgLoader = BGLoader::create(ScrollNode->m_contentLayer->getContentWidth(), currBG);
+    bgLoader = BGLoader::create(ScrollNode->content->getContentWidth(), currBG);
     bgLoader->setColor(currBGColor);
     bgLoader->setZOrder(-10);
     bgLoader->setContentHeight(1);
-    ScrollNode->m_contentLayer->addChild(bgLoader);
+    ScrollNode->content->addChild(bgLoader);
 
     this->setKeyboardEnabled(true);
     this->setKeypadEnabled(true);
@@ -129,10 +132,8 @@ void CatsLayer::keyBackClicked(){
 
 void CatsLayer::update(float dt){
 
-    if (-ScrollNode->m_contentLayer->getContentWidth() + ScrollNode->getContentWidth() > 0)
-        ScrollNode->m_contentLayer->setPositionX(0);
-    else
-        ScrollNode->m_contentLayer->setPositionX(std::clamp(ScrollNode->m_contentLayer->getPositionX(), -ScrollNode->m_contentLayer->getContentWidth() + ScrollNode->getContentWidth(), 0.0f));
+    if (followTarget != nullptr)
+        followUpdate(dt);
 }
 
 void CatsLayer::onBackClicked(CCObject*) { keyBackClicked(); }
@@ -157,16 +158,19 @@ void CatsLayer::addCat(GJGameLevel* catLevel){
 
     if (!placedCatsSet.contains(catLevel->m_levelID.value())) return;
 
-    auto cat = Cat::create(ScrollNode->m_contentLayer, catLevel);
+    auto cat = Cat::create(ScrollNode->content, catLevel);
     if (cat == nullptr) return;
     cat->setPositionY(20);
-    cat->setPositionX(Utils::GetRandomFloat(0, ScrollNode->m_contentLayer->getContentWidth() - cat->getScaledContentWidth()));
-    ScrollNode->m_contentLayer->addChild(cat);
+    cat->setPositionX(Utils::GetRandomFloat(0, ScrollNode->content->getContentWidth() - cat->getScaledContentWidth()));
+    ScrollNode->content->addChild(cat);
     spawnedCats.insert({catLevel->m_levelID.value(), cat});
 }
 
 void CatsLayer::removeCat(int catID){
     if (!spawnedCats.contains(catID)) return;
+
+    if (spawnedCats[catID] == followTarget)
+        followTarget = nullptr;
 
     Cat* cat = nullptr;
     cat = spawnedCats[catID];
@@ -177,5 +181,36 @@ void CatsLayer::removeCat(int catID){
 void CatsLayer::createCatSettingsNode(CCScene* scene){
     if (catSettingsNode != nullptr) return;
     catSettingsNode = CatSettingsLayer::create();
+    catSettingsNode->setScale(.6f);
+    catSettingsNode->setPosition({658, 60});
     scene->addChild(catSettingsNode, 100);
+}
+
+void CatsLayer::setFollowTarget(Cat* cat){
+    followTarget = cat;
+}
+
+void CatsLayer::followUpdate(float dt){
+
+    auto cameraPos = (ScrollNode->content->getPosition() + ScrollNode->getAccurateContentSize()) * -1;
+
+    CCPoint destination = ScrollNode->content->getParent()->convertToNodeSpace(ScrollNode->content->convertToWorldSpace(cameraPos - followTarget->getPosition())) + ScrollNode->getContentSize() / 2 / ScrollNode->getCurrentZoom();
+    CCPoint lerpedMovement;
+
+    lerpedMovement.x = std::lerp(ScrollNode->content->getPositionX(), destination.x, dt * 5);
+    lerpedMovement.y = std::lerp(ScrollNode->content->getPositionY(), destination.y, dt * 5);
+
+    //log::info("{} | {} | {}", ScrollNode->content->getPosition(), destination, dt);
+
+    ScrollNode->moveTo(lerpedMovement);
+}
+
+Cat* CatsLayer::getCatFromStats(CatStats& stats){
+    auto relatedLevel = stats.getLevel();
+
+    if (relatedLevel == nullptr) return nullptr;
+    
+    auto levelID = relatedLevel->m_levelID.value();
+    
+    return !spawnedCats.contains(levelID) ? nullptr : spawnedCats[levelID];
 }

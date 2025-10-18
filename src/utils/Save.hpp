@@ -4,8 +4,8 @@
 
 using namespace geode::prelude;
 
-#include "../nodes/Cat.hpp"
-#include "../types/CatStats.hpp"
+#include <nodes/Cat.hpp>
+#include <types/CatStats.hpp>
 
 class Save{
     private:

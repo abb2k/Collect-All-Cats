@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Geode/Geode.hpp>
-#include "CatStats.hpp"
+#include <types/CatStats.hpp>
 
 using namespace geode::prelude;
 

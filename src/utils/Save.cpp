@@ -1,10 +1,12 @@
 #include "Save.hpp"
-#include "../types/CatStatsSerializer.hpp"
+
+#include <types/CatStatsSerializer.hpp>
 
 std::filesystem::path Save::savesPath = Mod::get()->getSaveDir() / "cats";
 
 Result<> Save::saveCat(Cat* cat){
-    return saveCat(&cat->getStats());
+    auto stats = cat->getStats();
+    return saveCat(&stats);
 }
 
 Result<> Save::saveCat(CatStats* stats){
@@ -46,8 +48,9 @@ void Save::setPlacedCats(const std::vector<int>& catIDs){
 }
 void Save::addPlacedCat(int catID){
     auto placedCats = getPlacedCats();
-    for (const auto& catID : placedCats)
-        if (catID == catID) return;
+
+    for (const auto& catIDCheck : placedCats)
+        if (catIDCheck == catID) return;
 
     placedCats.push_back(catID);
 

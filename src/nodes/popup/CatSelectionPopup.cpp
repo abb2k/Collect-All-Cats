@@ -1,6 +1,7 @@
 #include "CatSelectionPopup.hpp"
-#include "../../layers/CatsLayer.hpp"
-#include"../CatSelectionCell.hpp"
+
+#include <layers/CatsLayer.hpp>
+#include <nodes/CatSelectionCell.hpp>
 
 CatSelectionPopup* CatSelectionPopup::create() {
     auto ret = new CatSelectionPopup();
@@ -44,7 +45,7 @@ bool CatSelectionPopup::setup() {
     scrollBar->setPosition(catsScrollLayer->getPosition() + ccp(catsScrollLayer->getContentWidth() + 5, catsScrollLayer->getContentHeight() / 2));
     m_mainLayer->addChild(scrollBar);
 
-    auto selAllBtnSprite = ButtonSprite::create("Place All", "bigFont.fnt", "GJ_button_01.png");
+    selAllBtnSprite = ButtonSprite::create("Place All", "bigFont.fnt", "GJ_button_01.png");
     selAllBtnSprite->setScale(.65f);
     auto selAllBtn = CCMenuItemSpriteExtra::create(
         selAllBtnSprite,
@@ -55,7 +56,7 @@ bool CatSelectionPopup::setup() {
     selAllBtn->setPosition({327, 278});
     m_buttonMenu->addChild(selAllBtn);
 
-    auto deselAllBtnSprite = ButtonSprite::create("Remove All", "bigFont.fnt", "GJ_button_06.png");
+    deselAllBtnSprite = ButtonSprite::create("Remove All", "bigFont.fnt", "GJ_button_06.png");
     deselAllBtnSprite->setScale(.65f);
     auto deselAllBtn = CCMenuItemSpriteExtra::create(
         deselAllBtnSprite,
@@ -90,6 +91,15 @@ void CatSelectionPopup::onClose(CCObject*){
     Popup<>::onClose(nullptr);
 }
 
-void CatSelectionPopup::easeHorizontal(CCMoveBy* move){
-    m_mainLayer->runAction(CCEaseInOut::create(move, 2));
+void CatSelectionPopup::fadeTo(GLubyte opacity, float time){
+    for (const auto& cell : CCArrayExt<CatSelectionCell*>(catsScrollLayer->m_contentLayer->getChildren()))
+        cell->runAction(CCFadeTo::create(time, opacity));
+    
+    m_buttonMenu->runAction(CCFadeTo::create(time, opacity));
+    m_bgSprite->runAction(CCFadeTo::create(time, opacity));
+    selAllBtnSprite->m_label->runAction(CCFadeTo::create(time, opacity));
+    selAllBtnSprite->m_BGSprite->runAction(CCFadeTo::create(time, opacity));
+    deselAllBtnSprite->m_label->runAction(CCFadeTo::create(time, opacity));
+    deselAllBtnSprite->m_BGSprite->runAction(CCFadeTo::create(time, opacity));
+
 }
