@@ -21,4 +21,6 @@ void CatWanderState::onStateStart(){
 
     moveSpeed = Utils::GetRandomFloat(1, 5);
     duration = Utils::GetRandomFloat(1, 3);
+
+    target->getVisualParent()->setRotationY(moveDir ? 0 : 180);
 }

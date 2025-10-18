@@ -17,9 +17,11 @@ Cat* Cat::create(CCNode* wanderArea, GJGameLevel* relatedLevel) {
 }
 
 bool Cat::init(CCNode* wanderArea, GJGameLevel* relatedLevel) {
-    if (!CCNode::init()) return false;
+    if (!CCMenu::init()) return false;
 
     this->wanderArea = wanderArea;
+
+    ignoreAnchorPointForPosition(false);
 
     auto didLoadCat = Save::loadCat(relatedLevel);
     if (didLoadCat.isErr()){
@@ -167,3 +169,5 @@ void Cat::AIUpdate(float dt){
     if (currentAIState != nullptr)
         currentAIState->update(dt);
 }
+
+CCNode* Cat::getVisualParent() { return kittyColonThreeSprite; }

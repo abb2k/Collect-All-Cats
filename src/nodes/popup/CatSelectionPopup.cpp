@@ -102,4 +102,9 @@ void CatSelectionPopup::fadeTo(GLubyte opacity, float time){
     deselAllBtnSprite->m_label->runAction(CCFadeTo::create(time, opacity));
     deselAllBtnSprite->m_BGSprite->runAction(CCFadeTo::create(time, opacity));
 
+    if (opacity != 255)
+        this->runAction(CCFadeTo::create(time, 0));
+    else
+        this->runAction(CCFadeTo::create(time, 105));
+
 }

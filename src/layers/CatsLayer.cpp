@@ -39,6 +39,7 @@ bool CatsLayer::init() {
 
     ScrollNode = AdvancedScrollLayer::create(winSize, size + ccp(1, 1));
     ScrollNode->zoomToMinimum();
+    ScrollNode->scrollMovement = false;
     this->addChild(ScrollNode);
 
     int currGround = Save::getGround();
@@ -193,6 +194,19 @@ void CatsLayer::createCatSettingsNode(CCScene* scene){
 
 void CatsLayer::setFollowTarget(Cat* cat){
     followTarget = cat;
+
+    for (const auto& [catID, catObj] : spawnedCats)
+    {
+        if (followTarget == nullptr){
+            catObj->runAction(CCFadeTo::create(.2f, 255));
+        }
+        else{
+            if (catObj != followTarget)
+                catObj->runAction(CCFadeTo::create(.2f, 25));
+            else
+                catObj->runAction(CCFadeTo::create(.2f, 255));
+        }
+    }
 }
 
 void CatsLayer::followUpdate(float dt){

@@ -7,7 +7,7 @@ using namespace geode::prelude;
 
 class CatAIStateBase;
 
-class Cat : public CCNode {
+class Cat : public CCMenu {
 public:
     static Cat* create(CCNode* wanderArea, GJGameLevel* relatedLevel);
 
@@ -30,6 +30,8 @@ public:
     void stopAI();
 
     void update(float dt) override;
+
+    CCNode* getVisualParent();
 
 private:
     virtual bool init(CCNode* wanderArea, GJGameLevel* relatedLevel);
