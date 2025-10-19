@@ -4,6 +4,7 @@
 #include <utils/Save.hpp>
 #include <utils/Utils.hpp>
 #include <kittyAI/CatWanderState.hpp>
+#include <kittyAI/CatIdleState.hpp>
 
 CatsLayer* CatsLayer::sharedInstance = nullptr;
 
@@ -164,9 +165,13 @@ void CatsLayer::addCat(GJGameLevel* catLevel){
     if (cat == nullptr) return;
     cat->setPositionY(20);
     cat->setPositionX(Utils::GetRandomFloat(0, ScrollNode->content->getContentWidth() - cat->getScaledContentWidth()));
-    cat->addAIState("wander", CatWanderState::create());
+    cat->addAIState("wander", CatWanderState::create({1, 3}, {10, 25}));
+    cat->addAIState("idle", CatIdleState::create({1, 4}));
     cat->addAIStateTransition("wander", "wander");
-    cat->setDefaultState("wander");
+    cat->addAIStateTransition("idle", "idle");
+    cat->addAIStateTransition("idle", "wander");
+    cat->addAIStateTransition("wander", "idle");
+    cat->setDefaultState(Utils::GetRandomInt(0, 1) == 0 ? "idle" : "wander");
     cat->startAI();
     ScrollNode->content->addChild(cat);
     spawnedCats.insert({catLevel->m_levelID.value(), cat});
