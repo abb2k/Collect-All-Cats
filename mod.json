@@ -16,6 +16,9 @@
 			"cat_sheet" :[
 				"resources/catSheet/*.png"
 			]
-		}
+		},
+		"files":[
+			"resources/*.mp3"
+		]
 	}
 }
