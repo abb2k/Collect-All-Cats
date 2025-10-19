@@ -50,5 +50,7 @@ class CatsLayer : public CCLayer {
 
         Cat* followTarget = nullptr;
 
+        CCNode* catContainer;
+
         void followUpdate(float dt);
 };

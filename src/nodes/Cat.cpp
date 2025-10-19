@@ -86,7 +86,6 @@ void Cat::onCatClicked(CCObject*){
 }
 
 void Cat::updateSize(){
-    this->setZOrder(1000 / stats.size + 1);
     this->setScale(stats.size);
 }
 
@@ -163,6 +162,11 @@ void Cat::moveToState(const std::string& stateName){
 
 void Cat::update(float dt){
     Cat::AIUpdate(dt);
+
+    this->setZOrder(-static_cast<int>(this->getPositionY()));
+
+    this->setPositionX(std::clamp(this->getPositionX(), this->getScaledContentWidth() * this->getAnchorPoint().x, this->wanderArea->getContentWidth() - this->getScaledContentWidth() * this->getAnchorPoint().x));
+    this->setPositionY(std::clamp(this->getPositionY(), this->getScaledContentHeight() * this->getAnchorPoint().y, this->wanderArea->getContentHeight() - this->getScaledContentHeight() * this->getAnchorPoint().y));
 }
 
 void Cat::AIUpdate(float dt){

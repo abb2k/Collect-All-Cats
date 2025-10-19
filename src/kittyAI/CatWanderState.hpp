@@ -10,7 +10,7 @@ class CatWanderState : public CatAIStateBase {
         void onStateStart() override;
 
         //true = left, false = right
-        bool moveDir;
+        CCPoint moveDir;
         float moveSpeed;
         float duration;
 

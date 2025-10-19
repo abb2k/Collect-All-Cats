@@ -16,14 +16,15 @@ void CatWanderState::step(float dt){
 
     if (duration <= 0) endState();
 
-    target->setPositionX(target->getPositionX() + moveSpeed * (moveDir ? -1 : 1) * dt);
+    target->setPosition(target->getPosition() + moveDir * moveSpeed * dt);
 }
 
 void CatWanderState::onStateStart(){
-    moveDir = Utils::GetRandomInt(0, 1) == 0 ? true : false;
+    moveDir.x = Utils::GetRandomFloat(-1.5f, 1.5f);
+    moveDir.y = Utils::GetRandomFloat(-1.5f, 1.5f);
 
     moveSpeed = Utils::GetRandomFloat(minMaxSpeed.x, minMaxSpeed.y);
     duration = Utils::GetRandomFloat(minMaxDuration.x, minMaxDuration.y);
 
-    target->getVisualParent()->setRotationY(moveDir ? 0 : 180);
+    target->getVisualParent()->setRotationY(moveDir.x < 0 ? 0 : 180);
 }
