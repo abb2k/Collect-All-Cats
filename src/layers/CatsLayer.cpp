@@ -121,7 +121,7 @@ bool CatsLayer::init() {
     catContainer = CCNode::create();
     catContainer->setID("cat-container");
     catContainer->setContentSize(ScrollNode->content->getContentSize());
-    catContainer->setContentHeight(65);
+    catContainer->setContentHeight(55);
     ScrollNode->content->addChild(catContainer);
 
     for (const auto& level : beatenExtremes)

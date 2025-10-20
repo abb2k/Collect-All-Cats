@@ -45,13 +45,13 @@ bool Cat::init(CCNode* wanderArea, GJGameLevel* relatedLevel) {
 
     auto btn = CCMenuItem::create(this, menu_selector(Cat::onCatClicked));
     btn->setContentSize(this->getContentSize());
-    btn->setPosition(this->getContentSize() / 2);
+    btn->setPosition(this->getContentSize() / 2 + ccp(0, 10));
     btn->setID("general-interact-range");
     this->addChild(btn);
 
     kittyColonThreeSprite = CCSprite::createWithSpriteFrameName("default_cat.png"_spr);
     kittyColonThreeSprite->setID("visual-parent");
-    kittyColonThreeSprite->setPosition(this->getContentSize() / 2);
+    kittyColonThreeSprite->setPosition(this->getContentSize() / 2 + ccp(0, 10));
     kittyColonThreeSprite->setScale(.7f);
     this->addChild(kittyColonThreeSprite);
     

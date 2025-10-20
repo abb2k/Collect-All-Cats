@@ -147,6 +147,13 @@ bool NewCatsLayer::init(const std::vector<CatStats>& newCats) {
 
     this->runAction(CCSequence::create(CCDelayTime::create(2.7f), CCCallFunc::create(this, callfunc_selector(NewCatsLayer::allowLeave)), nullptr));
 
+    auto engine = FMODAudioEngine::sharedEngine();
+    originalVolume = engine->m_musicVolume;
+    float newVolume = std::max(originalVolume / 4, 0.01f);
+
+    engine->m_musicVolume = newVolume;
+    engine->m_backgroundMusicChannel->setVolume(newVolume);
+
     this->setTouchEnabled(true);
     this->setKeypadEnabled(true);
     this->setKeyboardEnabled(true);
@@ -168,6 +175,12 @@ void NewCatsLayer::keyBackClicked(){
     if (!canLeave) return;
 
     if (parentLayer != nullptr) parentLayer->setKeypadEnabled(true);
+
+    auto engine = FMODAudioEngine::sharedEngine();
+    float resetVolume = std::min(originalVolume, 1.0f);
+    engine->m_musicVolume = resetVolume;
+    engine->m_backgroundMusicChannel->setVolume(resetVolume);
+
     this->removeMeAndCleanup();
 }
 

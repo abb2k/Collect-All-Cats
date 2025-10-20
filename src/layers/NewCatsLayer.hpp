@@ -24,4 +24,6 @@ private:
     bool canLeave;
 
     CCLayer* parentLayer = nullptr;
+
+    float originalVolume;
 };
