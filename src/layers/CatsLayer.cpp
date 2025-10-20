@@ -131,8 +131,8 @@ bool CatsLayer::init() {
 
     auto didLoadCat = Save::loadCat(beatenExtremes[0]);
 
-    auto newCats = NewCatsLayer::create({didLoadCat.unwrap()});
-    this->addChild(newCats);
+    // auto newCats = NewCatsLayer::create({didLoadCat.unwrap()});
+    // this->addChild(newCats);
 
     return true;
 }

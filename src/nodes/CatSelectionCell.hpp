@@ -13,6 +13,8 @@ public:
 
     void togglePlaced(bool placed, bool changeToggleSprite);
 
+    CatStats& getStats() { return myCatStats; }
+
 private:
     virtual bool init(GJGameLevel* level);
 
