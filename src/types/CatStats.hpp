@@ -22,6 +22,8 @@ struct CatStats{
 
         GJGameLevel* getLevel();
 
+        bool isEmpty();
+
     private:
         GJGameLevel* relatedLevel;
         CatStats() {}

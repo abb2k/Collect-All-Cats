@@ -105,10 +105,14 @@ bool CatSelectionCell::init(GJGameLevel* level) {
 }
 
 void CatSelectionCell::onCatSettingsClicked(CCObject*){
+    CatSelectionCell::getLatestStats();
+    
     CatsLayer::activeCatLayer()->catSettingsNode->showWithCat(myCatStats);
 }
 
 void CatSelectionCell::togglePlaced(bool placed, bool changeToggleSprite){
+    CatSelectionCell::getLatestStats();
+
     auto placedCats = Save::getPlacedCats();
     std::set<int> placedCatsSet(placedCats.begin(), placedCats.end());
     bool containsMe = placedCatsSet.contains(myCatStats.getLevel()->m_levelID.value());
@@ -147,4 +151,13 @@ void CatSelectionCell::onStatsChanged(const CatStats& newStats){
         catsLayer->spawnedCats[myCatStats.getLevel()->m_levelID.value()]->setCatStats(myCatStats);
     }
     else auto _ = Save::saveCat(&myCatStats);
+}
+
+void CatSelectionCell::getLatestStats(){
+    if (myCatStats.isEmpty()) return;
+
+    auto loadRes = Save::loadCat(myCatStats.getLevel());
+    if (loadRes.isErr()) return;
+
+    myCatStats = loadRes.unwrap();
 }

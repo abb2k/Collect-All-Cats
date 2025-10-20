@@ -29,4 +29,6 @@ private:
 
     CCLabelBMFont* nameLabel;
     CCLabelBMFont* levelNameLabel;
+
+    void getLatestStats();
 };

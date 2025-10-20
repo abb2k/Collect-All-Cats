@@ -39,3 +39,7 @@ CatStats CatStats::createEmpty(){
     newStats.catTypeID = -1;
     return newStats;
 }
+
+bool CatStats::isEmpty(){
+    return relatedLevel == nullptr;
+}
