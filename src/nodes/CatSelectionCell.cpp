@@ -103,9 +103,7 @@ bool CatSelectionCell::init(GJGameLevel* level) {
 }
 
 void CatSelectionCell::onCatSettingsClicked(CCObject*){
-    CatsLayer::activeCatLayer()->catSettingsNode->setToCat(myCatStats);
-    CatsLayer::activeCatLayer()->catSettingsNode->show();
-    CatsLayer::activeCatLayer()->catSettingsNode->onCatApplyCallback(std::bind(&CatSelectionCell::onStatsChanged, this, std::placeholders::_1));
+    CatsLayer::activeCatLayer()->catSettingsNode->showWithCat(myCatStats);
 }
 
 void CatSelectionCell::togglePlaced(bool placed, bool changeToggleSprite){

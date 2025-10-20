@@ -82,9 +82,7 @@ bool Cat::init(CCNode* wanderArea, GJGameLevel* relatedLevel) {
 void Cat::onCatClicked(CCObject*){
     kittyColonThreeSprite->runAction(CCSequence::create(CCTintTo::create(0, 0, 255, 0), CCTintTo::create(0.5f, 255, 255, 255), nullptr));
 
-    CatsLayer::activeCatLayer()->catSettingsNode->setToCat(stats);
-    CatsLayer::activeCatLayer()->catSettingsNode->show();
-    CatsLayer::activeCatLayer()->catSettingsNode->onCatApplyCallback(std::bind(&Cat::setCatStats, this, std::placeholders::_1));
+    CatsLayer::activeCatLayer()->catSettingsNode->showWithCat(stats);
 }
 
 void Cat::updateSize(){

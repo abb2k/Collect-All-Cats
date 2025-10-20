@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Geode/Geode.hpp>
-#include <nodes/LinkedCatDisplay.hpp>
+#include <types/CatStats.hpp>
 
 using namespace geode::prelude;
 
@@ -9,12 +9,12 @@ class CatSettingsLayer : public CCLayer {
 public:
     static CatSettingsLayer* create();
 
+    void showWithCat(CatStats& stats);
+
     void show();
     void hide();
 
     void setToCat(CatStats& stats);
-
-    void onCatApplyCallback(const std::function<void(const CatStats&)>& callback);
 
 private:
     virtual bool init() override;
@@ -40,12 +40,10 @@ private:
 
     CatStats catToModify = CatStats::createEmpty();
 
-    std::function<void(const CatStats&)> callback = NULL;
     CCMenu* buttonsMenu;
-
-    LinkedCatDisplay* catDisplay;
 
     bool doSwallow;
 
-    void applyChanges(CCObject*);
+    void updateLivingCat();
+
 };

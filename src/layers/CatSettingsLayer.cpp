@@ -1,5 +1,7 @@
 #include "CatSettingsLayer.hpp"
+
 #include <layers/CatsLayer.hpp>
+#include <utils/Save.hpp>
 
 CatSettingsLayer* CatSettingsLayer::create() {
     auto ret = new CatSettingsLayer();
@@ -47,11 +49,6 @@ bool CatSettingsLayer::init() {
     backBtn->setPosition({backBtn->getContentWidth() / 2 + 10, buttonsMenu->getContentHeight() - backBtn->getContentHeight() / 2 - 5});
     buttonsMenu->addChild(backBtn);
 
-    catDisplay = LinkedCatDisplay::create(nullptr);
-    catDisplay->setScale(110.0f / catDisplay->getContentHeight());
-    catDisplay->setPosition({buttonsMenu->getContentWidth() / 2, buttonsMenu->getContentHeight() - catDisplay->getScaledContentHeight() / 2 - 10});
-    this->addChild(catDisplay);
-
     auto sizeLabel = CCLabelBMFont::create("Size", "bigFont.fnt");
     sizeLabel->setScale(0.75f);
     sizeLabel->setPosition({buttonsMenu->getContentWidth() / 2, 155});
@@ -75,6 +72,8 @@ bool CatSettingsLayer::init() {
 
         sizeScroll->setValue((realNum - CatStats::MIN_SIZE) / (CatStats::MAX_SIZE - CatStats::MIN_SIZE));
         catToModify.size = realNum;
+
+        updateLivingCat();
     });
     this->addChild(sizeInputField);
 
@@ -87,19 +86,10 @@ bool CatSettingsLayer::init() {
     nameInputField->setCommonFilter(CommonFilter::Name);
     nameInputField->setCallback([&](const std::string& newText){
         catToModify.name = newText;
+
+        updateLivingCat();
     });
     this->addChild(nameInputField);
-
-    auto applyBtnSprite = ButtonSprite::create("Apply Changes", "bigFont.fnt", "GJ_button_01.png");
-    applyBtnSprite->setScale(.65f);
-    auto applyBtn = CCMenuItemSpriteExtra::create(
-        applyBtnSprite,
-        nullptr,
-        this,
-        menu_selector(CatSettingsLayer::applyChanges)
-    );
-    applyBtn->setPosition({buttonsMenu->getContentWidth() / 2, 30});
-    buttonsMenu->addChild(applyBtn);
 
     auto blockerMenu = CCMenu::create();
     blockerMenu->setContentSize(this->getContentSize() - ccp(30, 0));
@@ -161,9 +151,6 @@ void CatSettingsLayer::keyBackClicked(){
 
 void CatSettingsLayer::setToCat(CatStats& stats){
     catToModify = stats;
-    catDisplay->setCat(stats);
-    catDisplay->setScale(110.0f / catDisplay->getContentHeight());
-    catDisplay->setPosition({buttonsMenu->getContentWidth() / 2, buttonsMenu->getContentHeight() - catDisplay->getScaledContentHeight() / 2 - 10});
     sizeScroll->setValue((stats.size - CatStats::MIN_SIZE) / (CatStats::MAX_SIZE - CatStats::MIN_SIZE));
     sizeInputField->setString(fmt::format("{:.2f}", stats.size));
     nameInputField->setString(stats.name);
@@ -173,10 +160,6 @@ void CatSettingsLayer::setToCat(CatStats& stats){
     catsLayer->setFollowTarget(catsLayer->getCatFromStats(stats));
 }
 
-void CatSettingsLayer::onCatApplyCallback(const std::function<void(const CatStats&)>& callback){
-    this->callback = callback;
-}
-
 void CatSettingsLayer::onBackClicked(CCObject*){
     keyBackClicked();
 }
@@ -184,10 +167,29 @@ void CatSettingsLayer::onBackClicked(CCObject*){
 void CatSettingsLayer::onSizeValueChanged(CCObject*){
     catToModify.size = CatStats::MIN_SIZE + sizeScroll->getValue() * (CatStats::MAX_SIZE - CatStats::MIN_SIZE);
     sizeInputField->setString(fmt::format("{:.2f}", catToModify.size));
+
+    updateLivingCat();
 }
 
-void CatSettingsLayer::applyChanges(CCObject*){
-    if (callback == NULL) return;
+void CatSettingsLayer::updateLivingCat(){
+    auto livingCatUpdate = [&]() -> bool {
+        auto catLayer = CatsLayer::activeCatLayer();
+        if (catLayer == nullptr) return false;
 
-    callback(catToModify);
+        auto cat = catLayer->getCatFromStats(catToModify);
+        if (cat == nullptr) return false;
+
+        cat->setCatStats(catToModify);
+
+        return true;
+    };
+    
+    if (!livingCatUpdate()){
+        auto _ = Save::saveCat(&catToModify);
+    }
+}
+
+void CatSettingsLayer::showWithCat(CatStats& stats){
+    CatsLayer::activeCatLayer()->catSettingsNode->setToCat(stats);
+    CatsLayer::activeCatLayer()->catSettingsNode->show();
 }
