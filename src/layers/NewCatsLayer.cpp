@@ -104,11 +104,35 @@ bool NewCatsLayer::init(const std::vector<CatStats>& newCats) {
     kittyAlignmentMenu->updateLayout();
 
     kittyAlignmentMenu->setScaleY(0);
-    kittyAlignmentMenu->runAction(CCSequence::create(CCDelayTime::create(1.1f), CCEaseExponentialOut::create(CCScaleTo::create(.3f, 1)), nullptr));
-    kittyMenuShadow->runAction(CCSequence::create(CCDelayTime::create(1.05f), CCEaseExponentialOut::create(CCScaleTo::create(.3f, kittyMenuShadow->getScaleX(), kittyAlignmentMenu->getContentHeight() / kittyMenuShadow->getContentHeight())), nullptr));
+    kittyAlignmentMenu->runAction(
+        CCSequence::create(
+            CCDelayTime::create(1.1f), 
+            CCEaseExponentialOut::create(
+                CCScaleTo::create(.3f, 1)
+            ), 
+            nullptr
+        )
+    );
+    kittyMenuShadow->runAction(
+        CCSequence::create(
+            CCDelayTime::create(1.05f), 
+            CCEaseExponentialOut::create(
+                CCScaleTo::create(.3f, kittyMenuShadow->getScaleX(), kittyAlignmentMenu->getContentHeight() / kittyMenuShadow->getContentHeight())
+            ), 
+            nullptr
+        )
+    );
 
     kittyAlignmentMenu->setSkewY(20);
-    kittyAlignmentMenu->runAction(CCSequence::create(CCDelayTime::create(1.1f), CCEaseBackOut::create(CCSkewTo::create(.5f, 0, 0)), nullptr));
+    kittyAlignmentMenu->runAction(
+        CCSequence::create(
+            CCDelayTime::create(1.1f),
+            CCEaseBackOut::create(
+                CCSkewTo::create(.5f, 0, 0)
+            ), 
+            nullptr
+        )
+    );
 
     auto title = CCLabelBMFont::create("New Cats!", "bigFont.fnt");
     title->setID("new-cats-title");
@@ -121,7 +145,9 @@ bool NewCatsLayer::init(const std::vector<CatStats>& newCats) {
         CCSequence::create(
             CCDelayTime::create(.5f),
             CCPlaySound::create("woosh.wav"_spr, 1, 1, 1),
-            CCEaseBounceOut::create(CCScaleTo::create(.5f, 1.5f)),
+            CCEaseBounceOut::create(
+                CCScaleTo::create(.5f, 1.5f)
+            ),
             nullptr
         )
     );
@@ -143,9 +169,23 @@ bool NewCatsLayer::init(const std::vector<CatStats>& newCats) {
     placeBtn->setScaleY(0);
     placeMenu->addChild(placeBtn);
 
-    placeBtn->runAction(CCSequence::create(CCDelayTime::create(2.5f), CCEaseBackOut::create(CCScaleTo::create(.5f, 1)), nullptr));
+    placeBtn->runAction(
+        CCSequence::create(
+            CCDelayTime::create(2.5f), 
+            CCEaseBackOut::create(
+                CCScaleTo::create(.5f, 1)
+            ), 
+            nullptr
+        )
+    );
 
-    this->runAction(CCSequence::create(CCDelayTime::create(2.7f), CCCallFunc::create(this, callfunc_selector(NewCatsLayer::allowLeave)), nullptr));
+    this->runAction(
+        CCSequence::create(
+            CCDelayTime::create(2.7f), 
+            CCCallFunc::create(this, callfunc_selector(NewCatsLayer::allowLeave)), 
+            nullptr
+        )
+    );
 
     auto engine = FMODAudioEngine::sharedEngine();
     originalVolume = engine->m_musicVolume;
