@@ -42,12 +42,14 @@ bool CatsLayer::init() {
     ScrollNode = AdvancedScrollLayer::create(winSize, size + ccp(1, 1));
     ScrollNode->zoomToMinimum();
     ScrollNode->scrollMovement = false;
-    ScrollNode->verticalBar->setPositionX(ScrollNode->verticalBar->getPositionX() - 8);
-    ScrollNode->verticalBar->setScale(0.6f);
-    ScrollNode->verticalBar->setZOrder(1);
-    ScrollNode->horizontalBar->setPositionY(ScrollNode->horizontalBar->getPositionY() + 8);
-    ScrollNode->horizontalBar->setScale(0.6f);
+
+    ScrollNode->toggleVerticalScrollbar(false);
+
+    ScrollNode->horizontalBar->setPosition({238, 307});
+    ScrollNode->horizontalBar->setScaleX(1);
+    ScrollNode->horizontalBar->setScaleY(0.65f);
     ScrollNode->horizontalBar->setZOrder(1);
+
     this->addChild(ScrollNode);
 
     int currGround = Save::getGround();
