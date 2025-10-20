@@ -45,10 +45,17 @@ void LinkedCatDisplay::setCat(const CatStats& catStats){
     shadow->setOpacity(150);
     this->addChild(shadow);
 
+    nameLabel = CCLabelBMFont::create(catStats.name.c_str(), "goldFont.fnt");
+    nameLabel->setPosition(kittyColonThreeSprite->getContentSize() / 2 + ccp(0, kittyColonThreeSprite->getContentHeight() / 1.5f));
+    nameLabel->setVisible(false);
+    this->addChild(nameLabel);
+
     myStats = Ok(catStats);
 }
 
 void LinkedCatDisplay::update(float dt){
+    nameLabel->setScale(std::clamp(150 / nameLabel->getContentWidth(), .4f, 1.0f));
+    
     if (myStats.isErr()) return;
 
     auto catsLayer = CatsLayer::activeCatLayer();
@@ -65,4 +72,8 @@ void LinkedCatDisplay::update(float dt){
 
     kittyColonThreeSprite->setRotationX(visual->getRotationX());
     kittyColonThreeSprite->setRotationY(visual->getRotationY());
+}
+
+void LinkedCatDisplay::setNameAboveVisible(bool b){
+    nameLabel->setVisible(b);
 }

@@ -137,15 +137,23 @@ bool CatsLayer::init() {
     catContainer->setContentHeight(55);
     ScrollNode->content->addChild(catContainer);
 
-    for (const auto& level : beatenExtremes)
+    std::vector<CatStats> newCatsVec{};
+
+    for (const auto& level : beatenExtremes){
+        if (!Save::doesExistCatForLevel(level)){
+            auto stats = CatStats::createDefault(level);
+            newCatsVec.push_back(stats);
+        }
+
         addCat(level);
+    }
 
     scheduleUpdate();
 
-    auto didLoadCat = Save::loadCat(beatenExtremes[0]);
-
-    // auto newCats = NewCatsLayer::create({didLoadCat.unwrap()});
-    // this->addChild(newCats);
+    if (newCatsVec.size()){
+        auto newCats = NewCatsLayer::create(newCatsVec);
+        this->addChild(newCats);
+    }
 
     return true;
 }

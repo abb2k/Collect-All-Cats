@@ -11,6 +11,8 @@ public:
 
     void setCat(const CatStats& catStats);
 
+    void setNameAboveVisible(bool b);
+
 private:
     virtual bool init(CatStats* catStats);
 
@@ -18,4 +20,6 @@ private:
 
     Result<CatStats> myStats = Err("");
     CCSprite* kittyColonThreeSprite;
+
+    CCLabelBMFont* nameLabel;
 };

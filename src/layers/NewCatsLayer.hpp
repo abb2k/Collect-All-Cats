@@ -21,9 +21,14 @@ private:
     void keyBackClicked() override;
     void registerWithTouchDispatcher() override;
 
+    void update(float dt) override;
+    ScrollLayer* kittyScroll;
+
     bool canLeave;
 
     CCLayer* parentLayer = nullptr;
 
     float originalVolume;
+
+    std::vector<CatStats> newCats;
 };

@@ -23,6 +23,7 @@ class Save{
         static void setPlacedCats(const std::vector<int>& catIDs);
         static void addPlacedCat(int catID);
         static void removePlacedCats(int catID);
+        static bool doesExistCatForLevel(GJGameLevel* relatedLevel);
 
         static void saveBackground(int BGID);
         static int getBackground();

@@ -2,6 +2,8 @@
 
 #include <nodes/LinkedCatDisplay.hpp>
 #include <utils/CCPlaySound.hpp>
+#include <utils/Save.hpp>
+#include <layers/CatsLayer.hpp>
 
 NewCatsLayer* NewCatsLayer::create(const std::vector<CatStats>& newCats) {
     auto ret = new NewCatsLayer();
@@ -71,26 +73,27 @@ bool NewCatsLayer::init(const std::vector<CatStats>& newCats) {
         )
     );
 
-    auto kittyAlignmentMenu = CCNode::create();
-    kittyAlignmentMenu->setID("new-cats-container");
-    kittyAlignmentMenu->setPosition(winSize / 2);
-    kittyAlignmentMenu->setContentSize({winSize.width, 100});
-    kittyAlignmentMenu->setAnchorPoint({.5f, .5f});
-    kittyAlignmentMenu->setLayout(SimpleAxisLayout::create(Axis::Row)
-        ->setCrossAxisScaling(AxisScaling::ScaleDownGaps)
+    kittyScroll = ScrollLayer::create({winSize.width, 100}, true, false);
+    kittyScroll->setID("new-cats-container");
+    kittyScroll->setPosition(winSize / 2);
+    kittyScroll->setAnchorPoint({.5f, .5f});
+    kittyScroll->setZOrder(1);
+    kittyScroll->ignoreAnchorPointForPosition(false);
+    kittyScroll->m_contentLayer->setLayout(RowLayout::create()
+        ->setCrossAxisOverflow(false)
         ->setGap(15)
-        ->setMinRelativeScale(false)
+        //->setMinRelativeScale(false)
+        ->setAutoGrowAxis(kittyScroll->getContentWidth())
     );
-    this->addChild(kittyAlignmentMenu);
+    this->addChild(kittyScroll);
 
     auto kittyMenuShadow = CCSprite::create("square.png");
     kittyMenuShadow->setID("new-cats-bg-shadow");
-    kittyMenuShadow->setPosition(kittyAlignmentMenu->getPosition());
-    kittyMenuShadow->setScaleX(kittyAlignmentMenu->getContentWidth() / kittyMenuShadow->getContentWidth());
-    kittyMenuShadow->setAnchorPoint(kittyAlignmentMenu->getAnchorPoint());
-    kittyMenuShadow->setColor({0,0,0});
+    kittyMenuShadow->setPosition(kittyScroll->getPosition());
+    kittyMenuShadow->setScaleX(kittyScroll->getContentWidth() / kittyMenuShadow->getContentWidth());
+    kittyMenuShadow->setAnchorPoint(kittyScroll->getAnchorPoint());
+    kittyMenuShadow->setColor({ 34, 34, 34 });
     kittyMenuShadow->setOpacity(150);
-    kittyMenuShadow->setZOrder(-1);
     kittyMenuShadow->setScaleY(0);
     this->addChild(kittyMenuShadow);
 
@@ -98,13 +101,14 @@ bool NewCatsLayer::init(const std::vector<CatStats>& newCats) {
     {
         auto tempCat = newCat;
         auto display = LinkedCatDisplay::create(&tempCat);
-        kittyAlignmentMenu->addChild(display);
+        display->setNameAboveVisible(true);
+        kittyScroll->m_contentLayer->addChild(display);
     }
 
-    kittyAlignmentMenu->updateLayout();
+    kittyScroll->m_contentLayer->updateLayout();
 
-    kittyAlignmentMenu->setScaleY(0);
-    kittyAlignmentMenu->runAction(
+    kittyScroll->setScaleY(0);
+    kittyScroll->runAction(
         CCSequence::create(
             CCDelayTime::create(1.1f), 
             CCEaseExponentialOut::create(
@@ -117,14 +121,14 @@ bool NewCatsLayer::init(const std::vector<CatStats>& newCats) {
         CCSequence::create(
             CCDelayTime::create(1.05f), 
             CCEaseExponentialOut::create(
-                CCScaleTo::create(.3f, kittyMenuShadow->getScaleX(), kittyAlignmentMenu->getContentHeight() / kittyMenuShadow->getContentHeight())
+                CCScaleTo::create(.3f, kittyMenuShadow->getScaleX(), kittyScroll->getContentHeight() / kittyMenuShadow->getContentHeight())
             ), 
             nullptr
         )
     );
 
-    kittyAlignmentMenu->setSkewY(20);
-    kittyAlignmentMenu->runAction(
+    kittyScroll->setSkewY(20);
+    kittyScroll->runAction(
         CCSequence::create(
             CCDelayTime::create(1.1f),
             CCEaseBackOut::create(
@@ -133,6 +137,8 @@ bool NewCatsLayer::init(const std::vector<CatStats>& newCats) {
             nullptr
         )
     );
+
+    kittyScroll->setContentHeight(150);
 
     auto title = CCLabelBMFont::create("New Cats!", "bigFont.fnt");
     title->setID("new-cats-title");
@@ -199,6 +205,10 @@ bool NewCatsLayer::init(const std::vector<CatStats>& newCats) {
     this->setKeyboardEnabled(true);
     this->setTouchEnabled(true);
 
+    this->scheduleUpdate();
+
+    this->newCats = newCats;
+
     return true;
 }
 
@@ -222,8 +232,37 @@ void NewCatsLayer::keyBackClicked(){
     engine->m_backgroundMusicChannel->setVolume(resetVolume);
 
     this->removeMeAndCleanup();
+
+    auto catsLayer = CatsLayer::activeCatLayer();
+    
+    for (auto& cat : newCats)
+    {
+        Save::addPlacedCat(cat.getLevel()->m_levelID.value());
+        if (catsLayer != nullptr)
+            catsLayer->addCat(cat.getLevel());
+    }
 }
 
 void NewCatsLayer::registerWithTouchDispatcher() {
     CCDirector::sharedDirector()->getTouchDispatcher()->addTargetedDelegate(this, 0, true);
+}
+
+void NewCatsLayer::update(float dt){
+    kittyScroll->m_contentLayer->setScale(.75f);
+    kittyScroll->m_contentLayer->setPositionY(15 + 50 / 2);
+    kittyScroll->m_contentLayer->updateLayout();
+
+    if (kittyScroll->m_contentLayer->getScaledContentWidth() > kittyScroll->getContentWidth()){
+        kittyScroll->m_contentLayer->setPositionX(
+            std::clamp(
+                kittyScroll->m_contentLayer->getPositionX(),
+                -kittyScroll->m_contentLayer->getScaledContentWidth() + kittyScroll->getContentWidth(),
+                0.0f
+            )
+        );
+    }
+    else{
+        kittyScroll->m_contentLayer->setPositionX((-kittyScroll->m_contentLayer->getScaledContentWidth() + kittyScroll->getContentWidth()) / 2);
+    }
+    
 }

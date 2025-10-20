@@ -11,6 +11,10 @@ CatStats CatStats::createDefault(GJGameLevel* relatedLevel){
     newStats.relatedLevel = relatedLevel;
     newStats.name = relatedLevel->m_levelName;
     newStats.catTypeID = Utils::GetRandomInt(0, 10);
+
+    float randomSizeOffset = .2f;
+
+    newStats.size = Utils::GetRandomFloat(CatStats::MIN_SIZE + randomSizeOffset, CatStats::MAX_SIZE - randomSizeOffset);
     
     return newStats;
 }

@@ -114,3 +114,10 @@ void Save::saveGroundOutlineColor(ccColor3B color){
 ccColor3B Save::getGroundOutlineColor(){
     return Mod::get()->getSavedValue<ccColor3B>("GroundColor", { 0, 102, 255 });
 }
+
+
+bool Save::doesExistCatForLevel(GJGameLevel* relatedLevel){
+    std::filesystem::path mySavePath = savesPath / getCatSaveFileName(relatedLevel);
+
+    return std::filesystem::exists(mySavePath);
+}

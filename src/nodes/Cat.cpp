@@ -27,10 +27,6 @@ bool Cat::init(CCNode* wanderArea, GJGameLevel* relatedLevel) {
     if (didLoadCat.isErr()){
         stats = CatStats::createDefault(relatedLevel);
 
-        float randomSizeOffset = .2f;
-
-        stats.size = Utils::GetRandomFloat(CatStats::MIN_SIZE + randomSizeOffset, CatStats::MAX_SIZE - randomSizeOffset);
-
         auto didSaveWork = Save::saveCat(this);
         if (didSaveWork.isErr()){
             log::error("Failed to load cat!\n{}", didSaveWork.unwrapErr());
