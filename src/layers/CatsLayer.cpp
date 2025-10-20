@@ -5,6 +5,7 @@
 #include <utils/Utils.hpp>
 #include <kittyAI/CatWanderState.hpp>
 #include <kittyAI/CatIdleState.hpp>
+#include <layers/NewCatsLayer.hpp>
 
 CatsLayer* CatsLayer::sharedInstance = nullptr;
 
@@ -127,6 +128,11 @@ bool CatsLayer::init() {
         addCat(level);
 
     scheduleUpdate();
+
+    auto didLoadCat = Save::loadCat(beatenExtremes[0]);
+
+    auto newCats = NewCatsLayer::create({didLoadCat.unwrap()});
+    this->addChild(newCats);
 
     return true;
 }

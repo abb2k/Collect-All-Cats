@@ -15,6 +15,8 @@ LinkedCatDisplay* LinkedCatDisplay::create(CatStats* catStats) {
 bool LinkedCatDisplay::init(CatStats* catStats) {
     if (!CCMenu::init()) return false;
 
+    this->setPosition({0, 0});
+
     if (catStats != nullptr)
         setCat(*catStats);
 
@@ -27,8 +29,9 @@ void LinkedCatDisplay::setCat(const CatStats& catStats){
     auto catsLayer = CatsLayer::activeCatLayer();
     if (!catsLayer) return;
 
-    auto kittyColonThreeSprite = CCSprite::createWithSpriteFrameName("colourPickerShadow.png");
+    auto kittyColonThreeSprite = CCSprite::createWithSpriteFrameName("default_cat.png"_spr);
     kittyColonThreeSprite->setPosition(kittyColonThreeSprite->getContentSize() / 2);
+    kittyColonThreeSprite->setScale(1.5f);
     this->addChild(kittyColonThreeSprite);
 
     this->setContentSize(kittyColonThreeSprite->getContentSize());
