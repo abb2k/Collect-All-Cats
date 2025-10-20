@@ -16,4 +16,12 @@ private:
     CCAnimation* lighningAnim;
 
     void onPlace(CCObject*);
+    void allowLeave();
+
+    void keyBackClicked() override;
+    void registerWithTouchDispatcher() override;
+
+    bool canLeave;
+
+    CCLayer* parentLayer = nullptr;
 };

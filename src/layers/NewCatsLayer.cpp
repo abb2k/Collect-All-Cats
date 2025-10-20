@@ -1,6 +1,7 @@
 #include "NewCatsLayer.hpp"
 
 #include <nodes/LinkedCatDisplay.hpp>
+#include <utils/CCPlaySound.hpp>
 
 NewCatsLayer* NewCatsLayer::create(const std::vector<CatStats>& newCats) {
     auto ret = new NewCatsLayer();
@@ -14,6 +15,14 @@ NewCatsLayer* NewCatsLayer::create(const std::vector<CatStats>& newCats) {
 
 bool NewCatsLayer::init(const std::vector<CatStats>& newCats) {
     if (!CCLayer::init()) return false;
+
+    Loader::get()->queueInMainThread([&] {
+        auto parentLayer = typeinfo_cast<CCLayer*>(this->getParent());
+
+        this->parentLayer = parentLayer;
+
+        parentLayer->setKeypadEnabled(false);
+    });
 
     auto lightningFrames = CCArray::create();
     auto frameCache = CCSpriteFrameCache::get();
@@ -52,7 +61,15 @@ bool NewCatsLayer::init(const std::vector<CatStats>& newCats) {
 
     shadow->runAction(CCFadeTo::create(1, 150));
 
-    lightning->runAction(CCSequence::create(CCDelayTime::create(1), CCAnimate::create(lighningAnim), nullptr));
+    lightning->runAction(
+        CCSequence::create(
+            CCDelayTime::create(1),
+            CCPlaySound::create("lightningCut.wav"_spr, .85f, 1, 1),
+            CCAnimate::create(lighningAnim),
+            CCPlaySound::create("meow.mp3"_spr, 1, 1, 1),
+            nullptr
+        )
+    );
 
     auto kittyAlignmentMenu = CCNode::create();
     kittyAlignmentMenu->setID("new-cats-container");
@@ -100,7 +117,14 @@ bool NewCatsLayer::init(const std::vector<CatStats>& newCats) {
     title->setPosition({winSize.width / 2, winSize.height / 1.2f});
     this->addChild(title);
 
-    title->runAction(CCSequence::create(CCDelayTime::create(.5f), CCEaseBounceOut::create(CCScaleTo::create(.5f, 1.5f)), nullptr));
+    title->runAction(
+        CCSequence::create(
+            CCDelayTime::create(.5f),
+            CCPlaySound::create("woosh.wav"_spr, 1, 1, 1),
+            CCEaseBounceOut::create(CCScaleTo::create(.5f, 1.5f)),
+            nullptr
+        )
+    );
 
     auto placeMenu = CCMenu::create();
     placeMenu->setPosition({0, 0});
@@ -121,6 +145,8 @@ bool NewCatsLayer::init(const std::vector<CatStats>& newCats) {
 
     placeBtn->runAction(CCSequence::create(CCDelayTime::create(2.5f), CCEaseBackOut::create(CCScaleTo::create(.5f, 1)), nullptr));
 
+    this->runAction(CCSequence::create(CCDelayTime::create(2.7f), CCCallFunc::create(this, callfunc_selector(NewCatsLayer::allowLeave)), nullptr));
+
     this->setTouchEnabled(true);
     this->setKeypadEnabled(true);
     this->setKeyboardEnabled(true);
@@ -129,7 +155,22 @@ bool NewCatsLayer::init(const std::vector<CatStats>& newCats) {
     return true;
 }
 
+void NewCatsLayer::allowLeave(){
+    canLeave = true;
+}
+
 
 void NewCatsLayer::onPlace(CCObject*){
+    keyBackClicked();
+}
+
+void NewCatsLayer::keyBackClicked(){
+    if (!canLeave) return;
+
+    if (parentLayer != nullptr) parentLayer->setKeypadEnabled(true);
     this->removeMeAndCleanup();
+}
+
+void NewCatsLayer::registerWithTouchDispatcher() {
+    CCDirector::sharedDirector()->getTouchDispatcher()->addTargetedDelegate(this, 0, true);
 }

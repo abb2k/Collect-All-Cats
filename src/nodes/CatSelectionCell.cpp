@@ -40,12 +40,14 @@ bool CatSelectionCell::init(GJGameLevel* level) {
     else myCatStats = didLoadCat.unwrap();
 
     nameLabel = CCLabelBMFont::create(myCatStats.name.c_str(), "bigFont.fnt");
+    nameLabel->setID("name-label");
     nameLabel->setPosition({this->getContentWidth() / 2, 110});
     nameLabel->setAlignment(CCTextAlignment::kCCTextAlignmentCenter);
     nameLabel->setScale(std::min(0.75f, 100 / nameLabel->getContentWidth()));
     this->addChild(nameLabel);
 
     levelNameLabel = CCLabelBMFont::create(myCatStats.getLevel()->m_levelName.c_str(), "goldFont.fnt");
+    levelNameLabel->setID("level-name-label");
     levelNameLabel->setPosition({this->getContentWidth() / 2, 95});
     levelNameLabel->setAlignment(CCTextAlignment::kCCTextAlignmentCenter);
     levelNameLabel->setScale(std::min(0.5f, 75 / levelNameLabel->getContentWidth()));
@@ -56,13 +58,10 @@ bool CatSelectionCell::init(GJGameLevel* level) {
     }
 
     auto catDisplay = LinkedCatDisplay::create(&myCatStats);
+    catDisplay->setID("cat-display");
     catDisplay->setScale(60.5f / catDisplay->getContentHeight());
     catDisplay->setPosition({this->getContentWidth() / 2, 55});
     this->addChild(catDisplay);
-
-    auto buttonsMenu = CCMenu::create();
-    buttonsMenu->setPosition({0, 0});
-    this->addChild(buttonsMenu);
 
     auto catSettingsBtnSprite = CCSprite::createWithSpriteFrameName("GJ_optionsBtn_001.png");
     catSettingsBtnSprite->setScale(.5f);
@@ -72,8 +71,9 @@ bool CatSelectionCell::init(GJGameLevel* level) {
         this,
         menu_selector(CatSelectionCell::onCatSettingsClicked)
     );
+    catSettingsBtn->setID("cat-settings-btn");
     catSettingsBtn->setPosition(catSettingsBtn->getContentSize() / 2 + ccp(4, 6));
-    buttonsMenu->addChild(catSettingsBtn);
+    this->addChild(catSettingsBtn);
 
     auto placedCats = Save::getPlacedCats();
     bool catPlaced = false;
@@ -90,11 +90,13 @@ bool CatSelectionCell::init(GJGameLevel* level) {
         .5f,
         catPlaced
     );
+    selectedToggle->setID("cat-visible-toggle");
     selectedToggle->setCallback([&](bool state){CatSelectionCell::togglePlaced(state, false);});
     selectedToggle->setPosition({108, 15});
-    buttonsMenu->addChild(selectedToggle);
+    this->addChild(selectedToggle);
 
     auto toggleLabel = CCLabelBMFont::create("Placed", "bigFont.fnt");
+    toggleLabel->setID("cat-visible-toggle-label");
     toggleLabel->setScale(.2f);
     toggleLabel->setPosition({108, 27});
     this->addChild(toggleLabel);

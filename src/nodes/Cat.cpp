@@ -39,32 +39,29 @@ bool Cat::init(CCNode* wanderArea, GJGameLevel* relatedLevel) {
     }
     else stats = didLoadCat.unwrap();
 
-    auto menu = CCMenu::create();
-    menu->setPosition({0, 0});
-    menu->setID("button-menu");
-    this->addChild(menu);
-
     this->setContentSize({60, 60});
     this->setAnchorPoint({.5f, 0});
+    this->setScale(stats.size);
 
     auto btn = CCMenuItem::create(this, menu_selector(Cat::onCatClicked));
     btn->setContentSize(this->getContentSize());
     btn->setPosition(this->getContentSize() / 2);
-    btn->setID("general-kitty-btn");
-    menu->addChild(btn);
+    btn->setID("general-interact-range");
+    this->addChild(btn);
 
     kittyColonThreeSprite = CCSprite::createWithSpriteFrameName("default_cat.png"_spr);
+    kittyColonThreeSprite->setID("visual-parent");
     kittyColonThreeSprite->setPosition(this->getContentSize() / 2);
     kittyColonThreeSprite->setScale(.7f);
     this->addChild(kittyColonThreeSprite);
     
-    updateSize();
-
     nameLabel = CCLabelBMFont::create(stats.name.c_str(), "bigFont.fnt");
+    nameLabel->setID("name-label");
     nameLabel->setPosition({this->getContentWidth() / 2, 80});
     nameLabel->setScale(.5f);
     this->addChild(nameLabel);
     levelNameLabel = CCLabelBMFont::create(stats.getLevel()->m_levelName.c_str(), "goldFont.fnt");
+    levelNameLabel->setID("level-name-label");
     levelNameLabel->setPosition({this->getContentWidth() / 2, 70});
     levelNameLabel->setScale(.25f);
     this->addChild(levelNameLabel);
@@ -85,16 +82,12 @@ void Cat::onCatClicked(CCObject*){
     CatsLayer::activeCatLayer()->catSettingsNode->showWithCat(stats);
 }
 
-void Cat::updateSize(){
-    this->setScale(stats.size);
-}
-
 CatStats Cat::getStats() { return stats; }
 
 void Cat::setCatStats(const CatStats& newStats){
     stats = newStats;
 
-    updateSize();
+    this->setScale(stats.size);
 
     nameLabel->setString(stats.name.c_str());
 

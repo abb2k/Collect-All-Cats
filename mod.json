@@ -18,7 +18,8 @@
 			]
 		},
 		"files":[
-			"resources/*.mp3"
+			"resources/*.mp3",
+			"resources/*.wav"
 		]
 	}
 }
