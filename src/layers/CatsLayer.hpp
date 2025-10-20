@@ -20,6 +20,7 @@ class CatsLayer : public CCLayer {
         void onBackClicked(CCObject*);
         void onCatsMenuClicked(CCObject*);
         void onSettingsClicked(CCObject*);
+        void onEditorClicked(CCObject*);
 
         AdvancedScrollLayer* ScrollNode;
 
@@ -39,6 +40,8 @@ class CatsLayer : public CCLayer {
 
         void setFollowTarget(Cat* cat);
         Cat* getCatFromStats(const CatStats& stats);
+
+        const bool getIsInEditor(){return isInEditor;}
     private:
         virtual bool init();
 
@@ -53,4 +56,11 @@ class CatsLayer : public CCLayer {
         CCNode* catContainer;
 
         void followUpdate(float dt);
+
+        CCMenuItemSpriteExtra* editorModeBtn;
+        CCMenu* topRightMenu;
+        CCSprite* editorModeBtnSpr;
+        CCSprite* newEditorSpr;
+
+        bool isInEditor;
 };

@@ -84,7 +84,7 @@ bool CatsLayer::init() {
     });
     buttonsMenu->addChild(exitBtn);
     
-    auto topRightMenu = CCMenu::create();
+    topRightMenu = CCMenu::create();
     topRightMenu->setContentSize({250, 40});
     topRightMenu->setID("top-right-menu");
     topRightMenu->setPosition(winSize - ccp(5, 5));
@@ -96,6 +96,16 @@ bool CatsLayer::init() {
     );
     this->addChild(topRightMenu);
 
+    //editor mode button
+    editorModeBtnSpr = CCSprite::createWithSpriteFrameName("GJ_editBtn_001.png");
+    newEditorSpr = CCSprite::createWithSpriteFrameName("GJ_cancelDownloadBtn_001.png");
+    editorModeBtn = CCMenuItemSpriteExtra::create(
+        editorModeBtnSpr,
+        this,
+        menu_selector(CatsLayer::onEditorClicked)
+    );
+    topRightMenu->addChild(editorModeBtn);
+    
     //cats menu button
     auto catSelectBtnSprite = CCSprite::createWithSpriteFrameName("GJ_viewListsBtn_001.png");
     auto catSelectBtn = CCMenuItemSpriteExtra::create(
@@ -115,6 +125,7 @@ bool CatsLayer::init() {
         menu_selector(CatsLayer::onSettingsClicked)
     );
     topRightMenu->addChild(settingsBtn);
+
 
     topRightMenu->updateLayout();
 
@@ -159,6 +170,19 @@ void CatsLayer::onCatsMenuClicked(CCObject*){
 
 void CatsLayer::onSettingsClicked(CCObject*){
     RoomSettingsPopup::create()->show();
+}
+
+void CatsLayer::onEditorClicked(CCObject*){
+    isInEditor = !isInEditor;
+
+    if (isInEditor){
+        editorModeBtn->setSprite(newEditorSpr);
+        topRightMenu->updateLayout();
+    }
+    else{
+        editorModeBtn->setSprite(editorModeBtnSpr);
+        topRightMenu->updateLayout();
+    }
 }
 
 CatsLayer* CatsLayer::activeCatLayer(){
