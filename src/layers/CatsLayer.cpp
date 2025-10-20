@@ -239,8 +239,9 @@ void CatsLayer::followUpdate(float dt){
     ScrollNode->moveTo(lerpedMovement);
 }
 
-Cat* CatsLayer::getCatFromStats(CatStats& stats){
-    auto relatedLevel = stats.getLevel();
+Cat* CatsLayer::getCatFromStats(const CatStats& stats){
+    auto tempstats = stats;
+    auto relatedLevel = tempstats.getLevel();
 
     if (relatedLevel == nullptr) return nullptr;
     

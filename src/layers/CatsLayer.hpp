@@ -38,7 +38,7 @@ class CatsLayer : public CCLayer {
         void createCatSettingsNode(CCScene* scene);
 
         void setFollowTarget(Cat* cat);
-        Cat* getCatFromStats(CatStats& stats);
+        Cat* getCatFromStats(const CatStats& stats);
     private:
         virtual bool init();
 

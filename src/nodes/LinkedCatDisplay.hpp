@@ -13,4 +13,9 @@ public:
 
 private:
     virtual bool init(CatStats* catStats);
+
+    void update(float dt);
+
+    Result<CatStats> myStats = Err("");
+    CCSprite* kittyColonThreeSprite;
 };

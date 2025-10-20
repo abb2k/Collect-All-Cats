@@ -69,6 +69,8 @@ bool Cat::init(CCNode* wanderArea, GJGameLevel* relatedLevel) {
     levelNameLabel->setScale(.25f);
     this->addChild(levelNameLabel);
 
+    getVisualParent()->setRotationY(Utils::GetRandomInt(0, 1) == 0 ? 180 : 0);
+
     if (stats.name == stats.getLevel()->m_levelName)
         levelNameLabel->setString("");
 

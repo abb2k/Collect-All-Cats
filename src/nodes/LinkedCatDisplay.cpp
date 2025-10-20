@@ -22,14 +22,13 @@ bool LinkedCatDisplay::init(CatStats* catStats) {
 
     ignoreAnchorPointForPosition(false);
 
+    this->scheduleUpdate();
+
     return true;
 }
 
 void LinkedCatDisplay::setCat(const CatStats& catStats){
-    auto catsLayer = CatsLayer::activeCatLayer();
-    if (!catsLayer) return;
-
-    auto kittyColonThreeSprite = CCSprite::createWithSpriteFrameName("default_cat.png"_spr);
+    kittyColonThreeSprite = CCSprite::createWithSpriteFrameName("default_cat.png"_spr);
     kittyColonThreeSprite->setPosition(kittyColonThreeSprite->getContentSize() / 2);
     kittyColonThreeSprite->setScale(1.5f);
     this->addChild(kittyColonThreeSprite);
@@ -45,4 +44,25 @@ void LinkedCatDisplay::setCat(const CatStats& catStats){
     shadow->setColor({0,0,0});
     shadow->setOpacity(150);
     this->addChild(shadow);
+
+    myStats = Ok(catStats);
+}
+
+void LinkedCatDisplay::update(float dt){
+    if (myStats.isErr()) return;
+
+    auto catsLayer = CatsLayer::activeCatLayer();
+    if (!catsLayer) return;
+    
+    auto catRef = catsLayer->getCatFromStats(myStats.unwrap());
+    if (catRef == nullptr){
+        kittyColonThreeSprite->setRotation(0);
+        //reset pos
+        return;
+    }
+
+    auto visual = catRef->getVisualParent();
+
+    kittyColonThreeSprite->setRotationX(visual->getRotationX());
+    kittyColonThreeSprite->setRotationY(visual->getRotationY());
 }
