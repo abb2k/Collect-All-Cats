@@ -98,7 +98,9 @@ bool CatsLayer::init() {
 
     //editor mode button
     editorModeBtnSpr = CCSprite::createWithSpriteFrameName("GJ_editBtn_001.png");
+    editorModeBtnSpr->retain();
     newEditorSpr = CCSprite::createWithSpriteFrameName("GJ_cancelDownloadBtn_001.png");
+    newEditorSpr->retain();
     editorModeBtn = CCMenuItemSpriteExtra::create(
         editorModeBtnSpr,
         this,
@@ -152,6 +154,9 @@ void CatsLayer::keyBackClicked(){
     CCDirector::get()->popSceneWithTransition(.5f, PopTransition::kPopTransitionFade);
     catSettingsNode->hide();
     sharedInstance = nullptr;
+
+    editorModeBtnSpr->release();
+    newEditorSpr->release();
 }
 
 void CatsLayer::update(float dt){
