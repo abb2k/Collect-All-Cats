@@ -265,10 +265,12 @@ void AdvancedScrollLayer::addFromCenter(CCNode* child, CCPoint offset){
 
 void AdvancedScrollLayer::toggleHorizontalScrollbar(bool b){
     horizontalBar->setVisible(b);
+    horizontalBar->setTouchEnabled(b);
 }
 
 void AdvancedScrollLayer::toggleVerticalScrollbar(bool b){
     verticalBar->setVisible(b);
+    verticalBar->setTouchEnabled(b);
 }
 
 void AdvancedScrollLayer::setScrollSensetivity(float sense){
