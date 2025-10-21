@@ -51,10 +51,10 @@ bool CatSettingsLayer::init() {
 
     auto sizeLabel = CCLabelBMFont::create("Size", "bigFont.fnt");
     sizeLabel->setScale(0.75f);
-    sizeLabel->setPosition({buttonsMenu->getContentWidth() / 2, 155});
+    sizeLabel->setPosition({buttonsMenu->getContentWidth() / 2, 155 - 50});
     this->addChild(sizeLabel);
     sizeScroll = Slider::create(this, menu_selector(CatSettingsLayer::onSizeValueChanged), .75f);
-    sizeScroll->setPosition({buttonsMenu->getContentWidth() - sizeScroll->m_groove->getScaledContentWidth() / 2 - sizeScroll->m_sliderBar->getScaledContentWidth() / 4, 132});
+    sizeScroll->setPosition({buttonsMenu->getContentWidth() - sizeScroll->m_groove->getScaledContentWidth() / 2 - sizeScroll->m_sliderBar->getScaledContentWidth() / 4, 132 - 50});
     this->addChild(sizeScroll);
     sizeInputField = TextInput::create(45, "S", "bigFont.fnt");
     sizeInputField->setPosition(ccp(30, sizeScroll->getPositionY()));
@@ -79,17 +79,29 @@ bool CatSettingsLayer::init() {
 
     auto nameLabel = CCLabelBMFont::create("Name", "bigFont.fnt");
     nameLabel->setScale(0.75f);
-    nameLabel->setPosition({buttonsMenu->getContentWidth() / 2, 105});
+    nameLabel->setPosition({buttonsMenu->getContentWidth() / 2, 60});
     this->addChild(nameLabel);
     nameInputField = TextInput::create(200, "name", "bigFont.fnt");
-    nameInputField->setPosition({buttonsMenu->getContentWidth() / 2, 78});
+    nameInputField->setPosition({buttonsMenu->getContentWidth() / 2, 78 - 50});
     nameInputField->setCommonFilter(CommonFilter::Name);
     nameInputField->setCallback([&](const std::string& newText){
         catToModify.name = newText;
 
+        nameResetBtn->setVisible(catToModify.name != catToModify.getLevel()->m_levelName);
+
         updateLivingCat();
     });
     this->addChild(nameInputField);
+
+    auto nameResetBtnSpr = CCSprite::createWithSpriteFrameName("GJ_replayBtn_001.png");
+    nameResetBtnSpr->setScale(.4f);
+    nameResetBtn = CCMenuItemSpriteExtra::create(
+        nameResetBtnSpr,
+        this,
+        menu_selector(CatSettingsLayer::nameReset)
+    );
+    nameResetBtn->setPosition({158, 58});
+    buttonsMenu->addChild(nameResetBtn);
 
     auto blockerMenu = CCMenu::create();
     blockerMenu->setContentSize(this->getContentSize() - ccp(30, 0));
@@ -123,6 +135,9 @@ void CatSettingsLayer::show(){
 
     auto selPopup = CatsLayer::activeCatLayer()->currentSelectionPopup;
     if (!selPopup) return;
+
+    if (catToModify.getLevel() != nullptr)
+        nameResetBtn->setVisible(catToModify.name != catToModify.getLevel()->m_levelName);
 
     selPopup->fadeTo(10, 0.3f);
 }
@@ -158,6 +173,9 @@ void CatSettingsLayer::setToCat(CatStats& stats){
     auto catsLayer = CatsLayer::activeCatLayer();
 
     catsLayer->setFollowTarget(catsLayer->getCatFromStats(stats));
+
+    if (catToModify.getLevel() != nullptr)
+        nameResetBtn->setVisible(catToModify.name != catToModify.getLevel()->m_levelName);
 }
 
 void CatSettingsLayer::onBackClicked(CCObject*){
@@ -192,4 +210,15 @@ void CatSettingsLayer::updateLivingCat(){
 void CatSettingsLayer::showWithCat(CatStats& stats){
     CatsLayer::activeCatLayer()->catSettingsNode->setToCat(stats);
     CatsLayer::activeCatLayer()->catSettingsNode->show();
+}
+
+void CatSettingsLayer::nameReset(CCObject*){
+    if (catToModify.getLevel() != nullptr)
+        catToModify.name = catToModify.getLevel()->m_levelName;
+
+    nameInputField->setString(catToModify.name);
+
+    nameResetBtn->setVisible(false);
+
+    updateLivingCat();
 }

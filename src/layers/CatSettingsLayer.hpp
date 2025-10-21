@@ -35,6 +35,8 @@ private:
     TextInput* sizeInputField;
 
     TextInput* nameInputField;
+    CCMenuItemSpriteExtra* nameResetBtn;
+    void nameReset(CCObject*);
 
     bool isOpen;
 

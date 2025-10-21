@@ -42,6 +42,10 @@ void CACEndLevelLayer::catEnter(){
 
 void CACEndLevelLayer::playEndEffect(){
     EndLevelLayer::playEndEffect();
+
+    if (m_playLayer == nullptr) return;
+    if (m_playLayer->m_level == nullptr) return;
+    
     auto level = m_playLayer->m_level;
     if (level->m_demonDifficulty == 6 && level->m_difficulty == GJDifficulty::Auto)
         catEnter();
