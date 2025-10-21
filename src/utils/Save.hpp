@@ -39,4 +39,10 @@ class Save{
 
         static void saveGroundOutlineColor(ccColor3B color);
         static ccColor3B getGroundOutlineColor();
+
+        static void saveExpFirstDialogue(bool b);
+        static bool getExpFirstDialogue();
+
+        static void saveDoorOpened(bool b);
+        static bool getDoorOpened();
 };

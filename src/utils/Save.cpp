@@ -121,3 +121,18 @@ bool Save::doesExistCatForLevel(GJGameLevel* relatedLevel){
 
     return std::filesystem::exists(mySavePath);
 }
+
+void Save::saveExpFirstDialogue(bool b){
+    Mod::get()->setSavedValue("ExpFirstDialogue", b);
+}
+
+bool Save::getExpFirstDialogue(){
+    return Mod::get()->getSavedValue<bool>("ExpFirstDialogue", false);
+}
+
+void Save::saveDoorOpened(bool b){
+    Mod::get()->setSavedValue("DoorOpened", b);
+}
+bool Save::getDoorOpened(){
+    return Mod::get()->getSavedValue<bool>("DoorOpened", false);
+}
