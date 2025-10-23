@@ -3,6 +3,8 @@
 #include <utils/Utils.hpp>
 #include <types/CatStatsSerializer.hpp>
 
+#include <types/AREDLLevelDetailsSerializer.hpp>
+
 const float CatStats::MIN_SIZE = .25f;
 const float CatStats::MAX_SIZE = 2.0f;
 
@@ -46,4 +48,32 @@ CatStats CatStats::createEmpty(){
 
 bool CatStats::isEmpty(){
     return relatedLevel == nullptr;
+}
+
+void CatStats::loadAREDLLevelData(){
+    web::WebRequest req;
+    auto task = req.get(fmt::format("https://api.aredl.net/v2/api/aredl/levels/{}", relatedLevel->m_levelID));
+
+    task.listen([&](web::WebResponse* res) {
+        log::info("data recieved {}", res->string().unwrap());
+        if (res == nullptr || !res->ok()) return;
+        log::info("data pass 1");
+        
+        auto jsonRes = res->json();
+        if (!jsonRes.isOk()) return;
+        auto json = jsonRes.unwrap();
+
+        log::info("data pass 2");
+
+        auto detailsRes = json.as<AREDLLevelDetails>();
+        if (!detailsRes.isOk()) return;
+
+        levelDetails = detailsRes.unwrap();
+
+        if (onAREDLStatsRecieved != NULL) onAREDLStatsRecieved(this);
+    });
+}
+
+void CatStats::setOnAREDLStatsRecievedCallback(std::function<void(CatStats*)> callback){
+    onAREDLStatsRecieved = callback;
 }

@@ -34,6 +34,10 @@ bool Cat::init(CCNode* wanderArea, GJGameLevel* relatedLevel) {
         }
     }
     else stats = didLoadCat.unwrap();
+    stats.setOnAREDLStatsRecievedCallback([this](CatStats*){
+        log::info("{}", stats.getLevelDetails()->position);
+    });
+    stats.loadAREDLLevelData();
 
     this->setContentSize({60, 60});
     this->setAnchorPoint({.5f, 0});

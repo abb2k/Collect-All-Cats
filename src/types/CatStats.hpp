@@ -4,6 +4,8 @@
 
 using namespace geode::prelude;
 
+#include <types/AREDLLevelDetails.hpp>
+
 struct CatStats{
     public:
         std::string name;
@@ -24,7 +26,19 @@ struct CatStats{
 
         bool isEmpty();
 
+        const AREDLLevelDetails* getLevelDetails(){
+            if (levelDetails.has_value()) return &levelDetails.value();
+            return nullptr;
+        }
+
+        void setOnAREDLStatsRecievedCallback(std::function<void(CatStats*)> callback);
+        
+        void loadAREDLLevelData();
+
     private:
         GJGameLevel* relatedLevel;
+        std::optional<AREDLLevelDetails> levelDetails = std::nullopt;
         CatStats() {}
+
+        std::function<void(CatStats*)> onAREDLStatsRecieved = NULL;
 };
