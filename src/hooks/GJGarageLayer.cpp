@@ -191,7 +191,7 @@ void CACGarageLayer::postDoorOpenDialogue(){
     array->addObject(DialogObject::create("Shopkeeper", fmt::format("Umm <cg>{}</c> do u understand what they are saying?", GJAccountManager::get()->m_username), 5, 1, false, {255, 255, 255}));
     array->addObject(DialogObject::create("The Cats", "We are the cats! we come in peace!", 999, 1, true, ccColor3B{ 255, 255, 255 }));
     array->addObject(DialogObject::create("Shopkeeper", "If you come in peace then what is all this noise about..", 6, 1, false, {255, 255, 255}));
-    array->addObject(DialogObject::create("The Cats", "We are sorry of we disturbed you, we do not wish any harm!", 999, 1, true, ccColor3B{ 255, 255, 255 }));
+    array->addObject(DialogObject::create("The Cats", "We are sorry if we disturbed you, we do not wish any harm!", 999, 1, true, ccColor3B{ 255, 255, 255 }));
     array->addObject(DialogObject::create("Shopkeeper", "Yeah yeah just dont do this again..", 6, 1, false, {255, 255, 255}));
     array->addObject(DialogObject::create("Shopkeeper", fmt::format("Alright, now that that's covered, i can finally exist in peace, thank you <cg>{}</c>", GJAccountManager::get()->m_username), 5, 1, false, {255, 255, 255}));
     array->addObject(DialogObject::create("The Cats", "Thanks for helping us introduce ourselves to this local, we were having trouble doing that ourselves", 999, 1, true, ccColor3B{ 255, 255, 255 }));
