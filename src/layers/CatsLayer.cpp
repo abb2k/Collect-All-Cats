@@ -29,7 +29,7 @@ bool CatsLayer::init() {
 
     for (const auto& level : CCArrayExt<GJGameLevel*>(completedLevels))
     {
-        if (level->m_demonDifficulty == 6 && level->m_difficulty == GJDifficulty::Auto) beatenExtremes.push_back(level);
+        if (level->m_demonDifficulty == 6 && level->m_demon.value() == 1) beatenExtremes.push_back(level);
     }
 
     if (!beatenExtremes.size()) return false;
