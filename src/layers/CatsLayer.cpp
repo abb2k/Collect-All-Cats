@@ -81,7 +81,7 @@ bool CatsLayer::init() {
     auto exitBtnSprite = CCSprite::createWithSpriteFrameName("GJ_arrow_01_001.png");
     exitBtnSprite->setScale(.75f);
     auto exitBtn = CCMenuItemSpriteExtra::create(
-        exitBtnSprite,
+        exitBtnSprite, 
         nullptr,
         this,
         menu_selector(CatsLayer::onBackClicked)

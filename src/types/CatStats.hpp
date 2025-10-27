@@ -35,6 +35,8 @@ struct CatStats{
         
         void loadAREDLLevelData();
 
+        std::pair<std::string, std::string> getSpritesPathsForCat();
+
     private:
         GJGameLevel* relatedLevel;
         std::optional<AREDLLevelDetails> levelDetails = std::nullopt;

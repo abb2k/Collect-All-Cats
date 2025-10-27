@@ -49,11 +49,8 @@ bool Cat::init(CCNode* wanderArea, GJGameLevel* relatedLevel) {
     btn->setID("general-interact-range");
     this->addChild(btn);
 
-    kittyColonThreeSprite = CCSprite::createWithSpriteFrameName("default_cat.png"_spr);
-    kittyColonThreeSprite->setID("visual-parent");
-    kittyColonThreeSprite->setPosition(this->getContentSize() / 2 + ccp(0, 10));
-    kittyColonThreeSprite->setScale(.7f);
-    this->addChild(kittyColonThreeSprite);
+    visualParent = CCMenu::create();
+    this->addChild(visualParent);
     
     nameLabel = CCLabelBMFont::create(stats.name.c_str(), "bigFont.fnt");
     nameLabel->setID("name-label");
@@ -73,11 +70,13 @@ bool Cat::init(CCNode* wanderArea, GJGameLevel* relatedLevel) {
 
     this->scheduleUpdate();
 
+    //Cat::setCatStats(stats);
+
     return true;
 }
 
 void Cat::onCatClicked(CCObject*){
-    kittyColonThreeSprite->runAction(CCSequence::create(CCTintTo::create(0, 0, 255, 0), CCTintTo::create(0.5f, 255, 255, 255), nullptr));
+    visualParent->runAction(CCSequence::create(CCTintTo::create(0, 0, 255, 0), CCTintTo::create(0.5f, 255, 255, 255), nullptr));
 
     CatsLayer::activeCatLayer()->catSettingsNode->showWithCat(stats);
 }
@@ -95,6 +94,20 @@ void Cat::setCatStats(const CatStats& newStats){
         levelNameLabel->setString("");
     else
         levelNameLabel->setString(stats.getLevel()->m_levelName.c_str());
+
+    visualParent->removeAllChildrenWithCleanup(true);
+
+    auto KCTSPrimary = CCSprite::createWithSpriteFrameName("default_cat.png"_spr);
+    KCTSPrimary->setID("kitty-color-three-sprite-primary");
+    KCTSPrimary->setPosition(this->getContentSize() / 2 + ccp(0, 10));
+    KCTSPrimary->setScale(.7f);
+    visualParent->addChild(KCTSPrimary);
+
+    auto KCTSSecondary = CCSprite::createWithSpriteFrameName("default_cat.png"_spr);
+    KCTSSecondary->setID("kitty-color-three-sprite-secondary");
+    KCTSSecondary->setPosition(this->getContentSize() / 2 + ccp(0, 10));
+    KCTSSecondary->setScale(.7f);
+    visualParent->addChild(KCTSSecondary);
 
     auto _ = Save::saveCat(&stats);
 }
@@ -167,4 +180,4 @@ void Cat::AIUpdate(float dt){
         currentAIState->update(dt);
 }
 
-CCNode* Cat::getVisualParent() { return kittyColonThreeSprite; }
+CCNode* Cat::getVisualParent() { return visualParent; }

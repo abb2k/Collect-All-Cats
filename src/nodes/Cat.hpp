@@ -48,7 +48,7 @@ private:
     std::shared_ptr<CatAIStateBase> currentAIState = nullptr;
     void AIUpdate(float dt);
 
-    CCSprite* kittyColonThreeSprite;
+    CCMenu* visualParent;
 
     CCLabelBMFont* nameLabel;
     CCLabelBMFont* levelNameLabel;

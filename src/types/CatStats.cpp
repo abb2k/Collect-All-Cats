@@ -55,15 +55,11 @@ void CatStats::loadAREDLLevelData(){
     auto task = req.get(fmt::format("https://api.aredl.net/v2/api/aredl/levels/{}", relatedLevel->m_levelID));
 
     task.listen([&](web::WebResponse* res) {
-        log::info("data recieved {}", res->string().unwrap());
         if (res == nullptr || !res->ok()) return;
-        log::info("data pass 1");
         
         auto jsonRes = res->json();
         if (!jsonRes.isOk()) return;
         auto json = jsonRes.unwrap();
-
-        log::info("data pass 2");
 
         auto detailsRes = json.as<AREDLLevelDetails>();
         if (!detailsRes.isOk()) return;
@@ -76,4 +72,8 @@ void CatStats::loadAREDLLevelData(){
 
 void CatStats::setOnAREDLStatsRecievedCallback(std::function<void(CatStats*)> callback){
     onAREDLStatsRecieved = callback;
+}
+
+std::pair<std::string, std::string> CatStats::getSpritesPathsForCat(){
+    return {fmt::format("cat-{}_0", catTypeID), fmt::format("cat-{}_1", catTypeID)};
 }
