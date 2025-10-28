@@ -50,6 +50,10 @@ bool Cat::init(CCNode* wanderArea, GJGameLevel* relatedLevel) {
     this->addChild(btn);
 
     visualParent = CCMenu::create();
+    visualParent->setID("visual-parent");
+    visualParent->setContentSize({0, 0});
+    visualParent->setPosition(this->getContentSize() / 2 + ccp(0, 10));
+    visualParent->ignoreAnchorPointForPosition(false);
     this->addChild(visualParent);
     
     nameLabel = CCLabelBMFont::create(stats.name.c_str(), "bigFont.fnt");
@@ -70,7 +74,7 @@ bool Cat::init(CCNode* wanderArea, GJGameLevel* relatedLevel) {
 
     this->scheduleUpdate();
 
-    //Cat::setCatStats(stats);
+    Cat::setCatStats(stats);
 
     return true;
 }
@@ -99,13 +103,11 @@ void Cat::setCatStats(const CatStats& newStats){
 
     auto KCTSPrimary = CCSprite::createWithSpriteFrameName("default_cat.png"_spr);
     KCTSPrimary->setID("kitty-color-three-sprite-primary");
-    KCTSPrimary->setPosition(this->getContentSize() / 2 + ccp(0, 10));
     KCTSPrimary->setScale(.7f);
     visualParent->addChild(KCTSPrimary);
 
     auto KCTSSecondary = CCSprite::createWithSpriteFrameName("default_cat.png"_spr);
     KCTSSecondary->setID("kitty-color-three-sprite-secondary");
-    KCTSSecondary->setPosition(this->getContentSize() / 2 + ccp(0, 10));
     KCTSSecondary->setScale(.7f);
     visualParent->addChild(KCTSSecondary);
 
