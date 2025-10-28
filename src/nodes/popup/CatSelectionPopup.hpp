@@ -38,4 +38,10 @@ class CatSelectionPopup : public Popup<> {
 
         void updatePageContent();
         float prevHeight;
+        int getPageCount();
+
+        void movePage(CCObject*);
+        CCMenuItemSpriteExtra* pageLeftBtn;
+        CCMenuItemSpriteExtra* pageRightBtn;
+        const int PAGE_ARROW_DISABLED_OPACITY = 100;
 };

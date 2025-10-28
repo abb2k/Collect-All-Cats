@@ -11,6 +11,9 @@ struct CatStats{
         std::string name;
         unsigned int catTypeID;
         float size = 1;
+        unsigned int hatID;
+        ccColor4B primaryColor = {255, 255, 255, 255};
+        ccColor4B secondaryColor = {255, 255, 255, 255};
 
         static const float MIN_SIZE;
         static const float MAX_SIZE;
@@ -36,6 +39,7 @@ struct CatStats{
         void loadAREDLLevelData();
 
         std::pair<std::string, std::string> getSpritesPathsForCat();
+        static std::pair<std::string, std::string> getSpritesPathsForCat(unsigned int typeID);
 
     private:
         GJGameLevel* relatedLevel;

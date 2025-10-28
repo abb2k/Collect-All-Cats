@@ -3,6 +3,8 @@
 #include <Geode/Geode.hpp>
 #include <types/CatStats.hpp>
 
+#include <nodes/CatVisualDisplay.hpp>
+
 using namespace geode::prelude;
 
 class LinkedCatDisplay : public CCMenu {
@@ -26,4 +28,6 @@ private:
     bool oneRunTest = false;
 
     float scaleFactor = 1.5f;
+
+    CatVisualDisplay* catDisplay = nullptr;
 };

@@ -38,6 +38,12 @@ void LinkedCatDisplay::setCat(const CatStats& catStats){
     this->setContentSize(kittyColonThreeSprite->getSprite()->getContentSize());
     this->setAnchorPoint({.5f, .5f});
 
+    catDisplay = CatVisualDisplay::create();
+    catDisplay->setVisible(false);
+    catDisplay->setScale(this->getContentWidth() / 66.66f);
+    catDisplay->setPosition(this->getContentSize() / 2);
+    this->addChild(catDisplay);
+
     auto shadow = CCSprite::createWithSpriteFrameName("d_circle_02_001.png");
     shadow->setZOrder(-1);
     shadow->setScale(kittyColonThreeSprite->getSprite()->getContentWidth() / shadow->getContentWidth());
@@ -62,13 +68,17 @@ void LinkedCatDisplay::update(float dt){
 
     auto catsLayer = CatsLayer::activeCatLayer();
     if (!catsLayer) return;
+
+    auto stats = myStats.unwrap();
     
-    auto catRef = catsLayer->getCatFromStats(myStats.unwrap());
+    auto catRef = catsLayer->getCatFromStats(stats);
     if (catRef == nullptr){
-        kittyColonThreeSprite->setRotation(0);
-        //reset pos
+        kittyColonThreeSprite->clear(0, 0, 0, 0);
+        catDisplay->setVisible(true);
+        catDisplay->updateVisuals(stats);
         return;
     }
+    catDisplay->setVisible(false);
 
     float scale = CCDirector::sharedDirector()->getContentScaleFactor();
 

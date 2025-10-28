@@ -43,7 +43,7 @@ bool Cat::init(CCNode* wanderArea, GJGameLevel* relatedLevel) {
     btn->setID("general-interact-range");
     this->addChild(btn);
 
-    visualParent = CCMenu::create();
+    visualParent = CatVisualDisplay::create();
     visualParent->setID("visual-parent");
     visualParent->setContentSize({0, 0});
     visualParent->setPosition(this->getContentSize() / 2 + ccp(0, 10));
@@ -93,17 +93,7 @@ void Cat::setCatStats(const CatStats& newStats){
     else
         levelNameLabel->setString(stats.getLevel()->m_levelName.c_str());
 
-    visualParent->removeAllChildrenWithCleanup(true);
-
-    auto KCTSPrimary = CCSprite::createWithSpriteFrameName("default_cat.png"_spr);
-    KCTSPrimary->setID("kitty-color-three-sprite-primary");
-    KCTSPrimary->setScale(.7f);
-    visualParent->addChild(KCTSPrimary);
-
-    auto KCTSSecondary = CCSprite::createWithSpriteFrameName("default_cat.png"_spr);
-    KCTSSecondary->setID("kitty-color-three-sprite-secondary");
-    KCTSSecondary->setScale(.7f);
-    visualParent->addChild(KCTSSecondary);
+    visualParent->updateVisuals(stats);
 
     auto _ = Save::saveCat(&stats);
 }

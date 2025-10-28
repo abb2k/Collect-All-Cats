@@ -12,7 +12,7 @@ CatStats CatStats::createDefault(GJGameLevel* relatedLevel){
     CatStats newStats;
     newStats.relatedLevel = relatedLevel;
     newStats.name = relatedLevel->m_levelName;
-    newStats.catTypeID = Utils::GetRandomInt(0, 10);
+    newStats.catTypeID = 0;
 
     float randomSizeOffset = .2f;
 
@@ -26,6 +26,9 @@ Result<CatStats> CatStats::createFromJson(const matjson::Value& value){
     GEODE_UNWRAP_INTO(stats.catTypeID, value["type"].asUInt());
     GEODE_UNWRAP_INTO(stats.name, value["name"].asString());
     GEODE_UNWRAP_INTO(stats.size, value["size"].asDouble());
+    GEODE_UNWRAP_INTO(stats.hatID, value["hatID"].asUInt());
+    GEODE_UNWRAP_INTO(stats.primaryColor, value["primaryColor"].as<ccColor4B>());
+    GEODE_UNWRAP_INTO(stats.secondaryColor, value["secondaryColor"].as<ccColor4B>());
 
     return Ok(stats);
 }
@@ -75,5 +78,9 @@ void CatStats::setOnAREDLStatsRecievedCallback(std::function<void(CatStats*)> ca
 }
 
 std::pair<std::string, std::string> CatStats::getSpritesPathsForCat(){
-    return {fmt::format("cat-{}_0", catTypeID), fmt::format("cat-{}_1", catTypeID)};
+    return CatStats::getSpritesPathsForCat(this->catTypeID);
+}
+
+std::pair<std::string, std::string> CatStats::getSpritesPathsForCat(unsigned int typeID){
+    return {fmt::format("cat-{}_0.png"_spr, typeID), fmt::format("cat-{}_1.png"_spr, typeID)};
 }

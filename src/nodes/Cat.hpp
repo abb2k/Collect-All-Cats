@@ -2,6 +2,7 @@
 
 #include <Geode/Geode.hpp>
 #include <types/CatStats.hpp>
+#include <nodes/CatVisualDisplay.hpp>
 
 using namespace geode::prelude;
 
@@ -46,7 +47,7 @@ private:
     std::shared_ptr<CatAIStateBase> currentAIState = nullptr;
     void AIUpdate(float dt);
 
-    CCMenu* visualParent;
+    CatVisualDisplay* visualParent;
 
     CCLabelBMFont* nameLabel;
     CCLabelBMFont* levelNameLabel;

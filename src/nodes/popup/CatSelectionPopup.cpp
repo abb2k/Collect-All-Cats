@@ -25,7 +25,8 @@ bool CatSelectionPopup::setup() {
     m_closeBtn->setPosition({m_closeBtn->getPositionX() + m_closeBtn->getContentWidth() / 2, m_closeBtn->getPositionY() - m_closeBtn->getContentHeight() / 2});
     setCloseButtonSpr(CCSprite::createWithSpriteFrameName("GJ_arrow_02_001.png"), .75f);
 
-    catsScrollLayer = ScrollLayer::create({375, 250});
+    catsScrollLayer = ScrollLayer::create({375, 250 * 1.1f});
+    catsScrollLayer->setScale(.9f);
     catsScrollLayer->setPosition((m_size - catsScrollLayer->getContentSize()) / 2 - ccp(3.5f, 15));
     m_mainLayer->addChild(catsScrollLayer);
     auto layout = RowLayout::create()
@@ -86,9 +87,32 @@ bool CatSelectionPopup::setup() {
 
     CatSelectionPopup::updatePageContent();
 
+    auto pageLeftBtnSpr = CCSprite::createWithSpriteFrameName("GJ_arrow_01_001.png");
+    pageLeftBtnSpr->setScale(.5f);
+    pageLeftBtn = CCMenuItemSpriteExtra::create(
+        pageLeftBtnSpr,
+        this,
+        menu_selector(CatSelectionPopup::movePage)
+    );
+    pageLeftBtn->setPosition({17.5f, catsScrollLayer->getContentHeight() / 2});
+    m_buttonMenu->addChild(pageLeftBtn);
+
+    auto pageRightBtnSpr = CCSprite::createWithSpriteFrameName("GJ_arrow_01_001.png");
+    pageRightBtnSpr->setFlipX(true);
+    pageRightBtnSpr->setScale(.5f);
+    pageRightBtn = CCMenuItemSpriteExtra::create(
+        pageRightBtnSpr,
+        this,
+        menu_selector(CatSelectionPopup::movePage)
+    );
+    pageRightBtn->setPosition({375, catsScrollLayer->getContentHeight() / 2});
+    m_buttonMenu->addChild(pageRightBtn);
+
     CCTouchDispatcher::get()->addPrioTargetedDelegate(m_buttonMenu, -504, true);
 
     this->scheduleUpdate();
+
+    CatSelectionPopup::movePage(nullptr);
 
     return true;
 }
@@ -204,5 +228,43 @@ void CatSelectionPopup::updatePageContent(){
     if (prevHeight != catsScrollLayer->m_contentLayer->getContentHeight()){
         prevHeight = catsScrollLayer->m_contentLayer->getContentHeight();
         catsScrollLayer->moveToTop();
+    }
+}
+
+int CatSelectionPopup::getPageCount(){
+    auto filteredCats = CatSelectionPopup::getFilteredCats();
+    return (filteredCats.size() + CATS_PER_PAGE - 1) / CATS_PER_PAGE;
+}
+
+void CatSelectionPopup::movePage(CCObject* sender){
+    if (sender == pageLeftBtn){
+        if (currentPage > 0){
+            currentPage--;
+            CatSelectionPopup::updatePageContent();
+        }
+    }
+    else if (sender == pageRightBtn){
+        if (currentPage + 1 < CatSelectionPopup::getPageCount()){
+            currentPage++;
+            CatSelectionPopup::updatePageContent();
+        }
+    }
+
+    if (currentPage == 0){
+        pageLeftBtn->setOpacity(PAGE_ARROW_DISABLED_OPACITY);
+        pageLeftBtn->setEnabled(false);
+    }
+    else{
+        pageLeftBtn->setOpacity(255);
+        pageLeftBtn->setEnabled(true);
+    }
+
+    if (currentPage == CatSelectionPopup::getPageCount() - 1){
+        pageRightBtn->setOpacity(PAGE_ARROW_DISABLED_OPACITY);
+        pageRightBtn->setEnabled(false);
+    }
+    else{
+        pageRightBtn->setOpacity(255);
+        pageRightBtn->setEnabled(true);
     }
 }

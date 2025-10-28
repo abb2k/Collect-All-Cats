@@ -15,7 +15,10 @@ struct matjson::Serialize<CatStats> {
         matjson::Value obj = matjson::makeObject({
             { "type", value.catTypeID },
             { "name", value.name },
-            { "size", value.size }
+            { "size", value.size },
+            { "hatID", value.hatID },
+            { "primaryColor", value.primaryColor},
+            { "secondaryColor", value.secondaryColor},
         });
         return obj;
     }

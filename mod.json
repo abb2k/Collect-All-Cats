@@ -20,6 +20,9 @@
 		"files":[
 			"resources/*.mp3",
 			"resources/*.wav"
+		],
+		"sprites": [
+			"resources/catSkins/*.png"
 		]
 	}
 }
