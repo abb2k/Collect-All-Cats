@@ -11,8 +11,6 @@ class Cat : public CCMenu {
 public:
     static Cat* create(CCNode* wanderArea, GJGameLevel* relatedLevel);
 
-    void updateSize();
-
     CatStats getStats();
 
     bool movementAllowed = true;

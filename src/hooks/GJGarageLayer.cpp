@@ -38,11 +38,11 @@ void CACGarageLayer::startDialogue(){
     auto array = CCArray::create();
 
     array->addObject(DialogObject::create("Shopkeeper", fmt::format("Hello <cg>{}</c>!", GJAccountManager::get()->m_username), 5, 1, false, {255, 255, 255}));
-    array->addObject(DialogObject::create("Shopkeeper", "I'm having a small issue..", 5, 1, false, {255, 255, 255}));
-    array->addObject(DialogObject::create("Shopkeeper", "Some creatures decided they wanna <cr>DIG A HOLE</c> in the <cy>GARAGE WALL!</c>", 6, 1, false, {255, 255, 255}));
-    array->addObject(DialogObject::create("Shopkeeper", "And start living there...", 6, 1, false, {255, 255, 255}));
-    array->addObject(DialogObject::create("Shopkeeper", "They also built a <cy>door</c>! So i cant go myself and ask them to leave! It's <cr>locked</c>!", 5, 1, false, {255, 255, 255}));
-    array->addObject(DialogObject::create("Shopkeeper", "Can you please <cy>get this door open</c>.. I dont know how much longer i can stand this...", 6, 1, false, {255, 255, 255}));
+    array->addObject(DialogObject::create("Shopkeeper", "I'm having a small issue..", 5, 1, true, {255, 255, 255}));
+    array->addObject(DialogObject::create("Shopkeeper", "Some creatures decided they wanna <cr>DIG A HOLE</c> in the <cy>GARAGE WALL!</c>", 6, 1, true, {255, 255, 255}));
+    array->addObject(DialogObject::create("Shopkeeper", "And start living there...", 6, 1, true, {255, 255, 255}));
+    array->addObject(DialogObject::create("Shopkeeper", "They also built a <cy>door</c>! So i cant go myself and ask them to leave! It's <cr>locked</c>!", 5, 1, true, {255, 255, 255}));
+    array->addObject(DialogObject::create("Shopkeeper", "Can you please <cy>get this door open</c>.. I dont know how much longer i can stand this...", 6, 1, true, {255, 255, 255}));
 
     m_fields->dialogue = DialogLayer::createWithObjects(array, 1);
     m_fields->dialogue->m_delegate = this;
@@ -180,20 +180,20 @@ void CACGarageLayer::postDoorOpenDialogue(){
     auto array = CCArray::create();
 
     array->addObject(DialogObject::create("Shopkeeper", "Woah! What was that loud <cr>BOOM</c> sound!", 5, 1, false, {255, 255, 255}));
-    array->addObject(DialogObject::create("Shopkeeper", fmt::format("Oh hi <cg>{}</c>!", GJAccountManager::get()->m_username), 5, 1, false, {255, 255, 255}));
-    array->addObject(DialogObject::create("Shopkeeper", "Woah you got that door open!", 5, 1, false, {255, 255, 255}));
-    array->addObject(DialogObject::create("Shopkeeper", "Great job!", 5, 1, false, {255, 255, 255}));
+    array->addObject(DialogObject::create("Shopkeeper", fmt::format("Oh hi <cg>{}</c>!", GJAccountManager::get()->m_username), 5, 1, true, {255, 255, 255}));
+    array->addObject(DialogObject::create("Shopkeeper", "Woah you got that door open!", 5, 1, true, {255, 255, 255}));
+    array->addObject(DialogObject::create("Shopkeeper", "Great job!", 5, 1, true, {255, 255, 255}));
     array->addObject(DialogObject::create("The Cats", "meow.. (hello..)", 999, 1, true, ccColor3B{ 255, 255, 255 }));
-    array->addObject(DialogObject::create("Shopkeeper", "So YOU are the things making all this noise!", 5, 1, false, {255, 255, 255}));
-    array->addObject(DialogObject::create("Shopkeeper", "What even are you?", 6, 1, false, {255, 255, 255}));
-    array->addObject(DialogObject::create("Shopkeeper", "some sort of deadlocked monster? that was exposed to lots of radiation or something?", 6, 1, false, {255, 255, 255}));
+    array->addObject(DialogObject::create("Shopkeeper", "So YOU are the things making all this noise!", 5, 1, true, {255, 255, 255}));
+    array->addObject(DialogObject::create("Shopkeeper", "What even are you?", 6, 1, true, {255, 255, 255}));
+    array->addObject(DialogObject::create("Shopkeeper", "some sort of deadlocked monster? that was exposed to lots of radiation or something?", 6, 1, true, {255, 255, 255}));
     array->addObject(DialogObject::create("The Cats", "meow.. mmeow meoww moewwwwww (we are cats.. not from these lands >:()", 999, 1, true, ccColor3B{ 255, 255, 255 }));
-    array->addObject(DialogObject::create("Shopkeeper", fmt::format("Umm <cg>{}</c> do u understand what they are saying?", GJAccountManager::get()->m_username), 5, 1, false, {255, 255, 255}));
+    array->addObject(DialogObject::create("Shopkeeper", fmt::format("Umm <cg>{}</c> do u understand what they are saying?", GJAccountManager::get()->m_username), 5, 1, true, {255, 255, 255}));
     array->addObject(DialogObject::create("The Cats", "We are the cats! we come in peace!", 999, 1, true, ccColor3B{ 255, 255, 255 }));
-    array->addObject(DialogObject::create("Shopkeeper", "If you come in peace then what is all this noise about..", 6, 1, false, {255, 255, 255}));
+    array->addObject(DialogObject::create("Shopkeeper", "If you come in peace then what is all this noise about..", 6, 1, true, {255, 255, 255}));
     array->addObject(DialogObject::create("The Cats", "We are sorry if we disturbed you, we do not wish any harm!", 999, 1, true, ccColor3B{ 255, 255, 255 }));
-    array->addObject(DialogObject::create("Shopkeeper", "Yeah yeah just dont do this again..", 6, 1, false, {255, 255, 255}));
-    array->addObject(DialogObject::create("Shopkeeper", fmt::format("Alright, now that that's covered, i can finally exist in peace, thank you <cg>{}</c>", GJAccountManager::get()->m_username), 5, 1, false, {255, 255, 255}));
+    array->addObject(DialogObject::create("Shopkeeper", "Yeah yeah just dont do this again..", 6, 1, true, {255, 255, 255}));
+    array->addObject(DialogObject::create("Shopkeeper", fmt::format("Alright, now that that's covered, i can finally exist in peace, thank you <cg>{}</c>", GJAccountManager::get()->m_username), 5, 1, true, {255, 255, 255}));
     array->addObject(DialogObject::create("The Cats", "Thanks for helping us introduce ourselves to this local, we were having trouble doing that ourselves", 999, 1, true, ccColor3B{ 255, 255, 255 }));
     array->addObject(DialogObject::create("The Cats", "Feel free to come visit our hideout anytime! See you later :)", 999, 1, true, ccColor3B{ 255, 255, 255 }));
     
