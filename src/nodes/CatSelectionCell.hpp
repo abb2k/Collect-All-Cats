@@ -9,14 +9,14 @@ using namespace geode::prelude;
 
 class CatSelectionCell : public CCMenu {
 public:
-    static CatSelectionCell* create(GJGameLevel* level);
+    static CatSelectionCell* create(const CatStats& stats);
 
     void togglePlaced(bool placed, bool changeToggleSprite);
 
     CatStats& getStats() { return myCatStats; }
 
 private:
-    virtual bool init(GJGameLevel* level);
+    virtual bool init(const CatStats& stats);
 
     CatStats myCatStats = CatStats::createEmpty();
     SimpleToggler* selectedToggle;

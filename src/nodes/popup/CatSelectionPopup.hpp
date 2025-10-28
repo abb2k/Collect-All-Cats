@@ -4,6 +4,7 @@
 
 using namespace geode::prelude;
 
+#include <types/CatStats.hpp>
 
 class CatSelectionPopup : public Popup<> {
     public:
@@ -25,15 +26,16 @@ class CatSelectionPopup : public Popup<> {
         ButtonSprite* selAllBtnSprite;
         ButtonSprite* deselAllBtnSprite;
 
-        std::vector<CCMenu*> allCells{};
+        std::vector<CatStats> allLevels{};
         std::string filter = "";
-        float prevHeight;
-        std::vector<CCMenu*> getFilteredCells();
-        std::map<CCMenu*, bool> isVisible{};
-
-        void updateCellVisibility();
-
-        void update(float dt) override;
 
         bool containsWord(const std::string& str, const std::string& word);
+
+        int currentPage = 0;
+        const int CATS_PER_PAGE = 21;
+        std::vector<CatStats*> getFilteredCats();
+        std::vector<CatStats*> getPageCats();
+
+        void updatePageContent();
+        float prevHeight;
 };

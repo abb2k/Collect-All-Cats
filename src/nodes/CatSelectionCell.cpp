@@ -3,9 +3,9 @@
 #include <utils/Save.hpp>
 #include <nodes/LinkedCatDisplay.hpp>
 
-CatSelectionCell* CatSelectionCell::create(GJGameLevel* level) {
+CatSelectionCell* CatSelectionCell::create(const CatStats& stats) {
     auto ret = new CatSelectionCell();
-    if (ret->init(level)) {
+    if (ret->init(stats)) {
         ret->autorelease();
         return ret;
     }
@@ -13,7 +13,7 @@ CatSelectionCell* CatSelectionCell::create(GJGameLevel* level) {
     return nullptr;
 }
 
-bool CatSelectionCell::init(GJGameLevel* level) {
+bool CatSelectionCell::init(const CatStats& stats) {
     if (!CCMenu::init()) return false;
 
     catsLayer = CatsLayer::activeCatLayer();
@@ -28,10 +28,7 @@ bool CatSelectionCell::init(GJGameLevel* level) {
     BG->setAnchorPoint({0, 0});
     this->addChild(BG);
 
-    auto didLoadCat = Save::loadCatOrDefault(level);
-    
-    if (didLoadCat.isErr()) log::error("{}", didLoadCat.unwrapErr());
-    else myCatStats = didLoadCat.unwrap();
+    myCatStats = stats;
 
     nameLabel = CCLabelBMFont::create(myCatStats.name.c_str(), "bigFont.fnt");
     nameLabel->setID("name-label");

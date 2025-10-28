@@ -3,6 +3,8 @@
 #include <layers/CatsLayer.hpp>
 #include <nodes/CatSelectionCell.hpp>
 
+#include <utils/Save.hpp>
+
 CatSelectionPopup* CatSelectionPopup::create() {
     auto ret = new CatSelectionPopup();
     // @geode-ignore(unknown-resource)
@@ -35,15 +37,16 @@ bool CatSelectionPopup::setup() {
 
     for (const auto& level : catsLayer->beatenExtremes)
     {
-        auto cell = CatSelectionCell::create(level);
-        allCells.push_back(cell);
-        catsScrollLayer->m_contentLayer->addChild(cell);
+        auto didGetCat = Save::loadCatOrDefault(level);
+
+        if (didGetCat.isOk())
+            allLevels.push_back(didGetCat.unwrap());
+        else
+            log::error("{}", didGetCat.unwrapErr());
     }
 
-    std::sort(allCells.begin(), allCells.end(), [](CCMenu* aM, CCMenu* bM){ 
-        auto a = typeinfo_cast<CatSelectionCell*>(aM);
-        auto b = typeinfo_cast<CatSelectionCell*>(bM);
-        return a->getStats().name < b->getStats().name;
+    std::sort(allLevels.begin(), allLevels.end(), [](const CatStats& a, const CatStats& b){ 
+        return a.name < b.name;
     });
 
     auto scrollBar = Scrollbar::create(catsScrollLayer);
@@ -76,11 +79,12 @@ bool CatSelectionPopup::setup() {
     searchBar->setPosition({130, 277});
     searchBar->setCallback([&](const std::string& newStr){
         filter = newStr;
-        CatSelectionPopup::updateCellVisibility();
+        currentPage = 0;
+        CatSelectionPopup::updatePageContent();
     });
     m_mainLayer->addChild(searchBar);
 
-    CatSelectionPopup::updateCellVisibility();
+    CatSelectionPopup::updatePageContent();
 
     CCTouchDispatcher::get()->addPrioTargetedDelegate(m_buttonMenu, -504, true);
 
@@ -128,54 +132,65 @@ void CatSelectionPopup::fadeTo(GLubyte opacity, float time){
 
 }
 
-std::vector<CCMenu*> CatSelectionPopup::getFilteredCells(){
-    std::vector<CCMenu*> toReturn{};
+bool CatSelectionPopup::containsWord(const std::string& str, const std::string& word){
+    auto pos = str.find(word);
+    if (pos == std::string::npos) return false;
+
+    return pos == 0 || str[pos - 1] == ' ';
+}
+
+std::vector<CatStats*> CatSelectionPopup::getFilteredCats(){
+    std::vector<CatStats*> toReturn{};
 
     std::transform(filter.begin(), filter.end(), filter.begin(), ::tolower);
-    if (filter == "") return allCells;
+    if (filter == ""){
+        for (auto& catStat : allLevels)
+            toReturn.push_back(&catStat);
+        return toReturn;
+    }
 
-    for (const auto& cellMenu : allCells){
-        auto cell = typeinfo_cast<CatSelectionCell*>(cellMenu);
+    for (auto& stats : allLevels){
 
-        auto nickname = cell->getStats().name;
+        auto nickname = stats.name;
         std::transform(nickname.begin(), nickname.end(), nickname.begin(), ::tolower);
-        auto lvlname = cell->getStats().getLevel()->m_levelName;
+        auto lvlname = stats.getLevel()->m_levelName;
         std::transform(lvlname.begin(), lvlname.end(), lvlname.begin(), ::tolower);
  
         if (!CatSelectionPopup::containsWord(nickname, filter) && !CatSelectionPopup::containsWord(lvlname, filter)) continue;
 
-        toReturn.push_back(cell);
+        toReturn.push_back(&stats);
     }
 
     return toReturn;
 }
 
-void CatSelectionPopup::updateCellVisibility(){
-    auto filteredList = CatSelectionPopup::getFilteredCells();
+std::vector<CatStats*> CatSelectionPopup::getPageCats(){
+    std::vector<CatStats*> toReturn{};
 
-    std::vector<CCMenu*> allCellsUnvisited = allCells;
+    auto list = CatSelectionPopup::getFilteredCats();
 
-    isVisible.clear();
+    auto startIdx = currentPage * CATS_PER_PAGE;
+    auto endIdx = std::min(startIdx + CATS_PER_PAGE, static_cast<int>(list.size()));
 
-    for (const auto& cellMenu : filteredList){
-        allCellsUnvisited.erase(find(allCellsUnvisited.begin(), allCellsUnvisited.end(), cellMenu));
-        
-        isVisible.insert({cellMenu, true});
-    }
+    for (int i = startIdx; i < endIdx; i++)
+        toReturn.push_back(list[i]);
 
-    for (const auto& cellMenu : allCellsUnvisited){
-        isVisible.insert({cellMenu, false});
-    }
+    return toReturn;
 }
 
-void CatSelectionPopup::update(float dt){
-    for (const auto& cellMenu : allCells){
-        if (!isVisible.contains(cellMenu)) continue;
+void CatSelectionPopup::updatePageContent(){
+    catsScrollLayer->m_contentLayer->removeAllChildren();
 
-        cellMenu->setVisible(isVisible[cellMenu]);
+    auto pageCats = CatSelectionPopup::getPageCats();
+
+    for (const auto& catStatsPtr : pageCats)
+    {
+        auto cell = CatSelectionCell::create(*catStatsPtr);
+        catsScrollLayer->m_contentLayer->addChild(cell);
     }
 
     catsScrollLayer->m_contentLayer->updateLayout();
+    catsScrollLayer->moveToTop();
 
     if (catsScrollLayer->m_contentLayer->getContentHeight() < catsScrollLayer->getContentHeight()){
         catsScrollLayer->setTouchEnabled(false);
@@ -190,11 +205,4 @@ void CatSelectionPopup::update(float dt){
         prevHeight = catsScrollLayer->m_contentLayer->getContentHeight();
         catsScrollLayer->moveToTop();
     }
-}
-
-bool CatSelectionPopup::containsWord(const std::string& str, const std::string& word){
-    auto pos = str.find(word);
-    if (pos == std::string::npos) return false;
-
-    return pos == 0 || str[pos - 1] == ' ';
 }
