@@ -18,6 +18,7 @@ class Save{
         static Result<> saveCat(CatStats* stats);
 
         static Result<CatStats> loadCat(GJGameLevel* relatedLevel);
+        static Result<CatStats> loadCatOrDefault(GJGameLevel* relatedLevel);
 
         static std::vector<int> getPlacedCats();
         static void setPlacedCats(const std::vector<int>& catIDs);

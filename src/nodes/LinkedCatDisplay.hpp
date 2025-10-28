@@ -19,7 +19,11 @@ private:
     void update(float dt);
 
     Result<CatStats> myStats = Err("");
-    CCSprite* kittyColonThreeSprite;
 
+    CCRenderTexture* kittyColonThreeSprite = nullptr;
+    LazySprite* testSpr;
     CCLabelBMFont* nameLabel;
+    bool oneRunTest = false;
+
+    float scaleFactor = 1.5f;
 };

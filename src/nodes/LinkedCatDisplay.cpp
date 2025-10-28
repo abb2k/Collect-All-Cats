@@ -28,25 +28,27 @@ bool LinkedCatDisplay::init(CatStats* catStats) {
 }
 
 void LinkedCatDisplay::setCat(const CatStats& catStats){
-    kittyColonThreeSprite = CCSprite::createWithSpriteFrameName("default_cat.png"_spr);
-    kittyColonThreeSprite->setPosition(kittyColonThreeSprite->getContentSize() / 2);
-    kittyColonThreeSprite->setScale(1.5f);
+    float scale = CCDirector::sharedDirector()->getContentScaleFactor();
+
+    kittyColonThreeSprite = CCRenderTexture::create(150 * scaleFactor, 150 * scaleFactor);
+    kittyColonThreeSprite->setScale(kittyColonThreeSprite->getSprite()->getContentWidth() / 66.66f / scaleFactor);
+    kittyColonThreeSprite->setPosition(kittyColonThreeSprite->getSprite()->getContentSize() / 2);
     this->addChild(kittyColonThreeSprite);
 
-    this->setContentSize(kittyColonThreeSprite->getContentSize());
+    this->setContentSize(kittyColonThreeSprite->getSprite()->getContentSize());
     this->setAnchorPoint({.5f, .5f});
 
     auto shadow = CCSprite::createWithSpriteFrameName("d_circle_02_001.png");
     shadow->setZOrder(-1);
-    shadow->setScale(kittyColonThreeSprite->getContentWidth() / shadow->getContentWidth());
+    shadow->setScale(kittyColonThreeSprite->getSprite()->getContentWidth() / shadow->getContentWidth());
     shadow->setScaleY(shadow->getScaleY() / 2);
-    shadow->setPosition(kittyColonThreeSprite->getPosition() - ccp(0, kittyColonThreeSprite->getContentHeight() / 2));
+    shadow->setPosition(kittyColonThreeSprite->getPosition() - ccp(0, kittyColonThreeSprite->getSprite()->getContentHeight() / 2));
     shadow->setColor({0,0,0});
     shadow->setOpacity(150);
     this->addChild(shadow);
 
     nameLabel = CCLabelBMFont::create(catStats.name.c_str(), "goldFont.fnt");
-    nameLabel->setPosition(kittyColonThreeSprite->getContentSize() / 2 + ccp(0, kittyColonThreeSprite->getContentHeight() / 1.5f));
+    nameLabel->setPosition(kittyColonThreeSprite->getSprite()->getContentSize() / 2 + ccp(0, kittyColonThreeSprite->getSprite()->getContentHeight() / 1.5f));
     nameLabel->setVisible(false);
     this->addChild(nameLabel);
 
@@ -68,10 +70,22 @@ void LinkedCatDisplay::update(float dt){
         return;
     }
 
-    auto visual = catRef->getVisualParent();
+    float scale = CCDirector::sharedDirector()->getContentScaleFactor();
 
-    kittyColonThreeSprite->setRotationX(visual->getRotationX());
-    kittyColonThreeSprite->setRotationY(visual->getRotationY());
+    auto visual = catRef->getVisualParent();
+    auto oldPos = visual->getPosition();
+    auto oldSize = visual->getScale();
+    auto textSize = kittyColonThreeSprite->getSprite()->getContentSize();
+
+    visual->setPosition({(textSize.width - visual->getContentSize().width) / 2, (textSize.height - visual->getContentSize().height) / 2});
+    visual->setScale(scaleFactor);
+    
+    kittyColonThreeSprite->beginWithClear(0, 0, 0, 0);
+    visual->visit();
+    kittyColonThreeSprite->end();
+    
+    visual->setScale(oldSize);
+    visual->setPosition(oldPos);
 }
 
 void LinkedCatDisplay::setNameAboveVisible(bool b){

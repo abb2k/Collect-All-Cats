@@ -28,15 +28,9 @@ bool CatSelectionCell::init(GJGameLevel* level) {
     BG->setAnchorPoint({0, 0});
     this->addChild(BG);
 
-    auto didLoadCat = Save::loadCat(level);
-    if (didLoadCat.isErr()){
-        myCatStats = CatStats::createDefault(level);
-        auto didCatSave = Save::saveCat(&myCatStats);
-        if (didCatSave.isErr()){
-            log::info("Failed to load cat!\n{}", didCatSave.unwrapErr());
-            return false;
-        }
-    }
+    auto didLoadCat = Save::loadCatOrDefault(level);
+    
+    if (didLoadCat.isErr()) log::error("{}", didLoadCat.unwrapErr());
     else myCatStats = didLoadCat.unwrap();
 
     nameLabel = CCLabelBMFont::create(myCatStats.name.c_str(), "bigFont.fnt");

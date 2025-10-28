@@ -35,6 +35,19 @@ Result<CatStats> Save::loadCat(GJGameLevel* relatedLevel){
     
     return Ok(stats);
 }
+Result<CatStats> Save::loadCatOrDefault(GJGameLevel* relatedLevel){
+    auto didLoadCat = Save::loadCat(relatedLevel);
+    if (didLoadCat.isErr()){
+        auto catStats = CatStats::createDefault(relatedLevel);
+        auto didCatSave = Save::saveCat(&catStats);
+        if (didCatSave.isErr()){
+            return Err("Failed to load cat!\n{}", didCatSave.unwrapErr());
+        }
+
+        return Ok(catStats);
+    }
+    else return didLoadCat;
+}
 
 std::string Save::getCatSaveFileName(GJGameLevel* relatedLevel){
     return fmt::format("{}.json", relatedLevel->m_levelID.value());

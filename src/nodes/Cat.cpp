@@ -23,17 +23,11 @@ bool Cat::init(CCNode* wanderArea, GJGameLevel* relatedLevel) {
 
     ignoreAnchorPointForPosition(false);
 
-    auto didLoadCat = Save::loadCat(relatedLevel);
-    if (didLoadCat.isErr()){
-        stats = CatStats::createDefault(relatedLevel);
-
-        auto didSaveWork = Save::saveCat(this);
-        if (didSaveWork.isErr()){
-            log::error("Failed to load cat!\n{}", didSaveWork.unwrapErr());
-            return false;
-        }
-    }
+    auto didLoadCat = Save::loadCatOrDefault(relatedLevel);
+    
+    if (didLoadCat.isErr()) log::error("{}", didLoadCat.unwrapErr());
     else stats = didLoadCat.unwrap();
+    
     stats.setOnAREDLStatsRecievedCallback([this](CatStats*){
         log::info("{}", stats.getLevelDetails()->position);
     });
