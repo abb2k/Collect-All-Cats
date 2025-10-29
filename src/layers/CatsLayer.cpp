@@ -2,7 +2,7 @@
 
 #include <nodes/popup/RoomSettingsPopup.hpp>
 #include <utils/Save.hpp>
-#include <utils/Utils.hpp>
+#include <utils/CatUtils.hpp>
 #include <kittyAI/CatWanderState.hpp>
 #include <kittyAI/CatIdleState.hpp>
 #include <layers/NewCatsLayer.hpp>
@@ -219,14 +219,14 @@ void CatsLayer::addCat(GJGameLevel* catLevel){
     auto cat = Cat::create(catContainer, catLevel);
     if (cat == nullptr) return;
     cat->setPositionY(20);
-    cat->setPositionX(Utils::GetRandomFloat(0, ScrollNode->content->getContentWidth() - cat->getScaledContentWidth()));
+    cat->setPositionX(CatUtils::GetRandomFloat(0, ScrollNode->content->getContentWidth() - cat->getScaledContentWidth()));
     cat->addAIState("wander", CatWanderState::create({1, 3}, {10, 25}));
     cat->addAIState("idle", CatIdleState::create({1, 4}));
     cat->addAIStateTransition("wander", "wander");
     cat->addAIStateTransition("idle", "idle");
     cat->addAIStateTransition("idle", "wander");
     cat->addAIStateTransition("wander", "idle");
-    cat->setDefaultState(Utils::GetRandomInt(0, 1) == 0 ? "idle" : "wander");
+    cat->setDefaultState(CatUtils::GetRandomInt(0, 1) == 0 ? "idle" : "wander");
     cat->startAI();
     catContainer->addChild(cat);
     spawnedCats.insert({catLevel->m_levelID.value(), cat});

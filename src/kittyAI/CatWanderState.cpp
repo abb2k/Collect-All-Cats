@@ -1,6 +1,6 @@
 #include "CatWanderState.hpp"
 
-#include <utils/Utils.hpp>
+#include <utils/CatUtils.hpp>
 
 std::shared_ptr<CatWanderState> CatWanderState::create(CCPoint minMaxDuration, CCPoint minMaxSpeed){
     auto ret = std::make_shared<CatWanderState>();
@@ -20,11 +20,11 @@ void CatWanderState::step(float dt){
 }
 
 void CatWanderState::onStateStart(){
-    moveDir.x = Utils::GetRandomFloat(-1.5f, 1.5f);
-    moveDir.y = Utils::GetRandomFloat(-1.5f, 1.5f);
+    moveDir.x = CatUtils::GetRandomFloat(-1.5f, 1.5f);
+    moveDir.y = CatUtils::GetRandomFloat(-1.5f, 1.5f);
 
-    moveSpeed = Utils::GetRandomFloat(minMaxSpeed.x, minMaxSpeed.y);
-    duration = Utils::GetRandomFloat(minMaxDuration.x, minMaxDuration.y);
+    moveSpeed = CatUtils::GetRandomFloat(minMaxSpeed.x, minMaxSpeed.y);
+    duration = CatUtils::GetRandomFloat(minMaxDuration.x, minMaxDuration.y);
 
     target->getVisualParent()->setRotationY(moveDir.x < 0 ? 0 : 180);
 }

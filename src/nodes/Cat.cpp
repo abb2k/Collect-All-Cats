@@ -1,10 +1,10 @@
 #include "Cat.hpp"
 
-#include <utils/Utils.hpp>
+#include <utils/CatUtils.hpp>
 #include <utils/Save.hpp>
 #include <layers/CatsLayer.hpp>
 #include <kittyAI/CatAIStateBase.hpp>
-#include <utils/Utils.hpp>
+#include <utils/CatUtils.hpp>
 
 Cat* Cat::create(CCNode* wanderArea, GJGameLevel* relatedLevel) {
     auto ret = new Cat();
@@ -61,7 +61,7 @@ bool Cat::init(CCNode* wanderArea, GJGameLevel* relatedLevel) {
     levelNameLabel->setScale(.25f);
     this->addChild(levelNameLabel);
 
-    getVisualParent()->setRotationY(Utils::GetRandomInt(0, 1) == 0 ? 180 : 0);
+    getVisualParent()->setRotationY(CatUtils::GetRandomInt(0, 1) == 0 ? 180 : 0);
 
     if (stats.name == stats.getLevel()->m_levelName)
         levelNameLabel->setString("");
@@ -148,7 +148,7 @@ void Cat::moveToState(const std::string& stateName){
 
         auto possibleOthers = AIStatesTransitions[state->name];
 
-        Cat::moveToState(possibleOthers[Utils::GetRandomInt(0, possibleOthers.size() - 1)]);
+        Cat::moveToState(possibleOthers[CatUtils::GetRandomInt(0, possibleOthers.size() - 1)]);
     });
 }
 

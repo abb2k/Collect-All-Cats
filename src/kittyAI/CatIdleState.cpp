@@ -1,6 +1,6 @@
 #include "CatIdleState.hpp"
 
-#include <utils/Utils.hpp>
+#include <utils/CatUtils.hpp>
 
 std::shared_ptr<CatIdleState> CatIdleState::create(CCPoint minMaxDuration){
     auto ret = std::make_shared<CatIdleState>();
@@ -15,5 +15,5 @@ void CatIdleState::step(float dt){
 }
 
 void CatIdleState::onStateStart(){
-    duration = Utils::GetRandomFloat(minMaxDuration.x, minMaxDuration.y);
+    duration = CatUtils::GetRandomFloat(minMaxDuration.x, minMaxDuration.y);
 }

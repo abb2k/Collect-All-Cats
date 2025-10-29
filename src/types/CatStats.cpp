@@ -1,6 +1,6 @@
 #include "CatStats.hpp"
 
-#include <utils/Utils.hpp>
+#include <utils/CatUtils.hpp>
 #include <types/CatStatsSerializer.hpp>
 
 #include <types/AREDLLevelDetailsSerializer.hpp>
@@ -16,7 +16,7 @@ CatStats CatStats::createDefault(GJGameLevel* relatedLevel){
 
     float randomSizeOffset = .2f;
 
-    newStats.size = Utils::GetRandomFloat(CatStats::MIN_SIZE + randomSizeOffset, CatStats::MAX_SIZE - randomSizeOffset);
+    newStats.size = CatUtils::GetRandomFloat(CatStats::MIN_SIZE + randomSizeOffset, CatStats::MAX_SIZE - randomSizeOffset);
     
     return newStats;
 }
