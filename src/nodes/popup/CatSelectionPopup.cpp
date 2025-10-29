@@ -166,7 +166,7 @@ bool CatSelectionPopup::containsWord(const std::string& str, const std::string& 
 std::vector<CatStats*> CatSelectionPopup::getFilteredCats(){
     std::vector<CatStats*> toReturn{};
 
-    std::transform(filter.begin(), filter.end(), filter.begin(), ::tolower);
+    std::transform(std::begin(filter), std::end(filter), std::begin(filter), ::tolower);
     if (filter == ""){
         for (auto& catStat : allLevels)
             toReturn.push_back(&catStat);
@@ -176,9 +176,9 @@ std::vector<CatStats*> CatSelectionPopup::getFilteredCats(){
     for (auto& stats : allLevels){
 
         auto nickname = stats.name;
-        std::transform(nickname.begin(), nickname.end(), nickname.begin(), ::tolower);
+        std::transform(std::begin(nickname), std::end(nickname), std::begin(nickname), ::tolower);
         auto lvlname = stats.getLevel()->m_levelName;
-        std::transform(lvlname.begin(), lvlname.end(), lvlname.begin(), ::tolower);
+        std::transform(std::begin(lvlname), std::end(lvlname), std::begin(lvlname), ::tolower);
  
         if (!CatSelectionPopup::containsWord(nickname, filter) && !CatSelectionPopup::containsWord(lvlname, filter)) continue;
 
