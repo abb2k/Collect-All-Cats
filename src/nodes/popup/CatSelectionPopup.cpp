@@ -166,14 +166,15 @@ bool CatSelectionPopup::containsWord(const std::string& str, const std::string& 
 std::vector<CatStats*> CatSelectionPopup::getFilteredCats(){
     std::vector<CatStats*> toReturn{};
 
-    auto makeLower = [](std::string& str) {
+    auto makeLower = [](std::string str) -> std::string {
         for (size_t i = 0; i < str.length(); ++i) {
             str[i] = static_cast<char>(std::tolower(static_cast<unsigned char>(str[i])));
         }
+        return str;
     };
 
-    makeLower(filter);
-    if (filter == ""){
+    auto lowerFilter = makeLower(filter);
+    if (lowerFilter == ""){
         for (auto& catStat : allLevels)
             toReturn.push_back(&catStat);
         return toReturn;
@@ -181,12 +182,10 @@ std::vector<CatStats*> CatSelectionPopup::getFilteredCats(){
 
     for (auto& stats : allLevels){
 
-        auto nickname = stats.name;
-        makeLower(nickname);
-        auto lvlname = stats.getLevel()->m_levelName;
-        makeLower(lvlname);
+        auto nickname = makeLower(stats.name);
+        auto lvlname = makeLower(stats.getLevel()->m_levelName);
  
-        if (!CatSelectionPopup::containsWord(nickname, filter) && !CatSelectionPopup::containsWord(lvlname, filter)) continue;
+        if (!CatSelectionPopup::containsWord(nickname, lowerFilter) && !CatSelectionPopup::containsWord(lvlname, lowerFilter)) continue;
 
         toReturn.push_back(&stats);
     }
