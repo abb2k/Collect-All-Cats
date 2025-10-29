@@ -6,6 +6,12 @@ using namespace geode::prelude;
 
 #include <types/AREDLLevelDetails.hpp>
 
+struct catSprites{
+    CCSprite* primary;
+    std::optional<CCSprite*> secondary;
+    std::optional<CCSprite*> noncolor;
+};
+
 struct CatStats{
     public:
         std::string name;
@@ -38,8 +44,8 @@ struct CatStats{
         
         void loadAREDLLevelData();
 
-        std::pair<std::string, std::string> getSpritesPathsForCat();
-        static std::pair<std::string, std::string> getSpritesPathsForCat(unsigned int typeID);
+        catSprites createSpritesPathsForCat();
+        static catSprites createSpritesPathsForCat(unsigned int typeID);
 
     private:
         GJGameLevel* relatedLevel;

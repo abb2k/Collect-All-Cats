@@ -82,7 +82,7 @@ bool NewCatsLayer::init(const std::vector<CatStats>& newCats) {
     kittyScroll->m_contentLayer->setLayout(RowLayout::create()
         ->setCrossAxisOverflow(false)
         ->setGap(15)
-        //->setMinRelativeScale(false)
+        ->setGrowCrossAxis(true)
         ->setAutoGrowAxis(kittyScroll->getContentWidth())
     );
     this->addChild(kittyScroll);
@@ -248,8 +248,8 @@ void NewCatsLayer::registerWithTouchDispatcher() {
 }
 
 void NewCatsLayer::update(float dt){
-    kittyScroll->m_contentLayer->setScale(.75f);
-    kittyScroll->m_contentLayer->setPositionY(15 + 50 / 2);
+    kittyScroll->m_contentLayer->setScale(.5f);
+    kittyScroll->m_contentLayer->setPositionY(15 + 50);
     kittyScroll->m_contentLayer->updateLayout();
 
     if (kittyScroll->m_contentLayer->getScaledContentWidth() > kittyScroll->getContentWidth()){

@@ -9,16 +9,20 @@ using namespace geode::prelude;
 class CatVisualDisplay : public CCMenu {
 public:
     static CatVisualDisplay* create();
+    bool init() override;
 
-    void updateVisuals(CatStats& stats);
+    void updateVisuals(const CatStats& stats);
 
+private:
     void updateCoreSprites(unsigned int typeID);
-
     void updateCorePrimary(ccColor4B primary);
     void updateCoreSecondary(ccColor4B secondary);
 
-private:
-    virtual bool init();
+    CCSprite* m_primarySprite = nullptr;
+    CCSprite* m_secondarySprite = nullptr;
+    CCSprite* m_noncolorSprite = nullptr;
 
-    std::optional<CatStats> current = std::nullopt;
+    std::optional<CatStats> current;
+
+    void initSprite(CCSprite* spr, const char* id);
 };

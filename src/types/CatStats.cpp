@@ -54,6 +54,8 @@ bool CatStats::isEmpty(){
 }
 
 void CatStats::loadAREDLLevelData(){
+    if (levelDetails.has_value() && levelDetails.value().level_id == relatedLevel->m_levelID) return;
+    
     web::WebRequest req;
     auto task = req.get(fmt::format("https://api.aredl.net/v2/api/aredl/levels/{}", relatedLevel->m_levelID));
 
@@ -77,10 +79,25 @@ void CatStats::setOnAREDLStatsRecievedCallback(std::function<void(CatStats*)> ca
     onAREDLStatsRecieved = callback;
 }
 
-std::pair<std::string, std::string> CatStats::getSpritesPathsForCat(){
-    return CatStats::getSpritesPathsForCat(this->catTypeID);
+catSprites CatStats::createSpritesPathsForCat(){
+    return CatStats::createSpritesPathsForCat(this->catTypeID);
 }
 
-std::pair<std::string, std::string> CatStats::getSpritesPathsForCat(unsigned int typeID){
-    return {fmt::format("cat-{}_0.png"_spr, typeID), fmt::format("cat-{}_1.png"_spr, typeID)};
+catSprites CatStats::createSpritesPathsForCat(unsigned int typeID){
+    bool isSecondaryFallback = true;
+    bool isNoncolorFallback = true;
+
+    if (std::filesystem::exists(Mod::get()->getResourcesDir() / fmt::format("cat-{}_1.png", typeID))){
+        isSecondaryFallback = false;
+    }
+
+    if (std::filesystem::exists(Mod::get()->getResourcesDir() / fmt::format("cat-{}_2.png", typeID))){
+        isNoncolorFallback = false;
+    }
+
+    return catSprites{
+        .primary = CCSprite::create(fmt::format("cat-{}_0.png"_spr, typeID).c_str()),
+        .secondary = isSecondaryFallback ? std::nullopt : std::make_optional(std::move(CCSprite::create(fmt::format("cat-{}_1.png"_spr, typeID).c_str()))),
+        .noncolor = isNoncolorFallback ? std::nullopt : std::make_optional(std::move(CCSprite::create(fmt::format("cat-{}_2.png"_spr, typeID).c_str()))),
+    };
 }

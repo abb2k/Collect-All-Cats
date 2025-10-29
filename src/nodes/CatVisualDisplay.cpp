@@ -20,54 +20,76 @@ bool CatVisualDisplay::init() {
     return true;
 }
 
-void CatVisualDisplay::updateVisuals(CatStats& stats){
-    
-    if (!current.has_value() || stats.catTypeID != current.value().catTypeID)
+void CatVisualDisplay::updateVisuals(const CatStats& stats){
+    const CatStats* cur = current.has_value() ? &current.value() : nullptr;
+
+    if (!cur || stats.catTypeID != cur->catTypeID)
         this->updateCoreSprites(stats.catTypeID);
 
-    if (!current.has_value() || stats.primaryColor != current.value().primaryColor)
+    if (!cur || stats.primaryColor != cur->primaryColor)
         this->updateCorePrimary(stats.primaryColor);
-    
-    if (!current.has_value() || stats.secondaryColor != current.value().secondaryColor)
+
+    if (!cur || stats.secondaryColor != cur->secondaryColor)
         this->updateCoreSecondary(stats.secondaryColor);
 
     current = stats;
 }
 
+void CatVisualDisplay::initSprite(CCSprite* spr, const char* id) {
+    if (!spr) return;
+    spr->setID(id);
+    spr->setScale(.7f);
+    spr->setPosition(this->getContentSize() / 2);
+    this->addChild(spr);
+}
+
 void CatVisualDisplay::updateCoreSprites(unsigned int typeID){
-    if (auto primary = this->getChildByID("kitty-color-three-sprite-primary")) {
-        this->removeChild(primary, true);
+    if (m_primarySprite) {
+        this->removeChild(m_primarySprite, true);
+        m_primarySprite = nullptr;
     }
-    if (auto secondary = this->getChildByID("kitty-color-three-sprite-secondary")) {
-        this->removeChild(secondary, true);
+    if (m_secondarySprite) {
+        this->removeChild(m_secondarySprite, true);
+        m_secondarySprite = nullptr;
+    }
+    if (m_noncolorSprite) {
+        this->removeChild(m_noncolorSprite, true);
+        m_noncolorSprite = nullptr;
     }
 
-    auto sprites = CatStats::getSpritesPathsForCat(typeID);
+    std::thread([this, typeID]() {
+        geode::queueInMainThread([this, typeID]() {
+            auto sprites = CatStats::createSpritesPathsForCat(typeID);
 
-    auto KCTSPrimary = CCSprite::create(sprites.first.c_str());
-    KCTSPrimary->setID("kitty-color-three-sprite-primary");
-    KCTSPrimary->setScale(.7f);
-    KCTSPrimary->setPosition(this->getContentSize() / 2);
-    this->addChild(KCTSPrimary);
+            if (sprites.primary) {
+                m_primarySprite = sprites.primary;
+                initSprite(m_primarySprite, "kitty-color-three-sprite-primary");
+            }
 
-    auto KCTSSecondary = CCSprite::create(sprites.second.c_str());
-    KCTSSecondary->setID("kitty-color-three-sprite-secondary");
-    KCTSSecondary->setScale(.7f);
-    KCTSSecondary->setPosition(this->getContentSize() / 2);
-    this->addChild(KCTSSecondary);
+            if (sprites.secondary.has_value()){
+                m_secondarySprite = sprites.secondary.value();
+                initSprite(m_secondarySprite, "kitty-color-three-sprite-secondary");
+            }
+
+            if (sprites.noncolor.has_value()){
+                m_noncolorSprite = sprites.noncolor.value();
+                initSprite(m_noncolorSprite, "kitty-color-three-sprite-noncolor");
+            }
+        });
+
+    }).detach();
 }
 
 void CatVisualDisplay::updateCorePrimary(ccColor4B primary){
-    auto spriteNode = this->getChildByID("kitty-color-three-sprite-primary");
-    if (auto spr = typeinfo_cast<CCSprite*>(spriteNode)) {
-        spr->setColor({primary.r, primary.g, primary.b});
-        spr->setOpacity(primary.a);
-    }
+    if (m_primarySprite == nullptr) return;
+
+    m_primarySprite->setColor({primary.r, primary.g, primary.b});
+    m_primarySprite->setOpacity(primary.a);
 }
+
 void CatVisualDisplay::updateCoreSecondary(ccColor4B secondary){
-    auto spriteNode = this->getChildByID("kitty-color-three-sprite-secondary");
-    if (auto spr = typeinfo_cast<CCSprite*>(spriteNode)) {
-        spr->setColor({secondary.r, secondary.g, secondary.b});
-        spr->setOpacity(secondary.a);
-    }
+    if (m_secondarySprite  == nullptr) return;
+
+    m_secondarySprite->setColor({secondary.r, secondary.g, secondary.b});
+    m_secondarySprite->setOpacity(secondary.a);
 }
