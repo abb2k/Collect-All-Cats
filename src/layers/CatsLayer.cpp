@@ -248,7 +248,7 @@ void CatsLayer::createCatSettingsNode(CCScene* scene){
     if (catSettingsNode != nullptr) return;
     catSettingsNode = CatSettingsLayer::create();
     catSettingsNode->setScale(.6f);
-    catSettingsNode->setPosition({658, 60});
+    catSettingsNode->setPosition({658, 35});
     scene->addChild(catSettingsNode, 100);
 }
 
@@ -273,7 +273,11 @@ void CatsLayer::followUpdate(float dt){
 
     auto cameraPos = (ScrollNode->content->getPosition() + ScrollNode->getAccurateContentSize()) * -1;
 
-    CCPoint destination = ScrollNode->content->getParent()->convertToNodeSpace(ScrollNode->content->convertToWorldSpace(cameraPos - followTarget->getPosition())) + ScrollNode->getContentSize() / 2 / ScrollNode->getCurrentZoom();
+    CCPoint destination = ScrollNode->content->getParent()->convertToNodeSpace(
+        ScrollNode->content->convertToWorldSpace(
+            cameraPos - followTarget->getPosition() - ccp(0, followTarget->getScaledContentHeight() / 2 + 15)
+        )
+    ) + ScrollNode->getContentSize() / 2 / ScrollNode->getCurrentZoom();
     CCPoint lerpedMovement;
 
     lerpedMovement.x = std::lerp(ScrollNode->content->getPositionX(), destination.x, dt * 5);

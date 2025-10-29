@@ -48,4 +48,17 @@ private:
 
     void updateLivingCat();
 
+    CCMenu* topBarMenu;
+    CCMenuItemSpriteExtra* addCatagory(const std::string& name, const std::string& resourceName, CCNode* visual);
+    std::map<CCMenuItemSpriteExtra*, std::pair<std::string, std::string>> catagoriesMapped{};
+    CCMenuItemSpriteExtra* selectedPage = nullptr;
+    void onCatagoryClicked(CCObject* sender);
+
+    void onColorSkinsSwitch(CCObject* sender);
+    CCMenuItemSpriteExtra* skinsSwitchBtn;
+    CCMenuItemSpriteExtra* colorSwitchBtn;
+    int currentEditingPage = 0;
+
+    CCLabelBMFont* catagoryTitle;
+
 };

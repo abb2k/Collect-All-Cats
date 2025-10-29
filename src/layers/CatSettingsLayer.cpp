@@ -19,7 +19,7 @@ bool CatSettingsLayer::init() {
 
     auto winSize = CCDirector::get()->getWinSize();
 
-    this->setContentSize({250, winSize.height});
+    this->setContentSize({250, winSize.height + 50});
     this->setPositionX(winSize.width);
     this->setAnchorPoint({0, 0});
 
@@ -103,6 +103,81 @@ bool CatSettingsLayer::init() {
     nameResetBtn->setPosition({158, 58});
     buttonsMenu->addChild(nameResetBtn);
 
+    auto topBar = CCScale9Sprite::create("square02_small.png");
+    topBar->setContentSize({200, 30});
+    topBar->setPosition({110, 320});
+    topBar->setOpacity(100);
+    this->addChild(topBar);
+
+    topBarMenu = CCMenu::create();
+    topBarMenu->setContentSize(topBar->getContentSize());
+    topBarMenu->setPosition(topBar->getPosition());
+    topBarMenu->ignoreAnchorPointForPosition(false);
+    topBarMenu->setLayout(SimpleAxisLayout::create(Axis::Row)
+        ->setGap(5.0f)
+        ->setMainAxisAlignment(MainAxisAlignment::Start)
+        ->setCrossAxisScaling(AxisScaling::ScaleDownGaps)
+        ->setMainAxisScaling(AxisScaling::ScaleDownGaps)
+        ->setMinRelativeScale(.3f)
+    );
+    this->addChild(topBarMenu);
+
+    auto centerContentBG = CCScale9Sprite::create("square02_small.png");
+    centerContentBG->setContentSize({200, 175});
+    centerContentBG->setPosition({110, 210});
+    centerContentBG->setOpacity(100);
+    this->addChild(centerContentBG);
+
+    auto colorSkinsSwitchMenu = CCMenu::create();
+    colorSkinsSwitchMenu->setContentSize({105, 17});
+    colorSkinsSwitchMenu->setPosition({154, 282});
+    colorSkinsSwitchMenu->setLayout(SimpleAxisLayout::create(Axis::Row)
+        ->setGap(5.0f)
+        ->setMainAxisAlignment(MainAxisAlignment::Start)
+        ->setCrossAxisScaling(AxisScaling::ScaleDownGaps)
+        ->setMainAxisScaling(AxisScaling::ScaleDownGaps)
+        ->setMinRelativeScale(false)
+    );
+    this->addChild(colorSkinsSwitchMenu);
+
+    auto skinsEnabledSpr = ButtonSprite::create("Skin", "bigFont.fnt", "GJ_button_03.png");
+    skinsEnabledSpr->setID("enabled");
+    skinsSwitchBtn = CCMenuItemSpriteExtra::create(
+        skinsEnabledSpr,
+        this,
+        menu_selector(CatSettingsLayer::onColorSkinsSwitch)
+    );
+    auto skinsDisabledSpr = ButtonSprite::create("Skin", "bigFont.fnt", "GJ_button_04.png");
+    skinsDisabledSpr->setID("disabled");
+    skinsDisabledSpr->setPosition(skinsEnabledSpr->getPosition());
+    skinsDisabledSpr->setVisible(false);
+    skinsSwitchBtn->addChild(skinsDisabledSpr);
+    colorSkinsSwitchMenu->addChild(skinsSwitchBtn);
+    skinsSwitchBtn->setEnabled(false);
+
+    auto colorEnabledSpr = ButtonSprite::create("Color", "bigFont.fnt", "GJ_button_03.png");
+    colorEnabledSpr->setID("enabled");
+    colorSwitchBtn = CCMenuItemSpriteExtra::create(
+        colorEnabledSpr,
+        this,
+        menu_selector(CatSettingsLayer::onColorSkinsSwitch)
+    );
+    auto colorDisabledSpr = ButtonSprite::create("Color", "bigFont.fnt", "GJ_button_04.png");
+    colorDisabledSpr->setID("disabled");
+    colorDisabledSpr->setPosition(colorEnabledSpr->getPosition());
+    colorSwitchBtn->addChild(colorDisabledSpr);
+    colorSkinsSwitchMenu->addChild(colorSwitchBtn);
+    colorEnabledSpr->setVisible(false);
+
+    colorSkinsSwitchMenu->updateLayout();
+
+    catagoryTitle = CCLabelBMFont::create("", "bigFont.fnt");
+    catagoryTitle->setAlignment(CCTextAlignment::kCCTextAlignmentLeft);
+    catagoryTitle->setAnchorPoint({0, .5f});
+    catagoryTitle->setScale(.75f);
+    catagoryTitle->setPosition({14, colorSkinsSwitchMenu->getPositionY() + 2});
+    this->addChild(catagoryTitle);
+
     auto blockerMenu = CCMenu::create();
     blockerMenu->setContentSize(this->getContentSize() - ccp(30, 0));
     blockerMenu->setPosition({0, 0});
@@ -118,6 +193,9 @@ bool CatSettingsLayer::init() {
     this->setTouchEnabled(false);
     this->setKeyboardEnabled(false);
     this->setKeypadEnabled(false);
+
+    onCatagoryClicked(addCatagory("Cats", "cat", CCSprite::createWithSpriteFrameName("default_cat.png"_spr)));
+    addCatagory("Hats", "hat", CCSprite::createWithSpriteFrameName("abb2k_cac_closed.png"_spr));
     
     return true;
 }
@@ -221,4 +299,64 @@ void CatSettingsLayer::nameReset(CCObject*){
     nameResetBtn->setVisible(false);
 
     updateLivingCat();
+}
+
+CCMenuItemSpriteExtra* CatSettingsLayer::addCatagory(const std::string& name, const std::string& resourceName, CCNode* visual){
+    auto button = CCMenuItemSpriteExtra::create(
+        visual,
+        this,
+        menu_selector(CatSettingsLayer::onCatagoryClicked)
+    );
+    button->setOpacity(150);
+    topBarMenu->addChild(button);
+
+    catagoriesMapped[button] = {name, resourceName};
+
+    topBarMenu->updateLayout();
+
+    return button;
+}
+
+void CatSettingsLayer::onCatagoryClicked(CCObject* sender){
+    CCMenuItemSpriteExtra* button = nullptr;
+    if (auto btn = typeinfo_cast<CCMenuItemSpriteExtra*>(sender)){button = btn;} else return;
+    if (!catagoriesMapped.contains(button)) return;
+
+    if (selectedPage != nullptr){
+        selectedPage->setEnabled(true);
+        selectedPage->setOpacity(150);
+    }
+    selectedPage = button;
+
+    selectedPage->setEnabled(false);
+    selectedPage->setOpacity(255);
+
+    catagoryTitle->setString(catagoriesMapped[button].first.c_str());
+
+    log::info("now in page {}", catagoriesMapped[button].first);
+}
+
+void CatSettingsLayer::onColorSkinsSwitch(CCObject* sender){
+    if (skinsSwitchBtn == sender){
+        currentEditingPage = 0;
+        skinsSwitchBtn->setEnabled(false);
+        colorSwitchBtn->setEnabled(true);
+
+        skinsSwitchBtn->getChildByID("enabled")->setVisible(true);
+        skinsSwitchBtn->getChildByID("disabled")->setVisible(false);
+
+        colorSwitchBtn->getChildByID("enabled")->setVisible(false);
+        colorSwitchBtn->getChildByID("disabled")->setVisible(true);
+    }
+    else if (colorSwitchBtn == sender){
+        currentEditingPage = 1;
+        skinsSwitchBtn->setEnabled(true);
+        colorSwitchBtn->setEnabled(false);
+
+        skinsSwitchBtn->getChildByID("enabled")->setVisible(false);
+        skinsSwitchBtn->getChildByID("disabled")->setVisible(true);
+
+        colorSwitchBtn->getChildByID("enabled")->setVisible(true);
+        colorSwitchBtn->getChildByID("disabled")->setVisible(false);
+    }
 }
