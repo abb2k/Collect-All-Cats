@@ -73,7 +73,8 @@ void LinkedCatDisplay::update(float dt){
     
     auto catRef = catsLayer->getCatFromStats(stats);
     if (catRef == nullptr){
-        kittyColonThreeSprite->clear(0, 0, 0, 0);
+        kittyColonThreeSprite->beginWithClear(0, 0, 0, 0);
+        kittyColonThreeSprite->end();
         catDisplay->setVisible(true);
         catDisplay->updateVisuals(stats);
         return;
