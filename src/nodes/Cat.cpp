@@ -74,9 +74,18 @@ bool Cat::init(CCNode* wanderArea, GJGameLevel* relatedLevel) {
 }
 
 void Cat::onCatClicked(CCObject*){
-    visualParent->runAction(CCSequence::create(CCTintTo::create(0, 0, 255, 0), CCTintTo::create(0.5f, 255, 255, 255), nullptr));
 
-    CatsLayer::activeCatLayer()->catSettingsNode->showWithCat(stats);
+    if (CatsLayer::activeCatLayer()->getIsInEditor()){
+        visualParent->runAction(CCSequence::create(CCTintTo::create(0, 0, 255, 0), CCTintTo::create(0.5f, 255, 255, 255), nullptr));
+        CatsLayer::activeCatLayer()->catSettingsNode->showWithCat(stats);
+    }
+    else{
+        interaction();
+    }
+};
+
+void Cat::interaction(){
+    FMODAudioEngine::get()->playEffect("meow.mp3"_spr);
 }
 
 CatStats Cat::getStats() { return stats; }
@@ -87,6 +96,7 @@ void Cat::setCatStats(const CatStats& newStats){
     this->setScale(stats.size);
 
     nameLabel->setString(stats.name.c_str());
+    log::info("{}, {}, {}", stats.name, stats.getLevel()->m_levelName, stats.getLevel()->m_levelID.value());
 
     if (stats.name == stats.getLevel()->m_levelName)
         levelNameLabel->setString("");
