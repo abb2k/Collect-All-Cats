@@ -6,7 +6,24 @@ using namespace geode::prelude;
 
 #include <types/AREDLLevelDetails.hpp>
 
-struct catSprites{
+struct CatagoryAssetInfo{
+    std::string catagoryResoueceName;
+    std::optional<unsigned int> assetID;
+    ccColor4B primary;
+    ccColor4B secondary;
+
+    static CatagoryAssetInfo createDefault(const std::string& catagoryResoueceName, unsigned int assetID = -1){
+        CatagoryAssetInfo toReturn{};
+        toReturn.catagoryResoueceName = catagoryResoueceName;
+        toReturn.assetID = assetID == -1 ? std::nullopt : std::make_optional(assetID);
+        toReturn.primary = {255, 255, 255, 255};
+        toReturn.secondary = {255, 255, 255, 255};
+
+        return toReturn;
+    }
+};
+
+struct CatagoryAssetSprites{
     CCSprite* primary;
     std::optional<CCSprite*> secondary;
     std::optional<CCSprite*> noncolor;
@@ -15,11 +32,8 @@ struct catSprites{
 struct CatStats{
     public:
         std::string name;
-        unsigned int catTypeID;
         float size = 1;
-        unsigned int hatID;
-        ccColor4B primaryColor = {255, 255, 255, 255};
-        ccColor4B secondaryColor = {255, 255, 255, 255};
+        std::map<std::string, CatagoryAssetInfo> customazationAssets{};
 
         static const float MIN_SIZE;
         static const float MAX_SIZE;
@@ -44,8 +58,12 @@ struct CatStats{
         
         void loadAREDLLevelData();
 
-        catSprites createSpritesPathsForCat();
-        static catSprites createSpritesPathsForCat(unsigned int typeID);
+        CatagoryAssetInfo getCatagoryAssetInfo(const std::string& catagoryResourceName);
+        void setCatagoryAsset(const std::string& catagoryResourceName, const std::optional<unsigned int>& assetID);
+        void setCatagoryAssetPrimary(const std::string& catagoryResourceName, const ccColor4B& primary);
+        void setCatagoryAssetSecondary(const std::string& catagoryResourceName, const ccColor4B& secondary);
+
+        static Result<CatagoryAssetSprites> getCatagoryAssetSprites(const std::string& catagoryResourceName, unsigned int itemID);
 
     private:
         GJGameLevel* relatedLevel;

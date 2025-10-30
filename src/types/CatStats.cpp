@@ -12,7 +12,7 @@ CatStats CatStats::createDefault(GJGameLevel* relatedLevel){
     CatStats newStats;
     newStats.relatedLevel = relatedLevel;
     newStats.name = relatedLevel->m_levelName;
-    newStats.catTypeID = 0;
+    newStats.setCatagoryAsset("cat", 0);
 
     float randomSizeOffset = .2f;
 
@@ -23,12 +23,9 @@ CatStats CatStats::createDefault(GJGameLevel* relatedLevel){
 
 Result<CatStats> CatStats::createFromJson(const matjson::Value& value){
     CatStats stats;
-    GEODE_UNWRAP_INTO(stats.catTypeID, value["type"].asUInt());
     GEODE_UNWRAP_INTO(stats.name, value["name"].asString());
     GEODE_UNWRAP_INTO(stats.size, value["size"].asDouble());
-    GEODE_UNWRAP_INTO(stats.hatID, value["hatID"].asUInt());
-    GEODE_UNWRAP_INTO(stats.primaryColor, value["primaryColor"].as<ccColor4B>());
-    GEODE_UNWRAP_INTO(stats.secondaryColor, value["secondaryColor"].as<ccColor4B>());
+    GEODE_UNWRAP_INTO(stats.customazationAssets, value["customazationAssets"].as<std::map<std::string, CatagoryAssetInfo>>());
 
     return Ok(stats);
 }
@@ -45,7 +42,6 @@ GJGameLevel* CatStats::getLevel() { return relatedLevel; }
 CatStats CatStats::createEmpty(){
     CatStats newStats;
     newStats.relatedLevel = nullptr;
-    newStats.catTypeID = -1;
     return newStats;
 }
 
@@ -79,25 +75,53 @@ void CatStats::setOnAREDLStatsRecievedCallback(std::function<void(CatStats*)> ca
     onAREDLStatsRecieved = callback;
 }
 
-catSprites CatStats::createSpritesPathsForCat(){
-    return CatStats::createSpritesPathsForCat(this->catTypeID);
+CatagoryAssetInfo CatStats::getCatagoryAssetInfo(const std::string& catagoryResourceName){
+    if (!customazationAssets.contains(catagoryResourceName))
+        customazationAssets[catagoryResourceName] = CatagoryAssetInfo::createDefault(catagoryResourceName);
+
+    return customazationAssets[catagoryResourceName];
 }
 
-catSprites CatStats::createSpritesPathsForCat(unsigned int typeID){
+void CatStats::setCatagoryAsset(const std::string& catagoryResourceName, const std::optional<unsigned int>& assetID){
+    if (!customazationAssets.contains(catagoryResourceName))
+        customazationAssets[catagoryResourceName] = CatagoryAssetInfo::createDefault(catagoryResourceName);
+
+    customazationAssets[catagoryResourceName].assetID = assetID;
+}
+
+void CatStats::setCatagoryAssetPrimary(const std::string& catagoryResourceName, const ccColor4B& primary){
+    if (!customazationAssets.contains(catagoryResourceName))
+        customazationAssets[catagoryResourceName] = CatagoryAssetInfo::createDefault(catagoryResourceName);
+
+    customazationAssets[catagoryResourceName].primary = primary;
+}
+
+void CatStats::setCatagoryAssetSecondary(const std::string& catagoryResourceName, const ccColor4B& secondary){
+    if (!customazationAssets.contains(catagoryResourceName))
+        customazationAssets[catagoryResourceName] = CatagoryAssetInfo::createDefault(catagoryResourceName);
+
+    customazationAssets[catagoryResourceName].secondary = secondary;
+}
+
+Result<CatagoryAssetSprites> CatStats::getCatagoryAssetSprites(const std::string& catagoryResourceName, unsigned int itemID){
     bool isSecondaryFallback = true;
     bool isNoncolorFallback = true;
 
-    if (std::filesystem::exists(Mod::get()->getResourcesDir() / fmt::format("cat-{}_1.png", typeID))){
+    if (!std::filesystem::exists(Mod::get()->getResourcesDir() / fmt::format("{}-{}_0.png", catagoryResourceName, itemID))){
+        return Err("No resource for catagory {} of ID {} exists!", catagoryResourceName, itemID);
+    }
+
+    if (std::filesystem::exists(Mod::get()->getResourcesDir() / fmt::format("{}-{}_1.png", catagoryResourceName, itemID))){
         isSecondaryFallback = false;
     }
 
-    if (std::filesystem::exists(Mod::get()->getResourcesDir() / fmt::format("cat-{}_2.png", typeID))){
+    if (std::filesystem::exists(Mod::get()->getResourcesDir() / fmt::format("{}-{}_2.png", catagoryResourceName, itemID))){
         isNoncolorFallback = false;
     }
 
-    return catSprites{
-        .primary = CCSprite::create(fmt::format("cat-{}_0.png"_spr, typeID).c_str()),
-        .secondary = isSecondaryFallback ? std::nullopt : std::make_optional(std::move(CCSprite::create(fmt::format("cat-{}_1.png"_spr, typeID).c_str()))),
-        .noncolor = isNoncolorFallback ? std::nullopt : std::make_optional(std::move(CCSprite::create(fmt::format("cat-{}_2.png"_spr, typeID).c_str()))),
-    };
+    return Ok(CatagoryAssetSprites{
+        .primary = CCSprite::create(fmt::format("{}-{}_0.png"_spr, catagoryResourceName, itemID).c_str()),
+        .secondary = isSecondaryFallback ? std::nullopt : std::make_optional(std::move(CCSprite::create(fmt::format("{}-{}_1.png"_spr, catagoryResourceName, itemID).c_str()))),
+        .noncolor = isNoncolorFallback ? std::nullopt : std::make_optional(std::move(CCSprite::create(fmt::format("{}-{}_2.png"_spr, catagoryResourceName, itemID).c_str()))),
+    });
 }

@@ -5,7 +5,7 @@
 
 using namespace geode::prelude;
 
-class CatSettingsLayer : public CCLayer {
+class CatSettingsLayer : public CCLayer, public ColorPickerDelegate {
 public:
     static CatSettingsLayer* create();
 
@@ -61,4 +61,6 @@ private:
 
     CCLabelBMFont* catagoryTitle;
 
+    void colorValueChanged(ccColor3B newColor) override;
+    CCMenu* colorOptionsContainer;
 };

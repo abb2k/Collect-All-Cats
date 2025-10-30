@@ -194,6 +194,83 @@ bool CatSettingsLayer::init() {
     catagoryTitle->setPosition({14, colorSkinsSwitchMenu->getPositionY() + 2});
     this->addChild(catagoryTitle);
 
+    colorOptionsContainer = CCMenu::create();
+    colorOptionsContainer->setID("color-options-container");
+    colorOptionsContainer->setPosition(centerContentBG->getPosition());
+    colorOptionsContainer->setContentSize({0, 0});
+    colorOptionsContainer->setVisible(false);
+    this->addChild(colorOptionsContainer);
+
+    auto colorPicker = CCControlColourPicker::colourPicker();
+    colorPicker->setID("color-picker");
+    colorPicker->setDelegate(this);
+    colorPicker->setScale(.6f);
+    colorPicker->setAnchorPoint({0, 0});
+    colorPicker->setPosition({-42, 10});
+    colorPicker->m_colourPicker->setEnabled(false);
+    colorPicker->m_huePicker->setEnabled(false);
+    colorOptionsContainer->addChild(colorPicker);
+
+    auto RInput = TextInput::create(50, "R");
+    RInput->setID("red-input");
+    RInput->setPosition({66, 42});
+    colorOptionsContainer->addChild(RInput);
+    auto GInput = TextInput::create(50, "G");
+    GInput->setID("green-input");
+    GInput->setPosition({66, 9});
+    colorOptionsContainer->addChild(GInput);
+    auto BInput = TextInput::create(50, "B");
+    BInput->setID("blue-input");
+    BInput->setPosition({66, -24});
+    colorOptionsContainer->addChild(BInput);
+
+    auto RInputLabel = CCLabelBMFont::create("R:", "bigFont.fnt");
+    RInputLabel->setID("red-label");
+    RInputLabel->setScale(.75f);
+    RInputLabel->setPosition(RInput->getPosition() - ccp(RInput->getContentWidth() / 2 + RInputLabel->getContentWidth() / 2, 0));
+    colorOptionsContainer->addChild(RInputLabel);
+    auto GInputLabel = CCLabelBMFont::create("G:", "bigFont.fnt");
+    GInputLabel->setID("green-label");
+    GInputLabel->setScale(.75f);
+    GInputLabel->setPosition(GInput->getPosition() - ccp(GInput->getContentWidth() / 2 + GInputLabel->getContentWidth() / 2, 0));
+    colorOptionsContainer->addChild(GInputLabel);
+    auto BInputLabel = CCLabelBMFont::create("B:", "bigFont.fnt");
+    BInputLabel->setID("blue-label");
+    BInputLabel->setScale(.75f);
+    BInputLabel->setPosition(BInput->getPosition() - ccp(BInput->getContentWidth() / 2 + BInputLabel->getContentWidth() / 2, 0));
+    colorOptionsContainer->addChild(BInputLabel);
+
+    auto AInput = TextInput::create(50, "A");
+    AInput->setID("alpha-input");
+    AInput->setPosition({66, -64});
+    colorOptionsContainer->addChild(AInput);
+
+    auto AInputLabel = CCLabelBMFont::create("A:", "bigFont.fnt");
+    AInputLabel->setID("alpha-label");
+    AInputLabel->setScale(.75f);
+    AInputLabel->setPosition(AInput->getPosition() - ccp(AInput->getContentWidth() / 2 + AInputLabel->getContentWidth() / 2, 0));
+    colorOptionsContainer->addChild(AInputLabel);
+
+    auto colorDetailSpr = ButtonSprite::create("Detail", "bigFont.fnt", "GJ_button_03.png");
+    colorDetailSpr->setID("detail");
+    colorDetailSpr->setScale(.7f);
+    auto colorBaseDetailBtn = CCMenuItemSpriteExtra::create(
+        colorDetailSpr,
+        this,
+        menu_selector(CatSettingsLayer::onColorSkinsSwitch)
+    );
+    colorBaseDetailBtn->setID("base-detail-btn");
+    colorDetailSpr->setVisible(false);
+
+    auto colorBaseSpr = ButtonSprite::create("Base", "bigFont.fnt", "GJ_button_02.png");
+    colorBaseSpr->setID("base");
+    colorBaseSpr->setScale(.7f);
+    colorBaseSpr->setPosition(colorDetailSpr->getPosition());
+
+    colorBaseDetailBtn->setPosition({-42, -62});
+    colorBaseDetailBtn->addChild(colorBaseSpr);
+    colorOptionsContainer->addChild(colorBaseDetailBtn);
+
     auto blockerMenu = CCMenu::create();
     blockerMenu->setID("touch-blocker-menu");
     blockerMenu->setContentSize(this->getContentSize() - ccp(30, 0));
@@ -366,6 +443,11 @@ void CatSettingsLayer::onColorSkinsSwitch(CCObject* sender){
 
         colorSwitchBtn->getChildByID("enabled")->setVisible(false);
         colorSwitchBtn->getChildByID("disabled")->setVisible(true);
+
+        colorOptionsContainer->setVisible(false);
+        auto picker = static_cast<CCControlColourPicker*>(colorOptionsContainer->getChildByID("color-picker"));
+        picker->m_huePicker->setEnabled(false);
+        picker->m_colourPicker->setEnabled(false);
     }
     else if (colorSwitchBtn == sender){
         currentEditingPage = 1;
@@ -377,5 +459,14 @@ void CatSettingsLayer::onColorSkinsSwitch(CCObject* sender){
 
         colorSwitchBtn->getChildByID("enabled")->setVisible(true);
         colorSwitchBtn->getChildByID("disabled")->setVisible(false);
+
+        colorOptionsContainer->setVisible(true);
+        auto picker = static_cast<CCControlColourPicker*>(colorOptionsContainer->getChildByID("color-picker"));
+        picker->m_huePicker->setEnabled(true);
+        picker->m_colourPicker->setEnabled(true);
     }
+}
+
+void CatSettingsLayer::colorValueChanged(ccColor3B newColor){
+
 }
