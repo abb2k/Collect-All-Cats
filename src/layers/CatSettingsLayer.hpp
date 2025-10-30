@@ -2,6 +2,7 @@
 
 #include <Geode/Geode.hpp>
 #include <types/CatStats.hpp>
+#include <nodes/CatagoryAssetDisplay.hpp>
 
 using namespace geode::prelude;
 
@@ -73,4 +74,11 @@ private:
     GLubyte getNumFromInput(const std::string& value);
     bool isColorModeDetail;
     void baseDetailSwap(CCObject*);
+
+    CCMenu* skinOptionsContainer;
+    void updateCatagorySkinButtons();
+    void createOptionBtn(bool isSelected, CatagoryAssetDisplay* display, const std::string& id);
+    void onSkinOptionClicked(CCObject* option);
+    void updateSelectedOption();
+    int selectedOptionID;
 };

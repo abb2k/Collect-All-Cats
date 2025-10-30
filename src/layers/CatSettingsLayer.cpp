@@ -194,6 +194,8 @@ bool CatSettingsLayer::init() {
     catagoryTitle->setPosition({14, colorSkinsSwitchMenu->getPositionY() + 2});
     this->addChild(catagoryTitle);
 
+    //color stuff
+
     colorOptionsContainer = CCMenu::create();
     colorOptionsContainer->setID("color-options-container");
     colorOptionsContainer->setPosition(centerContentBG->getPosition());
@@ -313,6 +315,19 @@ bool CatSettingsLayer::init() {
     colorBaseDetailBtn->addChild(colorBaseSpr);
     colorOptionsContainer->addChild(colorBaseDetailBtn);
 
+    //skin stuff
+
+    skinOptionsContainer = CCMenu::create();
+    skinOptionsContainer->setID("skin-options-container");
+    skinOptionsContainer->setPosition(centerContentBG->getPosition());
+    skinOptionsContainer->setContentSize({190, 135});
+    skinOptionsContainer->setPositionY(skinOptionsContainer->getPositionY() - 10);
+    skinOptionsContainer->setLayout(RowLayout::create()
+        ->setCrossAxisAlignment(AxisAlignment::End)
+        ->setCrossAxisOverflow(false)
+    );
+    this->addChild(skinOptionsContainer);
+
     auto blockerMenu = CCMenu::create();
     blockerMenu->setID("touch-blocker-menu");
     blockerMenu->setContentSize(this->getContentSize() - ccp(30, 0));
@@ -393,6 +408,9 @@ void CatSettingsLayer::setToCat(CatStats& stats){
 
     if (catToModify.getLevel() != nullptr)
         nameResetBtn->setVisible(catToModify.name != catToModify.getLevel()->m_levelName);
+
+    updateEditorColors();
+    updateSelectedOption();
 }
 
 void CatSettingsLayer::onBackClicked(CCObject*){
@@ -475,7 +493,7 @@ void CatSettingsLayer::onCatagoryClicked(CCObject* sender){
 
     updateEditorColors();
 
-    log::info("now in page {}", catagoriesMapped[button].first);
+    updateCatagorySkinButtons();
 }
 
 void CatSettingsLayer::onColorSkinsSwitch(CCObject* sender){
@@ -494,6 +512,9 @@ void CatSettingsLayer::onColorSkinsSwitch(CCObject* sender){
         auto picker = static_cast<CCControlColourPicker*>(colorOptionsContainer->getChildByID("color-picker"));
         picker->m_huePicker->setEnabled(false);
         picker->m_colourPicker->setEnabled(false);
+
+        skinOptionsContainer->setVisible(true);
+        skinOptionsContainer->setEnabled(true);
     }
     else if (colorSwitchBtn == sender){
         currentEditingPage = 1;
@@ -509,6 +530,9 @@ void CatSettingsLayer::onColorSkinsSwitch(CCObject* sender){
         colorOptionsContainer->setVisible(true);
         colorPicker->m_huePicker->setEnabled(true);
         colorPicker->m_colourPicker->setEnabled(true);
+
+        skinOptionsContainer->setVisible(false);
+        skinOptionsContainer->setEnabled(false);
     }
 }
 
@@ -563,4 +587,122 @@ void CatSettingsLayer::updateEditorColors(){
     auto color = isColorModeDetail ? catagoryInfo.secondary : catagoryInfo.primary;
     AInput->setString(std::to_string(color.a));
     colorPicker->setColorValue({color.r, color.g, color.b});
+}
+
+void CatSettingsLayer::updateCatagorySkinButtons(){
+    skinOptionsContainer->removeAllChildrenWithCleanup(true);
+
+    if (!catagoriesMapped.contains(selectedPage)) return;
+
+    auto catagoryInfo = catToModify.getCatagoryAssetInfo(catagoriesMapped[selectedPage].second);
+
+    auto prefix = catagoryInfo.catagoryResoueceName + "-";
+
+    if (catagoryInfo.catagoryResoueceName != "cat"){
+        createOptionBtn(!catagoryInfo.assetID.has_value(), nullptr, "-1");
+        if (!catagoryInfo.assetID.has_value()) selectedOptionID = -1;
+    }
+    
+
+    for (const auto& entry : std::filesystem::directory_iterator(Mod::get()->getResourcesDir())) {
+        if (!entry.is_regular_file()) continue;
+        
+        auto filename = entry.path().filename().string();
+        if (filename.starts_with(prefix)) {
+            auto pos = filename.find('_');
+            
+            auto itemIDStr = filename.substr(prefix.size(), pos - prefix.size());
+
+            if (skinOptionsContainer->getChildByID(itemIDStr) != nullptr) continue;
+
+            auto numRes = geode::utils::numFromString<unsigned int>(itemIDStr);
+            if (numRes.isErr()) continue;
+            auto fileAssetID = numRes.unwrap();
+
+            bool isSelected = fileAssetID == (catagoryInfo.assetID.has_value() ? catagoryInfo.assetID.value() : -1);
+
+            auto display = CatagoryAssetDisplay::create();
+            display->setPrimaryColor(catagoryInfo.primary);
+            display->setSecondaryColor(catagoryInfo.secondary);
+            display->setAsset(catagoryInfo.catagoryResoueceName, fileAssetID);
+
+            createOptionBtn(isSelected, display, itemIDStr);
+            
+            if (isSelected)
+                selectedOptionID = fileAssetID;
+        }
+    }
+
+    skinOptionsContainer->updateLayout();
+}
+
+void CatSettingsLayer::onSkinOptionClicked(CCObject* option){
+    if (!catagoriesMapped.contains(selectedPage)) return;
+
+    auto catagoryName = catagoriesMapped[selectedPage].second;
+
+    auto nodeOption = static_cast<CCMenuItemSpriteExtra*>(option);
+
+    auto currentlySelectedOptionNode = static_cast<CCMenuItemSpriteExtra*>(skinOptionsContainer->getChildByID(std::to_string(selectedOptionID)));
+
+    currentlySelectedOptionNode->setEnabled(true);
+    currentlySelectedOptionNode->getChildByID("selected")->setVisible(false);
+    currentlySelectedOptionNode->getChildByID("unselected")->setVisible(true);
+
+    nodeOption->setEnabled(false);
+    nodeOption->getChildByID("selected")->setVisible(true);
+    nodeOption->getChildByID("unselected")->setVisible(false);
+
+    selectedOptionID = geode::utils::numFromString<int>(nodeOption->getID()).unwrapOr(0);
+
+    catToModify.setCatagoryAsset(catagoryName, selectedOptionID == -1 ? std::nullopt : std::make_optional(selectedOptionID));
+    updateLivingCat();
+}
+
+void CatSettingsLayer::updateSelectedOption(){
+    if (!catagoriesMapped.contains(selectedPage)) return;
+
+    auto catagoryInfo = catToModify.getCatagoryAssetInfo(catagoriesMapped[selectedPage].second);
+
+    auto currentlySelectedOptionNode = static_cast<CCMenuItemSpriteExtra*>(skinOptionsContainer->getChildByID(std::to_string(selectedOptionID)));
+
+    currentlySelectedOptionNode->setEnabled(true);
+    currentlySelectedOptionNode->getChildByID("selected")->setVisible(false);
+    currentlySelectedOptionNode->getChildByID("unselected")->setVisible(true);
+
+    auto actualSelectedOption = skinOptionsContainer->getChildByID(std::to_string(catagoryInfo.assetID.has_value() ? catagoryInfo.assetID.value() : -1));
+
+    if (actualSelectedOption != nullptr) return;
+
+    auto actualSelectedOptionBtn = static_cast<CCMenuItemSpriteExtra*>(actualSelectedOption);
+    actualSelectedOptionBtn->setEnabled(false);
+    actualSelectedOptionBtn->getChildByID("selected")->setVisible(true);
+    actualSelectedOptionBtn->getChildByID("unselected")->setVisible(false);
+}
+
+void CatSettingsLayer::createOptionBtn(bool isSelected, CatagoryAssetDisplay* display, const std::string& id){
+    auto spr = CCSprite::create("GJ_button_04.png");
+    spr->setID("unselected");
+    auto btn = CCMenuItemSpriteExtra::create(
+        spr,
+        this,
+        menu_selector(CatSettingsLayer::onSkinOptionClicked)
+    );
+    if (display != nullptr){
+        display->setPosition(spr->getPosition());
+        display->setZOrder(1);
+        btn->addChild(display);
+        display->setAssetUpdatedCallback([spr](CatagoryAssetDisplay* me){
+            me->setScale(spr->getContentWidth() / me->getContentWidth());
+        });
+    }
+    auto spr2 = CCSprite::create("GJ_button_05.png");
+    spr2->setID("selected");
+    spr2->setPosition(spr->getPosition());
+    spr2->setVisible(isSelected);
+    spr->setVisible(!isSelected);
+    btn->addChild(spr2);
+    btn->setID(id);
+    btn->setEnabled(!isSelected);
+    skinOptionsContainer->addChild(btn);
 }

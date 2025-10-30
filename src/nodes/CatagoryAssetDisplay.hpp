@@ -16,6 +16,8 @@ public:
     void setPrimaryColor(const ccColor4B& primary);
     void setSecondaryColor(const ccColor4B& secondary);
 
+    void setAssetUpdatedCallback(const std::function<void(CatagoryAssetDisplay*)>& onAssetUpdated);
+
 private:
 
     CatagoryAssetInfo currentAsset;
@@ -25,4 +27,6 @@ private:
     CCSprite* m_noncolorSprite = nullptr;
 
     void initSprite(CCSprite* spr, const char* id);
+
+    std::function<void(CatagoryAssetDisplay*)> onAssetUpdated = NULL;
 };

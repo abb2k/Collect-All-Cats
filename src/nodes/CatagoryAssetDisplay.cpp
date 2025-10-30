@@ -69,6 +69,9 @@ void CatagoryAssetDisplay::setAsset(const std::string& catagoryName, const std::
                 m_noncolorSprite = sprites.noncolor.value();
                 initSprite(m_noncolorSprite, "kitty-color-three-sprite-noncolor");
             }
+            
+            if (onAssetUpdated != NULL)
+                onAssetUpdated(this);
         });
 
     }).detach();
@@ -102,4 +105,8 @@ void CatagoryAssetDisplay::initSprite(CCSprite* spr, const char* id) {
     spr->setID(id);
     spr->setAnchorPoint({0, 0});
     this->addChild(spr);
+}
+
+void CatagoryAssetDisplay::setAssetUpdatedCallback(const std::function<void(CatagoryAssetDisplay*)>& onAssetUpdated){
+    this->onAssetUpdated = onAssetUpdated;
 }
