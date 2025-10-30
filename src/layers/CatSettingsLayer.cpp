@@ -25,11 +25,13 @@ bool CatSettingsLayer::init() {
 
     // @geode-ignore(unknown-resource)
     auto BG = CCScale9Sprite::create("geode.loader/GE_square03.png");
+    BG->setID("background");
     BG->setAnchorPoint({0, 0});
     BG->setContentSize(this->getContentSize());
     this->addChild(BG);
 
     buttonsMenu = CCMenu::create();
+    buttonsMenu->setID("buttons-menu");
     buttonsMenu->setContentSize(this->getContentSize() - ccp(30, 0));
     buttonsMenu->setPosition({0, 0});
     buttonsMenu->setZOrder(100);
@@ -46,17 +48,21 @@ bool CatSettingsLayer::init() {
         this,
         menu_selector(CatSettingsLayer::onBackClicked)
     );
+    backBtn->setID("back-btn");
     backBtn->setPosition({backBtn->getContentWidth() / 2 + 10, buttonsMenu->getContentHeight() - backBtn->getContentHeight() / 2 - 5});
     buttonsMenu->addChild(backBtn);
 
     auto sizeLabel = CCLabelBMFont::create("Size", "bigFont.fnt");
+    sizeLabel->setID("size-label");
     sizeLabel->setScale(0.75f);
     sizeLabel->setPosition({buttonsMenu->getContentWidth() / 2, 155 - 50});
     this->addChild(sizeLabel);
     sizeScroll = Slider::create(this, menu_selector(CatSettingsLayer::onSizeValueChanged), .75f);
+    sizeScroll->setID("size-slider");
     sizeScroll->setPosition({buttonsMenu->getContentWidth() - sizeScroll->m_groove->getScaledContentWidth() / 2 - sizeScroll->m_sliderBar->getScaledContentWidth() / 4, 132 - 50});
     this->addChild(sizeScroll);
     sizeInputField = TextInput::create(45, "S", "bigFont.fnt");
+    sizeInputField->setID("size-input");
     sizeInputField->setPosition(ccp(30, sizeScroll->getPositionY()));
     sizeInputField->setCommonFilter(CommonFilter::Float);
     sizeInputField->setCallback([&](const std::string& newText){
@@ -78,10 +84,12 @@ bool CatSettingsLayer::init() {
     this->addChild(sizeInputField);
 
     auto nameLabel = CCLabelBMFont::create("Name", "bigFont.fnt");
+    nameLabel->setID("name-label");
     nameLabel->setScale(0.75f);
     nameLabel->setPosition({buttonsMenu->getContentWidth() / 2, 60});
     this->addChild(nameLabel);
     nameInputField = TextInput::create(200, "name", "bigFont.fnt");
+    nameInputField->setID("name-input");
     nameInputField->setPosition({buttonsMenu->getContentWidth() / 2, 78 - 50});
     nameInputField->setCommonFilter(CommonFilter::Name);
     nameInputField->setCallback([&](const std::string& newText){
@@ -100,16 +108,19 @@ bool CatSettingsLayer::init() {
         this,
         menu_selector(CatSettingsLayer::nameReset)
     );
+    nameResetBtn->setID("reset-name-btn");
     nameResetBtn->setPosition({158, 58});
     buttonsMenu->addChild(nameResetBtn);
 
     auto topBar = CCScale9Sprite::create("square02_small.png");
+    topBar->setID("catagory-bar-bg");
     topBar->setContentSize({200, 30});
     topBar->setPosition({110, 320});
     topBar->setOpacity(100);
     this->addChild(topBar);
 
     topBarMenu = CCMenu::create();
+    topBarMenu->setID("catagory-bar-menu");
     topBarMenu->setContentSize(topBar->getContentSize());
     topBarMenu->setPosition(topBar->getPosition());
     topBarMenu->ignoreAnchorPointForPosition(false);
@@ -123,12 +134,14 @@ bool CatSettingsLayer::init() {
     this->addChild(topBarMenu);
 
     auto centerContentBG = CCScale9Sprite::create("square02_small.png");
+    centerContentBG->setID("catagory-content-bg");
     centerContentBG->setContentSize({200, 175});
     centerContentBG->setPosition({110, 210});
     centerContentBG->setOpacity(100);
     this->addChild(centerContentBG);
 
     auto colorSkinsSwitchMenu = CCMenu::create();
+    colorSkinsSwitchMenu->setID("in-catagory-pages-menu");
     colorSkinsSwitchMenu->setContentSize({105, 17});
     colorSkinsSwitchMenu->setPosition({154, 282});
     colorSkinsSwitchMenu->setLayout(SimpleAxisLayout::create(Axis::Row)
@@ -147,6 +160,7 @@ bool CatSettingsLayer::init() {
         this,
         menu_selector(CatSettingsLayer::onColorSkinsSwitch)
     );
+    skinsSwitchBtn->setID("skins-btn");
     auto skinsDisabledSpr = ButtonSprite::create("Skin", "bigFont.fnt", "GJ_button_04.png");
     skinsDisabledSpr->setID("disabled");
     skinsDisabledSpr->setPosition(skinsEnabledSpr->getPosition());
@@ -162,6 +176,7 @@ bool CatSettingsLayer::init() {
         this,
         menu_selector(CatSettingsLayer::onColorSkinsSwitch)
     );
+    colorSwitchBtn->setID("color-btn");
     auto colorDisabledSpr = ButtonSprite::create("Color", "bigFont.fnt", "GJ_button_04.png");
     colorDisabledSpr->setID("disabled");
     colorDisabledSpr->setPosition(colorEnabledSpr->getPosition());
@@ -172,6 +187,7 @@ bool CatSettingsLayer::init() {
     colorSkinsSwitchMenu->updateLayout();
 
     catagoryTitle = CCLabelBMFont::create("", "bigFont.fnt");
+    catagoryTitle->setID("catagory-name-label");
     catagoryTitle->setAlignment(CCTextAlignment::kCCTextAlignmentLeft);
     catagoryTitle->setAnchorPoint({0, .5f});
     catagoryTitle->setScale(.75f);
@@ -179,6 +195,7 @@ bool CatSettingsLayer::init() {
     this->addChild(catagoryTitle);
 
     auto blockerMenu = CCMenu::create();
+    blockerMenu->setID("touch-blocker-menu");
     blockerMenu->setContentSize(this->getContentSize() - ccp(30, 0));
     blockerMenu->setPosition({0, 0});
     blockerMenu->setZOrder(100);
@@ -186,6 +203,7 @@ bool CatSettingsLayer::init() {
     this->addChild(blockerMenu);
 
     auto blocker = CCMenuItem::create();
+    blocker->setID("touch-blocker");
     blocker->setContentSize(blockerMenu->getContentSize());
     blocker->setAnchorPoint({0, 0});
     blockerMenu->addChild(blocker);
@@ -308,6 +326,7 @@ CCMenuItemSpriteExtra* CatSettingsLayer::addCatagory(const std::string& name, co
         menu_selector(CatSettingsLayer::onCatagoryClicked)
     );
     button->setOpacity(150);
+    button->setID(fmt::format("{}-catagory-btn", resourceName));
     topBarMenu->addChild(button);
 
     catagoriesMapped[button] = {name, resourceName};
