@@ -52,6 +52,7 @@ private:
     CCMenuItemSpriteExtra* addCatagory(const std::string& name, const std::string& resourceName, CCNode* visual);
     std::map<CCMenuItemSpriteExtra*, std::pair<std::string, std::string>> catagoriesMapped{};
     CCMenuItemSpriteExtra* selectedPage = nullptr;
+    CCMenuItemSpriteExtra* defaultCatagory;
     void onCatagoryClicked(CCObject* sender);
 
     void onColorSkinsSwitch(CCObject* sender);
@@ -63,4 +64,13 @@ private:
 
     void colorValueChanged(ccColor3B newColor) override;
     CCMenu* colorOptionsContainer;
+    CCControlColourPicker* colorPicker;
+    TextInput* RInput;
+    TextInput* GInput;
+    TextInput* BInput;
+    TextInput* AInput;
+    void updateEditorColors();
+    GLubyte getNumFromInput(const std::string& value);
+    bool isColorModeDetail;
+    void baseDetailSwap(CCObject*);
 };

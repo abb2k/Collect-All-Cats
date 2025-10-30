@@ -25,7 +25,7 @@ Result<CatStats> CatStats::createFromJson(const matjson::Value& value){
     CatStats stats;
     GEODE_UNWRAP_INTO(stats.name, value["name"].asString());
     GEODE_UNWRAP_INTO(stats.size, value["size"].asDouble());
-    GEODE_UNWRAP_INTO(stats.customazationAssets, value["customazationAssets"].as<std::map<std::string, CatagoryAssetInfo>>());
+    GEODE_UNWRAP_INTO(stats.customazationAssets, value["catagoryAssets"].as<std::map<std::string, CatagoryAssetInfo>>());
 
     return Ok(stats);
 }

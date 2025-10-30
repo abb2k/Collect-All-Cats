@@ -201,7 +201,7 @@ bool CatSettingsLayer::init() {
     colorOptionsContainer->setVisible(false);
     this->addChild(colorOptionsContainer);
 
-    auto colorPicker = CCControlColourPicker::colourPicker();
+    colorPicker = CCControlColourPicker::colourPicker();
     colorPicker->setID("color-picker");
     colorPicker->setDelegate(this);
     colorPicker->setScale(.6f);
@@ -211,17 +211,47 @@ bool CatSettingsLayer::init() {
     colorPicker->m_huePicker->setEnabled(false);
     colorOptionsContainer->addChild(colorPicker);
 
-    auto RInput = TextInput::create(50, "R");
+    RInput = TextInput::create(50, "R");
     RInput->setID("red-input");
+    RInput->setCommonFilter(CommonFilter::Uint);
     RInput->setPosition({66, 42});
+    RInput->setCallback([&](const std::string& newStr){
+        auto rNum = getNumFromInput(newStr);
+
+        auto gNum = getNumFromInput(GInput->getString());
+
+        auto bNum = getNumFromInput(BInput->getString());
+
+        colorPicker->setColorValue({rNum, gNum, bNum});
+    });
     colorOptionsContainer->addChild(RInput);
-    auto GInput = TextInput::create(50, "G");
+    GInput = TextInput::create(50, "G");
     GInput->setID("green-input");
+    GInput->setCommonFilter(CommonFilter::Uint);
     GInput->setPosition({66, 9});
+    GInput->setCallback([&](const std::string& newStr){
+        auto rNum = getNumFromInput(RInput->getString());
+
+        auto gNum = getNumFromInput(newStr);
+
+        auto bNum = getNumFromInput(BInput->getString());
+
+        colorPicker->setColorValue({rNum, gNum, bNum});
+    });
     colorOptionsContainer->addChild(GInput);
-    auto BInput = TextInput::create(50, "B");
+    BInput = TextInput::create(50, "B");
     BInput->setID("blue-input");
+    BInput->setCommonFilter(CommonFilter::Uint);
     BInput->setPosition({66, -24});
+    BInput->setCallback([&](const std::string& newStr){
+        auto rNum = getNumFromInput(RInput->getString());
+
+        auto gNum = getNumFromInput(GInput->getString());
+
+        auto bNum = getNumFromInput(newStr);
+
+        colorPicker->setColorValue({rNum, gNum, bNum});
+    });
     colorOptionsContainer->addChild(BInput);
 
     auto RInputLabel = CCLabelBMFont::create("R:", "bigFont.fnt");
@@ -240,9 +270,21 @@ bool CatSettingsLayer::init() {
     BInputLabel->setPosition(BInput->getPosition() - ccp(BInput->getContentWidth() / 2 + BInputLabel->getContentWidth() / 2, 0));
     colorOptionsContainer->addChild(BInputLabel);
 
-    auto AInput = TextInput::create(50, "A");
+    AInput = TextInput::create(50, "A");
     AInput->setID("alpha-input");
+    AInput->setCommonFilter(CommonFilter::Uint);
     AInput->setPosition({66, -64});
+    AInput->setCallback([&](const std::string& newStr){
+        auto rNum = getNumFromInput(RInput->getString());
+
+        auto gNum = getNumFromInput(GInput->getString());
+
+        auto bNum = getNumFromInput(BInput->getString());
+
+        AInput->setString(newStr);
+
+        colorPicker->setColorValue({rNum, gNum, bNum});
+    });
     colorOptionsContainer->addChild(AInput);
 
     auto AInputLabel = CCLabelBMFont::create("A:", "bigFont.fnt");
@@ -257,7 +299,7 @@ bool CatSettingsLayer::init() {
     auto colorBaseDetailBtn = CCMenuItemSpriteExtra::create(
         colorDetailSpr,
         this,
-        menu_selector(CatSettingsLayer::onColorSkinsSwitch)
+        menu_selector(CatSettingsLayer::baseDetailSwap)
     );
     colorBaseDetailBtn->setID("base-detail-btn");
     colorDetailSpr->setVisible(false);
@@ -288,8 +330,8 @@ bool CatSettingsLayer::init() {
     this->setTouchEnabled(false);
     this->setKeyboardEnabled(false);
     this->setKeypadEnabled(false);
-
-    onCatagoryClicked(addCatagory("Cats", "cat", CCSprite::createWithSpriteFrameName("default_cat.png"_spr)));
+    
+    defaultCatagory = addCatagory("Cats", "cat", CCSprite::createWithSpriteFrameName("default_cat.png"_spr));
     addCatagory("Hats", "hat", CCSprite::createWithSpriteFrameName("abb2k_cac_closed.png"_spr));
     
     return true;
@@ -305,6 +347,8 @@ void CatSettingsLayer::show(){
     this->setKeypadEnabled(true);
     buttonsMenu->setEnabled(true);
     handleTouchPriorityWith(this, -600, true);
+
+    onCatagoryClicked(defaultCatagory);
 
     auto selPopup = CatsLayer::activeCatLayer()->currentSelectionPopup;
     if (!selPopup) return;
@@ -429,6 +473,8 @@ void CatSettingsLayer::onCatagoryClicked(CCObject* sender){
 
     catagoryTitle->setString(catagoriesMapped[button].first.c_str());
 
+    updateEditorColors();
+
     log::info("now in page {}", catagoriesMapped[button].first);
 }
 
@@ -461,12 +507,60 @@ void CatSettingsLayer::onColorSkinsSwitch(CCObject* sender){
         colorSwitchBtn->getChildByID("disabled")->setVisible(false);
 
         colorOptionsContainer->setVisible(true);
-        auto picker = static_cast<CCControlColourPicker*>(colorOptionsContainer->getChildByID("color-picker"));
-        picker->m_huePicker->setEnabled(true);
-        picker->m_colourPicker->setEnabled(true);
+        colorPicker->m_huePicker->setEnabled(true);
+        colorPicker->m_colourPicker->setEnabled(true);
     }
 }
 
 void CatSettingsLayer::colorValueChanged(ccColor3B newColor){
+    RInput->setString(std::to_string(newColor.r));
+    GInput->setString(std::to_string(newColor.g));
+    BInput->setString(std::to_string(newColor.b));
 
+    if (!catagoriesMapped.contains(selectedPage)) return;
+
+    ccColor4B color = {newColor.r, newColor.g, newColor.b, getNumFromInput(AInput->getString())};
+
+    if (isColorModeDetail)
+        catToModify.setCatagoryAssetSecondary(catagoriesMapped[selectedPage].second, color);
+    else
+        catToModify.setCatagoryAssetPrimary(catagoriesMapped[selectedPage].second, color);
+
+    updateLivingCat();
+}
+
+GLubyte CatSettingsLayer::getNumFromInput(const std::string& value){
+    auto res = geode::utils::numFromString<GLubyte>(value);
+    GLubyte toReturn;
+    if (res.isErr()) toReturn = 0;
+    else toReturn = res.unwrap();
+
+    return toReturn;
+}
+
+void CatSettingsLayer::baseDetailSwap(CCObject* sender){
+    auto btn = static_cast<CCMenuItemSpriteExtra*>(sender);
+    if (isColorModeDetail){
+        isColorModeDetail = false;
+
+        btn->getChildByID("detail")->setVisible(false);
+        btn->getChildByID("base")->setVisible(true);
+    }
+    else{
+        isColorModeDetail = true;
+
+        btn->getChildByID("detail")->setVisible(true);
+        btn->getChildByID("base")->setVisible(false);
+    }
+
+    updateEditorColors();
+}
+
+void CatSettingsLayer::updateEditorColors(){
+    if (!catagoriesMapped.contains(selectedPage)) return;
+
+    auto catagoryInfo = catToModify.getCatagoryAssetInfo(catagoriesMapped[selectedPage].second);
+    auto color = isColorModeDetail ? catagoryInfo.secondary : catagoryInfo.primary;
+    AInput->setString(std::to_string(color.a));
+    colorPicker->setColorValue({color.r, color.g, color.b});
 }

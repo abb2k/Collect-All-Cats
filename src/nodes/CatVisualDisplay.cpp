@@ -19,6 +19,7 @@ bool CatVisualDisplay::init() {
 
     catDisplay = CatagoryAssetDisplay::create();
     catDisplay->setScale(.7f);
+    catDisplay->setPosition(this->getContentSize() / 2);
     this->addChild(catDisplay);
 
     return true;
@@ -34,6 +35,8 @@ void CatVisualDisplay::updateVisuals(CatStats& stats){
         updateIfChange("cat", catDisplay, *cur, stats);
     }
 
+    catDisplay->setPosition(this->getContentSize() / 2);
+
     current = stats;
 }
 
@@ -47,5 +50,5 @@ void CatVisualDisplay::updateIfChange(const std::string& catagoryName, CatagoryA
     if (currentCatAssetInfo.primary != newCatAssetInfo.primary)
         display->setPrimaryColor(newCatAssetInfo.primary);
     if (currentCatAssetInfo.secondary != newCatAssetInfo.secondary)
-        display->setPrimaryColor(newCatAssetInfo.secondary);
+        display->setSecondaryColor(newCatAssetInfo.secondary);
 }
