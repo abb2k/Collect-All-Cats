@@ -701,7 +701,7 @@ void CatSettingsLayer::createOptionBtn(bool isSelected, CatagoryAssetDisplay* di
             me->setScale(spr->getContentWidth() / me->getContentWidth());
         });
     }
-    auto spr2 = CCSprite::create("GJ_button_05.png");
+    auto spr2 = CCSprite::create("GJ_button_03.png");
     spr2->setID("selected");
     spr2->setPosition(spr->getPosition());
     spr2->setVisible(isSelected);
