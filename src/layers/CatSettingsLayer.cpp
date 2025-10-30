@@ -672,9 +672,11 @@ void CatSettingsLayer::updateSelectedOption(){
     currentlySelectedOptionNode->getChildByID("selected")->setVisible(false);
     currentlySelectedOptionNode->getChildByID("unselected")->setVisible(true);
 
-    auto actualSelectedOption = skinOptionsContainer->getChildByID(std::to_string(catagoryInfo.assetID.has_value() ? catagoryInfo.assetID.value() : -1));
+    selectedOptionID = catagoryInfo.assetID.has_value() ? catagoryInfo.assetID.value() : -1;
 
-    if (actualSelectedOption != nullptr) return;
+    auto actualSelectedOption = skinOptionsContainer->getChildByID(std::to_string(selectedOptionID));
+
+    if (actualSelectedOption == nullptr) return;
 
     auto actualSelectedOptionBtn = static_cast<CCMenuItemSpriteExtra*>(actualSelectedOption);
     actualSelectedOptionBtn->setEnabled(false);
