@@ -411,6 +411,7 @@ void CatSettingsLayer::setToCat(CatStats& stats){
 
     updateEditorColors();
     updateSelectedOption();
+    updateOptionsColors();
 }
 
 void CatSettingsLayer::onBackClicked(CCObject*){
@@ -515,6 +516,8 @@ void CatSettingsLayer::onColorSkinsSwitch(CCObject* sender){
 
         skinOptionsContainer->setVisible(true);
         skinOptionsContainer->setEnabled(true);
+
+        updateOptionsColors();
     }
     else if (colorSwitchBtn == sender){
         currentEditingPage = 1;
@@ -602,7 +605,6 @@ void CatSettingsLayer::updateCatagorySkinButtons(){
         createOptionBtn(!catagoryInfo.assetID.has_value(), nullptr, "-1");
         if (!catagoryInfo.assetID.has_value()) selectedOptionID = -1;
     }
-    
 
     for (const auto& entry : std::filesystem::directory_iterator(Mod::get()->getResourcesDir())) {
         if (!entry.is_regular_file()) continue;
@@ -691,6 +693,7 @@ void CatSettingsLayer::createOptionBtn(bool isSelected, CatagoryAssetDisplay* di
     if (display != nullptr){
         display->setPosition(spr->getPosition());
         display->setZOrder(1);
+        display->setTag(2);
         btn->addChild(display);
         display->setAssetUpdatedCallback([spr](CatagoryAssetDisplay* me){
             me->setScale(spr->getContentWidth() / me->getContentWidth());
@@ -705,4 +708,19 @@ void CatSettingsLayer::createOptionBtn(bool isSelected, CatagoryAssetDisplay* di
     btn->setID(id);
     btn->setEnabled(!isSelected);
     skinOptionsContainer->addChild(btn);
+}
+
+void CatSettingsLayer::updateOptionsColors(){
+    if (!catagoriesMapped.contains(selectedPage)) return;
+
+    auto catagoryInfo = catToModify.getCatagoryAssetInfo(catagoriesMapped[selectedPage].second);
+
+    for (const auto& child : CCArrayExt<CCNode*>(skinOptionsContainer->getChildren())){
+        auto display = child->getChildByTag(2);
+        if (display == nullptr) continue;
+
+        auto assetDisplayNode = static_cast<CatagoryAssetDisplay*>(display);
+        assetDisplayNode->setPrimaryColor(catagoryInfo.primary);
+        assetDisplayNode->setSecondaryColor(catagoryInfo.secondary);
+    }
 }

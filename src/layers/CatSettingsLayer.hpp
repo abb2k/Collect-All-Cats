@@ -80,5 +80,6 @@ private:
     void createOptionBtn(bool isSelected, CatagoryAssetDisplay* display, const std::string& id);
     void onSkinOptionClicked(CCObject* option);
     void updateSelectedOption();
+    void updateOptionsColors();
     int selectedOptionID;
 };
