@@ -126,7 +126,7 @@ bool CatSettingsLayer::init() {
     topBarMenu->ignoreAnchorPointForPosition(false);
     topBarMenu->setLayout(SimpleAxisLayout::create(Axis::Row)
         ->setGap(5.0f)
-        ->setMainAxisAlignment(MainAxisAlignment::Start)
+        ->setMainAxisAlignment(MainAxisAlignment::Center)
         ->setCrossAxisScaling(AxisScaling::ScaleDownGaps)
         ->setMainAxisScaling(AxisScaling::ScaleDownGaps)
         ->setMinRelativeScale(.3f)
@@ -325,6 +325,7 @@ bool CatSettingsLayer::init() {
     skinOptionsContainer->setLayout(RowLayout::create()
         ->setCrossAxisAlignment(AxisAlignment::End)
         ->setCrossAxisOverflow(false)
+        ->setGrowCrossAxis(true)
     );
     this->addChild(skinOptionsContainer);
 
