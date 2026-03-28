@@ -4,15 +4,15 @@
 
 using namespace geode::prelude;
 
-class RoomSettingsPopup : public Popup<>, public SelectArtDelegate, public ColorPickPopupDelegate {
+class RoomSettingsPopup : public Popup, public SelectArtDelegate{
     public:
         static RoomSettingsPopup* create();
 
     private:
-        virtual bool setup() override;
+        virtual bool init() override;
 
         virtual void selectArtClosed(SelectArtLayer* selectLater) override;
-        virtual void updateColor(cocos2d::ccColor4B const& color) override;
+        virtual void updateColor(cocos2d::ccColor4B const& color);
 
         void openBGSelect(CCObject*);
         void openGroundSelect(CCObject*);

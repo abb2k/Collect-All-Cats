@@ -8,7 +8,7 @@
 CatSelectionPopup* CatSelectionPopup::create() {
     auto ret = new CatSelectionPopup();
     // @geode-ignore(unknown-resource)
-    if (ret->initAnchored(400, 300, "geode.loader/GE_square03.png")) {
+    if (ret->init()) {
         ret->autorelease();
         return ret;
     }
@@ -16,7 +16,8 @@ CatSelectionPopup* CatSelectionPopup::create() {
     return nullptr;
 }
 
-bool CatSelectionPopup::setup() {
+bool CatSelectionPopup::init() {
+    if (!Popup::init(400, 300, "geode.loader/GE_square03.png")) return false;
 
     auto catsLayer = CatsLayer::activeCatLayer();
     if (!catsLayer) return false;
@@ -118,7 +119,7 @@ bool CatSelectionPopup::setup() {
 }
 
 void CatSelectionPopup::show(){
-    Popup<>::show();
+    Popup::show();
     this->setZOrder(this->getZOrder() - 10);
 }
 
@@ -135,7 +136,7 @@ void CatSelectionPopup::onDeselectAllClicked(CCObject*){
 void CatSelectionPopup::onClose(CCObject*){
     CatsLayer::activeCatLayer()->catSettingsNode->hide();
     CatsLayer::activeCatLayer()->currentSelectionPopup = nullptr;
-    Popup<>::onClose(nullptr);
+    Popup::onClose(nullptr);
 }
 
 void CatSelectionPopup::fadeTo(GLubyte opacity, float time){

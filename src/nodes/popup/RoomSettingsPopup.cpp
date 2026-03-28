@@ -6,7 +6,7 @@
 RoomSettingsPopup* RoomSettingsPopup::create() {
     auto ret = new RoomSettingsPopup();
     // @geode-ignore(unknown-resource)
-    if (ret->initAnchored(400, 300, "geode.loader/GE_square03.png")) {
+    if (ret->init()) {
         ret->autorelease();
         return ret;
     }
@@ -14,7 +14,8 @@ RoomSettingsPopup* RoomSettingsPopup::create() {
     return nullptr;
 }
 
-bool RoomSettingsPopup::setup() {
+bool RoomSettingsPopup::init() {
+    if (!Popup::init(400, 300, "geode.loader/GE_square03.png")) return false;
     
     m_bgSprite->setOpacity(220);
     m_closeBtn->setPosition({m_closeBtn->getPositionX() + m_closeBtn->getContentWidth() / 2, m_closeBtn->getPositionY() - m_closeBtn->getContentHeight() / 2});
@@ -152,7 +153,9 @@ void RoomSettingsPopup::updateColor(cocos2d::ccColor4B const& color){
 void RoomSettingsPopup::openBGColorSelect(CCObject*){
     ccColor3B currBGColor = Save::getBackgroundColor();
     auto colorPicker = ColorPickPopup::create(currBGColor);
-    colorPicker->setDelegate(this);
+    colorPicker->setCallback([&](auto newColor){
+        updateColor(newColor);
+    });
     colorPicker->show();
     lastClickedColorBtn = 1;
 }
@@ -160,7 +163,9 @@ void RoomSettingsPopup::openBGColorSelect(CCObject*){
 void RoomSettingsPopup::openGroundColorSelect(CCObject*){
     ccColor3B currGroundColor = Save::getGroundColor();
     auto colorPicker = ColorPickPopup::create(currGroundColor);
-    colorPicker->setDelegate(this);
+    colorPicker->setCallback([&](auto newColor){
+        updateColor(newColor);
+    });
     colorPicker->show();
     lastClickedColorBtn = 2;
 }

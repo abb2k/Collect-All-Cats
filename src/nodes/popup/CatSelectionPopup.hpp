@@ -6,7 +6,7 @@ using namespace geode::prelude;
 
 #include <types/CatStats.hpp>
 
-class CatSelectionPopup : public Popup<> {
+class CatSelectionPopup : public Popup{
     public:
         static CatSelectionPopup* create();
 
@@ -14,7 +14,7 @@ class CatSelectionPopup : public Popup<> {
 
         void fadeTo(GLubyte opacity, float time);
     private:
-        virtual bool setup() override;
+        virtual bool init() override;
 
         void onSelectAllClicked(CCObject*);
         void onDeselectAllClicked(CCObject*);

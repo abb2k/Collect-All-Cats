@@ -1,6 +1,8 @@
 #pragma once
 
 #include <Geode/Geode.hpp>
+#include <Geode/utils/web.hpp>
+#include <Geode/utils/async.hpp>
 
 using namespace geode::prelude;
 
@@ -71,4 +73,7 @@ struct CatStats{
         CatStats() {}
 
         std::function<void(CatStats*)> onAREDLStatsRecieved = NULL;
+
+        async::TaskHolder<web::WebResponse> listener;
+
 };
