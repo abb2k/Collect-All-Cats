@@ -25,14 +25,12 @@ bool CatVisualDisplay::init() {
     return true;
 }
 
-void CatVisualDisplay::updateVisuals(CatStats& stats){
-    CatStats* cur = current.has_value() ? &current.value() : nullptr;
-    
-    if (cur == nullptr){
+void CatVisualDisplay::updateVisuals(CatStats& stats){    
+    if (!current.has_value()){
         catDisplay->setAsset(stats.getCatagoryAssetInfo("cat"));
     }
     else{
-        updateIfChange("cat", catDisplay, *cur, stats);
+        updateIfChange("cat", catDisplay, current.value(), stats);
     }
 
     catDisplay->setPosition(this->getContentSize() / 2);

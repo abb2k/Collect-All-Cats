@@ -51,8 +51,8 @@ bool AdvancedScrollLayer::init(CCSize size, CCSize limits){
     
     horizontalBar = Scrollbar::create(widthScrollExt);
     horizontalBar->setPositionX(size.width / 2);
-    horizontalBar->setPositionY(-4);
     horizontalBar->setRotation(90);
+    setHorizontalScrollbarPosition(false);
     this->addChild(horizontalBar);
 
     heightScrollExt = new CCScrollLayerExt({0, 0, size.width, size.height});
@@ -80,6 +80,9 @@ bool AdvancedScrollLayer::init(CCSize size, CCSize limits){
     this->setMouseEnabled(true);
     this->setTouchEnabled(true);
     
+    allTouches = CCSet::create();
+    allTouches->retain();
+
     return true;
 }
 
@@ -135,19 +138,44 @@ bool AdvancedScrollLayer::ccTouchBegan(CCTouch* touch, CCEvent* event) {
 
     touchDown = true;
 
+    if (allTouches->count() == 1){
+        auto firstLoc = static_cast<CCTouch*>(allTouches->anyObject())->getLocation();
+        auto secondLoc = touch->getLocation();
+
+        //super special thanks for the better edit pinch to zoom functionallity :) it much good :thumbsup:
+
+        initialMinPoint = (zoomParent->convertToNodeSpace(firstLoc) + zoomParent->convertToNodeSpace(secondLoc)) / 2.f;
+        initialScale = zoomParent->getScale();
+        initialDistance = firstLoc.getDistance(secondLoc);
+    }
+
+    if (!allTouches->containsObject(touch))
+        allTouches->addObject(touch);
+
     return true;
 }
 
-void AdvancedScrollLayer::ccTouchEnded(CCTouch*, CCEvent*) {
+void AdvancedScrollLayer::ccTouchEnded(CCTouch* touch, CCEvent*) {
     touchDown = false;
+
+    if (allTouches->containsObject(touch))
+        allTouches->removeObject(touch);
 }
 
-void AdvancedScrollLayer::ccTouchCancelled(CCTouch*, CCEvent*) {
+void AdvancedScrollLayer::ccTouchCancelled(CCTouch* touch, CCEvent*) {
     touchDown = false;
+
+    if (allTouches->containsObject(touch))
+        allTouches->removeObject(touch);
 }
 
 void AdvancedScrollLayer::ccTouchMoved(CCTouch* touch, CCEvent*){
     if (!isEnabled || touch == nullptr) return;
+
+    if (allTouches->count() > 1){
+        ccTouchesMoved(allTouches, nullptr);
+        return;
+    }
 
     if (!this->boundingBox().containsPoint(this->getParent()->convertToNodeSpace(touch->getLocation()))) return;
 
@@ -172,21 +200,35 @@ void AdvancedScrollLayer::ccTouchesMoved(CCSet* touches, CCEvent* event){
 
     if (!this->boundingBox().containsPoint(this->getParent()->convertToNodeSpace(touch1->getLocation()))) return;
 
-    float distance = touch1->getLocation().getDistance(touch2->getLocation());
+    auto firstLoc = touch1->getLocation();
+    auto secondLoc = touch2->getLocation();
 
-    zoomBy(prevTouchDelta - distance);
+    auto center = (zoomParent->convertToNodeSpace(firstLoc) + zoomParent->convertToNodeSpace(secondLoc)) / 2.f;
+    auto distNow = firstLoc.getDistance(secondLoc);
+    
+    auto const mult = initialDistance / distNow;
 
-    prevTouchDelta = distance;
+    float d1 = touch1->getLocation().getDistance(touch1->getPreviousLocation());
+    float d2 = touch2->getLocation().getDistance(touch2->getPreviousLocation());
+
+    float result;
+    if (d1 + d2 == 0.0f)
+        result = 0.5f;
+    else
+        result = d1 / (d1 + d2);
+
+    zoomToAndMove(initialScale / mult, result);
 }
 
 void AdvancedScrollLayer::scrollWheel(float y, float x) {
     if (!isEnabled) return;
 
     if (!scrollMovement)
-        zoomBy(-y * 0.01f);
+        zoomToAndMove(zoomParent->getScale() + -y * zoomSensetivity);
     else{
-        if (CCKeyboardDispatcher::get()->getControlKeyPressed())
-            zoomBy(-y * 0.01f);
+        if (CCKeyboardDispatcher::get()->getControlKeyPressed()){
+            zoomToAndMove(zoomParent->getScale() + -y * zoomSensetivity);
+        }
         else if (!holdingShift)
             moveBy(ccp(x, y) * scrollSense);
         else
@@ -196,15 +238,15 @@ void AdvancedScrollLayer::scrollWheel(float y, float x) {
     //log::info("{}", ccp(y, x));
 }
 
-void AdvancedScrollLayer::keyDown(enumKeyCodes key){
+void AdvancedScrollLayer::keyDown(enumKeyCodes key, double d){
     if (key == enumKeyCodes::KEY_LeftShift){
         holdingShift = true;
     }
 
-    CCLayer::keyDown(key);
+    CCLayer::keyDown(key, d);
 }
 
-void AdvancedScrollLayer::keyUp(enumKeyCodes key){
+void AdvancedScrollLayer::keyUp(enumKeyCodes key, double d){
     if (key == enumKeyCodes::KEY_LeftShift){
         holdingShift = false;
     }
@@ -212,6 +254,10 @@ void AdvancedScrollLayer::keyUp(enumKeyCodes key){
 
 void AdvancedScrollLayer::registerWithTouchDispatcher() {
     CCDirector::sharedDirector()->getTouchDispatcher()->addTargetedDelegate(this, 0, true);
+}
+
+void AdvancedScrollLayer::setHorizontalScrollbarPosition(bool onTop){
+    horizontalBar->setPositionY(onTop ? this->getContentHeight() + 4 : -4);
 }
 
 void AdvancedScrollLayer::setLimits(CCSize newLimits){
@@ -226,6 +272,14 @@ void AdvancedScrollLayer::setLimits(CCSize newLimits){
         drawGrid(gridsquareSize, gridLineWidth, gridColor);
 
     moveTo(content->getPosition());
+    zoomBy(0);
+}
+
+void AdvancedScrollLayer::setLimitsWidth(float width){
+    setLimits({width, content->getContentHeight()});
+}
+void AdvancedScrollLayer::setLimitsHeight(float height){
+    setLimits({content->getContentWidth(), height});
 }
 
 void AdvancedScrollLayer::drawGrid(float squareSize, float lineWidth, ccColor4B color){
@@ -265,12 +319,10 @@ void AdvancedScrollLayer::addFromCenter(CCNode* child, CCPoint offset){
 
 void AdvancedScrollLayer::toggleHorizontalScrollbar(bool b){
     horizontalBar->setVisible(b);
-    horizontalBar->setTouchEnabled(b);
 }
 
 void AdvancedScrollLayer::toggleVerticalScrollbar(bool b){
     verticalBar->setVisible(b);
-    verticalBar->setTouchEnabled(b);
 }
 
 void AdvancedScrollLayer::setScrollSensetivity(float sense){
@@ -325,6 +377,23 @@ void AdvancedScrollLayer::zoomBy(float zoomAmount){
     zoomTo(zoomParent->getScale() + zoomAmount);
 }
 
+void AdvancedScrollLayer::zoomToAndMove(float zoomAmount, float betweenDelta){
+    auto touchPos = getMousePos();
+
+    if (allTouches->count() == 2){
+        CCSetIterator it = allTouches->begin();
+        CCTouch* touch1 = static_cast<CCTouch*>(*it);
+        ++it;
+        CCTouch* touch2 = static_cast<CCTouch*>(*it);
+        touchPos = touch1->getLocation().lerp(touch2->getLocation(), betweenDelta);
+    }
+
+    auto posBeforeZoom = zoomParent->convertToNodeSpace(touchPos);
+    zoomTo(zoomAmount);
+    auto posAfterZoom = zoomParent->convertToNodeSpace(touchPos);
+    moveBy(posAfterZoom - posBeforeZoom);
+}
+
 void AdvancedScrollLayer::zoomTo(float zoomAmount){
     if (zoomParent->getContentHeight() * zoomAmount < this->getContentHeight()) zoomAmount = this->getContentHeight() / zoomParent->getContentHeight();
     if (zoomParent->getContentWidth() * zoomAmount < this->getContentWidth()) zoomAmount = this->getContentWidth() / zoomParent->getContentWidth();
@@ -350,6 +419,29 @@ void AdvancedScrollLayer::zoomToMaximum(){
     zoomTo(minZoom);
 }
 
+float AdvancedScrollLayer::getCurrentZoom(){
+    return zoomParent->getScale();
+}
+
 void AdvancedScrollLayer::setEnabled(bool b){
     isEnabled = b;
+}
+
+AdvancedScrollLayer::~AdvancedScrollLayer(){
+    if (allTouches != nullptr)
+        allTouches->release();
+}
+
+CCSize AdvancedScrollLayer::getAccurateContentSize() {
+    auto viewSize = this->getContentSize();
+    auto contentSize = zoomParent->getContentSize();
+    float scale = zoomParent->getScale();
+
+    auto computeMin = [&](float view, float content) {
+        float scaleFactor = view / content;
+        float diff = view - content;
+        return ((scale - scaleFactor) / (1 - scaleFactor)) * (diff / 2) / scale;
+    };
+
+    return ccp(computeMin(viewSize.width, contentSize.width), computeMin(viewSize.height, contentSize.height));
 }

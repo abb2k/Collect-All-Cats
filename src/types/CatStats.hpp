@@ -73,7 +73,4 @@ struct CatStats{
         CatStats() {}
 
         std::function<void(CatStats*)> onAREDLStatsRecieved = NULL;
-
-        async::TaskHolder<web::WebResponse> listener;
-
 };

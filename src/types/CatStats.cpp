@@ -27,14 +27,14 @@ Result<CatStats> CatStats::createFromJson(const matjson::Value& value){
     GEODE_UNWRAP_INTO(stats.size, value["size"].asDouble());
     GEODE_UNWRAP_INTO(stats.customazationAssets, value["catagoryAssets"].as<std::map<std::string, CatagoryAssetInfo>>());
 
-    return Ok(stats);
+    return Ok(std::move(stats));
 }
 
 Result<CatStats> CatStats::createFromJsonWithLevel(const matjson::Value& json, GJGameLevel* level){
     GEODE_UNWRAP_INTO(auto stats, json.as<CatStats>());
     stats.relatedLevel = level;
 
-    return Ok(stats);
+    return Ok(std::move(stats));
 }
 
 GJGameLevel* CatStats::getLevel() { return relatedLevel; }
@@ -53,7 +53,7 @@ void CatStats::loadAREDLLevelData(){
     if (levelDetails.has_value() && levelDetails.value().level_id == relatedLevel->m_levelID) return;
     
     web::WebRequest req;
-    listener.spawn(
+    async::spawn(
         req.get(fmt::format("https://api.aredl.net/v2/api/aredl/levels/{}", relatedLevel->m_levelID)),
         [&](web::WebResponse value) {
             if (!value.ok()) return;

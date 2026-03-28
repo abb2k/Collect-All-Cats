@@ -1,10 +1,45 @@
 #pragma once
 
+#include <Geode/Geode.hpp>
+
 using namespace geode::prelude;
 
 class AdvancedScrollLayer : public CCLayer {
-    public:
+    private:
+    
+        bool init(CCSize size, CCSize limits);
 
+        CCNode* zoomParent;
+
+        float scrollSense = 1;
+
+        bool isEnabled = true;
+
+        CCScrollLayerExt* widthScrollExt;
+        CCScrollLayerExt* heightScrollExt;
+
+        void updateProgressBars();
+        void updatePositionByProgBars(float dt);
+
+        bool touchDown = false;
+
+        void scrollWheel(float y, float x) override;
+        void registerWithTouchDispatcher() override;
+
+        CCDrawNode* gridNode = nullptr;
+        float gridsquareSize;
+        float gridLineWidth;
+        ccColor4B gridColor;
+
+        bool holdingShift;
+
+        CCSet* allTouches = nullptr;
+        float initialDistance;
+        float initialScale;
+        CCPoint initialMinPoint;
+        CCPoint initialPoint1;
+        CCPoint initialPoint2;
+    public:
         static AdvancedScrollLayer* create(CCSize size, CCSize limits);
 
         bool ccTouchBegan(cocos2d::CCTouch* touch, cocos2d::CCEvent* event) override;
@@ -13,28 +48,20 @@ class AdvancedScrollLayer : public CCLayer {
         void ccTouchEnded(cocos2d::CCTouch* touch, cocos2d::CCEvent* event) override;
         void ccTouchCancelled(cocos2d::CCTouch* touch, cocos2d::CCEvent* event) override;
 
-        virtual void keyDown(enumKeyCodes key)  override;
-        virtual void keyUp(enumKeyCodes key)  override;
+        virtual void keyDown(enumKeyCodes key, double d)  override;
+        virtual void keyUp(enumKeyCodes key, double d)  override;
+
+        CCSize getAccurateContentSize();
         
         CCNode* content;
 
         bool scrollMovement = true;
 
         void setLimits(CCSize newLimits);
+        void setLimitsWidth(float width);
+        void setLimitsHeight(float height);
 
-        const CCSize getAccurateContentSize() {
-            auto viewSize = this->getContentSize();
-            auto contentSize = zoomParent->getContentSize();
-            float scale = zoomParent->getScale();
-
-            auto computeMin = [&](float view, float content) {
-                float scaleFactor = view / content;
-                float diff = view - content;
-                return ((scale - scaleFactor) / (1 - scaleFactor)) * (diff / 2) / scale;
-            };
-
-            return ccp(computeMin(viewSize.width, contentSize.width), computeMin(viewSize.height, contentSize.height));
-        }
+        void setHorizontalScrollbarPosition(bool onTop);
 
         void drawGrid(float squaresAmount, float lineWidth, ccColor4B color);
 
@@ -53,12 +80,13 @@ class AdvancedScrollLayer : public CCLayer {
         void moveToCorner(bool left, bool bottom);
 
         void zoomBy(float zoomAmount);
+        void zoomToAndMove(float zoomAmount, float betweenDelta = .5f);
         void zoomTo(float zoomAmount);
 
         void zoomToMinimum();
         void zoomToMaximum();
 
-        float getCurrentZoom() const { return zoomParent->getScale(); };
+        float getCurrentZoom();
 
         void setEnabled(bool b);
 
@@ -68,35 +96,10 @@ class AdvancedScrollLayer : public CCLayer {
         float minZoom = 2;
         float maxZoom = .5f;
 
-    protected:
-
-        bool init(CCSize size, CCSize limits);
-
-        CCNode* zoomParent;
-
-        float scrollSense = 1;
-
-        float prevTouchDelta = -1;
-
-        bool isEnabled = true;
-
-        CCScrollLayerExt* widthScrollExt;
-        CCScrollLayerExt* heightScrollExt;
+        float zoomSensetivity = 0.01f;
 
         float getMinimumPosition(bool horizontal);
         float getMaximumPosition(bool horizontal);
-        void updateProgressBars();
-        void updatePositionByProgBars(float dt);
 
-        bool touchDown = false;
-
-        void scrollWheel(float y, float x) override;
-        void registerWithTouchDispatcher() override;
-
-        CCDrawNode* gridNode = nullptr;
-        float gridsquareSize;
-        float gridLineWidth;
-        ccColor4B gridColor;
-
-        bool holdingShift;
+        ~AdvancedScrollLayer();
 };
