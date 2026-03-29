@@ -27,7 +27,10 @@ bool Cat::init(CCNode* wanderArea, GJGameLevel* relatedLevel, AREDLLevelDetails*
     
     if (didLoadCat.isErr()) log::error("{}", didLoadCat.unwrapErr());
     else stats = didLoadCat.unwrap();
-    if (details != nullptr) stats.setLevelDetails(*details);
+    if (details != nullptr){
+        stats.setLevelDetails(*details);
+        stats.name = stats.getRealName();
+    }
     
     stats.setOnAREDLStatsRecievedCallback([this](CatStats* refStats){
         if (refStats == nullptr || refStats->getLevelDetails() == nullptr) return;
