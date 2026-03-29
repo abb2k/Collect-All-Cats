@@ -58,14 +58,21 @@ void CatStats::loadAREDLLevelData(){
     async::spawn(
         req.get(fmt::format("https://api.aredl.net/v2/api/aredl/levels/{}", relatedLevel->m_levelID)),
         [&](web::WebResponse value) {
+            log::info("Received AREDL response for level id {} with status code {}", relatedLevel->m_levelID.value(), value.code());
             if (!value.ok()) return;
+
+            log::info("Response body: {}", value.string().unwrapOr("Failed to get response body"));
         
             auto jsonRes = value.json();
             if (!jsonRes.isOk()) return;
             auto json = jsonRes.unwrap();
 
+            log::info("Parsed JSON for AREDL level id {}: {}", relatedLevel->m_levelID.value(), json.dump());
+
             auto detailsRes = json.as<AREDLLevelDetails>();
             if (!detailsRes.isOk()) return;
+
+            log::info("Parsed AREDLLevelDetails for level id {}: name = {}, position = {}, points = {}, publisher = {}", relatedLevel->m_levelID.value(), detailsRes.unwrap().name, detailsRes.unwrap().position, detailsRes.unwrap().points, detailsRes.unwrap().publisher.username);
 
             levelDetails = detailsRes.unwrap();
 
