@@ -139,3 +139,7 @@ Result<CatagoryAssetSprites> CatStats::getCatagoryAssetSprites(const std::string
 std::string CatStats::getRealName(){
     return getLevel()->m_levelName == "" ? (getLevelDetails() != nullptr ? getLevelDetails()->name : "Unknown") : getLevel()->m_levelName;
 }
+
+void CatStats::setLevelDetails(const AREDLLevelDetails& details){
+    levelDetails = details;
+}

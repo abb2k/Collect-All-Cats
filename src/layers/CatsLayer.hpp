@@ -33,7 +33,7 @@ class CatsLayer : public CCLayer {
         CatSelectionPopup* currentSelectionPopup = nullptr;
 
         std::map<int, Cat*> spawnedCats{};
-        Cat* addCat(GJGameLevel* catLevel);
+        Cat* addCat(GJGameLevel* catLevel, AREDLLevelDetails* details = nullptr);
         void removeCat(int catID);
 
         void createCatSettingsNode(CCScene* scene);

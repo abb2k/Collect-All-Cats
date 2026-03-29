@@ -51,10 +51,12 @@ struct CatStats{
 
         bool isEmpty();
 
-        const AREDLLevelDetails* getLevelDetails(){
+        AREDLLevelDetails* getLevelDetails(){
             if (levelDetails.has_value()) return &levelDetails.value();
             return nullptr;
         }
+
+        void setLevelDetails(const AREDLLevelDetails& details);
 
         void setOnAREDLStatsRecievedCallback(std::function<void(CatStats*)> callback);
         

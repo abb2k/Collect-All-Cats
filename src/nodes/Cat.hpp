@@ -10,7 +10,7 @@ class CatAIStateBase;
 
 class Cat : public CCMenu {
 public:
-    static Cat* create(CCNode* wanderArea, GJGameLevel* relatedLevel);
+    static Cat* create(CCNode* wanderArea, GJGameLevel* relatedLevel, AREDLLevelDetails* details);
 
     CatStats getStats();
 
@@ -33,7 +33,7 @@ public:
     CCNode* getVisualParent();
 
 private:
-    virtual bool init(CCNode* wanderArea, GJGameLevel* relatedLevel);
+    virtual bool init(CCNode* wanderArea, GJGameLevel* relatedLevel, AREDLLevelDetails* details);
 
     CatStats stats = CatStats::createEmpty();
 

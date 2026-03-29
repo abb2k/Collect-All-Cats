@@ -6,9 +6,9 @@
 #include <kittyAI/CatAIStateBase.hpp>
 #include <utils/CatUtils.hpp>
 
-Cat* Cat::create(CCNode* wanderArea, GJGameLevel* relatedLevel) {
+Cat* Cat::create(CCNode* wanderArea, GJGameLevel* relatedLevel, AREDLLevelDetails* details) {
     auto ret = new Cat();
-    if (ret->init(wanderArea, relatedLevel)) {
+    if (ret->init(wanderArea, relatedLevel, details)) {
         ret->autorelease();
         return ret;
     }
@@ -16,7 +16,7 @@ Cat* Cat::create(CCNode* wanderArea, GJGameLevel* relatedLevel) {
     return nullptr;
 }
 
-bool Cat::init(CCNode* wanderArea, GJGameLevel* relatedLevel) {
+bool Cat::init(CCNode* wanderArea, GJGameLevel* relatedLevel, AREDLLevelDetails* details) {
     if (!CCMenu::init()) return false;
 
     this->wanderArea = wanderArea;
@@ -27,6 +27,7 @@ bool Cat::init(CCNode* wanderArea, GJGameLevel* relatedLevel) {
     
     if (didLoadCat.isErr()) log::error("{}", didLoadCat.unwrapErr());
     else stats = didLoadCat.unwrap();
+    if (details != nullptr) stats.setLevelDetails(*details);
     
     stats.setOnAREDLStatsRecievedCallback([this](CatStats* refStats){
         if (refStats == nullptr || refStats->getLevelDetails() == nullptr) return;

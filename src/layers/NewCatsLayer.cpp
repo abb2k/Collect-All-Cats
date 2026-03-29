@@ -242,10 +242,7 @@ void NewCatsLayer::keyBackClicked(){
     {
         Save::addPlacedCat(cat.getLevel()->m_levelID.value());
         if (catsLayer != nullptr){
-            auto catObj = catsLayer->addCat(cat.getLevel());
-            if (catObj != nullptr){
-                catObj->setCatStats(cat);
-            }
+            catsLayer->addCat(cat.getLevel(), cat.getLevelDetails());
         }
     }
 }

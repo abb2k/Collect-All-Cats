@@ -231,13 +231,13 @@ CatsLayer* CatsLayer::activeCatLayer(){
     return sharedInstance;
 }
 
-Cat* CatsLayer::addCat(GJGameLevel* catLevel){
+Cat* CatsLayer::addCat(GJGameLevel* catLevel, AREDLLevelDetails* details){
     auto placedCats = Save::getPlacedCats();
     std::set<int> placedCatsSet(placedCats.begin(), placedCats.end());
 
     if (!placedCatsSet.contains(catLevel->m_levelID.value())) return nullptr;
 
-    auto cat = Cat::create(catContainer, catLevel);
+    auto cat = Cat::create(catContainer, catLevel, details);
     if (cat == nullptr) return nullptr;
     cat->setPositionY(20);
     cat->setPositionX(CatUtils::GetRandomFloat(0, ScrollNode->content->getContentWidth() - cat->getScaledContentWidth()));
