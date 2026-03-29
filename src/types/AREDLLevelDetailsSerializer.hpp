@@ -67,7 +67,9 @@ struct matjson::Serialize<AREDLLevelDetails> {
         log::info("8");
         GEODE_UNWRAP_INTO(details.tags, value["tags"].as<std::vector<std::string>>());
         log::info("9");
-        GEODE_UNWRAP_INTO(details.description, value["description"].asString());
+        if (!value["description"].isNull()){
+            GEODE_UNWRAP_INTO(details.description, value["description"].asString());
+        }
         log::info("10");
         if (!value["song"].isNull()){
             GEODE_UNWRAP_INTO(details.songID, value["song"].asInt());
