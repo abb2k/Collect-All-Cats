@@ -2,7 +2,7 @@
 
 void CACEndLevelLayer::customSetup(){
     EndLevelLayer::customSetup();
-    log::info("TS WORKING!!");
+    // log::info("TS WORKING!!");
 
     m_fields->catContainer = CCNode::create();
     m_fields->catContainer->setID("cat-conatiner");
@@ -49,7 +49,7 @@ void CACEndLevelLayer::playEndEffect(){
     auto level = m_playLayer->m_level;
     if (level->m_demonDifficulty == 6 && level->m_demon.value() == 1)
         catEnter();
-    log::info("CACEndLevelLayer::playEndEffect");
+    // log::info("CACEndLevelLayer::playEndEffect");
 }
 
 void CACEndLevelLayer::spawnCircleWave(){

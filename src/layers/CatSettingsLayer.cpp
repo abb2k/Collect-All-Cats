@@ -494,7 +494,13 @@ void CatSettingsLayer::onCatagoryClicked(CCObject* sender){
     selectedPage->setOpacity(255);
 
     catagoryTitle->setString(catagoriesMapped[button].first.c_str());
-    catagoryTitle->setScale(std::min(.75f, (this->getContentWidth() - colorSkinsSwitchMenu->getContentWidth()) / catagoryTitle->getContentWidth()));
+    catagoryTitle->setScale(.75f);
+    
+    auto spaceToFit = (this->getContentWidth() - colorSkinsSwitchMenu->getContentWidth() - 65);
+    auto wantedScale = spaceToFit / catagoryTitle->getContentWidth();
+
+    if (catagoryTitle->getScale() > wantedScale)
+        catagoryTitle->setScale(wantedScale);
 
     updateEditorColors();
 

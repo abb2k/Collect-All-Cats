@@ -95,7 +95,7 @@ void CACGarageLayer::OnMenuBtnClicked(CCObject*){
             }
             else if (beatenExtremes.size() == 3){
                 array->addObject(DialogObject::create("The Cats", "<cy>3</c> you have beaten, marvelous!", 999, 1, false, ccColor3B{ 255, 255, 255 }));
-                array->addObject(DialogObject::create("The Cats", fmt::format("<cy>{}</c> and <cy>{}</c> and <cy>{}</c>", beatenExtremes[0]->m_levelName, beatenExtremes[1]->m_levelName, beatenExtremes[2]->m_levelName), 999, 1, false, ccColor3B{ 255, 255, 255 }));
+                array->addObject(DialogObject::create("The Cats", fmt::format("<cy>{}</c>, <cy>{}</c> and <cy>{}</c>", beatenExtremes[0]->m_levelName, beatenExtremes[1]->m_levelName, beatenExtremes[2]->m_levelName), 999, 1, false, ccColor3B{ 255, 255, 255 }));
                 array->addObject(DialogObject::create("The Cats", "an incredible feat! the door may now open..", 999, 1, false, ccColor3B{ 255, 255, 255 }));
             }
             else if (beatenExtremes.size() == 4){

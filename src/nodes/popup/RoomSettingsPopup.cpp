@@ -15,6 +15,7 @@ RoomSettingsPopup* RoomSettingsPopup::create() {
 }
 
 bool RoomSettingsPopup::init() {
+    // @geode-ignore(unknown-resource)
     if (!Popup::init(400, 300, "geode.loader/GE_square03.png")) return false;
     
     m_bgSprite->setOpacity(220);

@@ -17,6 +17,7 @@ CatSelectionPopup* CatSelectionPopup::create() {
 }
 
 bool CatSelectionPopup::init() {
+    // @geode-ignore(unknown-resource)
     if (!Popup::init(400, 300, "geode.loader/GE_square03.png")) return false;
 
     auto catsLayer = CatsLayer::activeCatLayer();

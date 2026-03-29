@@ -115,6 +115,11 @@ bool CatsLayer::init() {
         menu_selector(CatsLayer::onEditorClicked)
     );
     topRightMenu->addChild(editorModeBtn);
+
+    editorModelabel = CCLabelBMFont::create("A", "bigFont.fnt");
+    editorModelabel->setScale(.75f);
+    editorModelabel->setOpacity(0);
+    this->addChild(editorModelabel);
     
     //cats menu button
     auto catSelectBtnSprite = CCSprite::createWithSpriteFrameName("GJ_viewListsBtn_001.png");
@@ -138,6 +143,11 @@ bool CatsLayer::init() {
 
 
     topRightMenu->updateLayout();
+
+    editorModelabel->setPosition(
+        this->convertToNodeSpace(editorModeBtn->convertToWorldSpace({0, 0})) + 
+        ccp(editorModeBtn->getScaledContentSize().width / 2, -editorModelabel->getScaledContentSize().height / 2)
+    );
 
     catContainer = CCNode::create();
     catContainer->setID("cat-container");
@@ -199,11 +209,22 @@ void CatsLayer::onEditorClicked(CCObject*){
     if (isInEditor){
         editorModeBtn->setSprite(newEditorSpr);
         topRightMenu->updateLayout();
+        editorModelabel->setString("Editor Mode");
     }
     else{
         editorModeBtn->setSprite(editorModeBtnSpr);
         topRightMenu->updateLayout();
+        editorModelabel->setString("View Mode");
     }
+    
+    editorModelabel->stopAllActions();
+    editorModelabel->runAction(
+        CCSequence::create(
+            CCFadeTo::create(.05f, 255),
+            CCFadeTo::create(.5f, 0),
+            nullptr
+        )
+    );
 }
 
 CatsLayer* CatsLayer::activeCatLayer(){

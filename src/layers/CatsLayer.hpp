@@ -62,5 +62,7 @@ class CatsLayer : public CCLayer {
         CCSprite* editorModeBtnSpr;
         CCSprite* newEditorSpr;
 
+        CCLabelBMFont* editorModelabel;
+
         bool isInEditor;
 };
