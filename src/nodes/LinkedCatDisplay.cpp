@@ -65,7 +65,7 @@ void LinkedCatDisplay::setCat(const CatStats& catStats){
         tempStatsRef.setOnAREDLStatsRecievedCallback([this](CatStats* newStats){
             if (onAREDLStatsRecieved != NULL)
                 onAREDLStatsRecieved(newStats);
-                
+            
             this->myStats = Ok(*newStats);
         });
         
