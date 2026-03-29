@@ -30,6 +30,14 @@ bool CatSelectionCell::init(const CatStats& stats) {
 
     myCatStats = stats;
 
+    if (myCatStats.getLevelDetails() == nullptr){
+        myCatStats.setOnAREDLStatsRecievedCallback([this](CatStats* newStats){
+            this->onStatsChanged(*newStats);
+        });
+        
+        myCatStats.loadAREDLLevelData();
+    }
+
     nameLabel = CCLabelBMFont::create(myCatStats.name.c_str(), "bigFont.fnt");
     nameLabel->setID("name-label");
     nameLabel->setPosition({this->getContentWidth() / 2, 110});
