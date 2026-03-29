@@ -78,7 +78,9 @@ void LinkedCatDisplay::update(float dt){
     auto catsLayer = CatsLayer::activeCatLayer();
     if (!catsLayer) return;
 
-    auto stats = myStats.unwrap();
+    auto& stats = myStats.unwrap();
+
+    nameLabel->setString(stats.name.c_str());
     
     auto catRef = catsLayer->getCatFromStats(stats);
     if (catRef == nullptr){
