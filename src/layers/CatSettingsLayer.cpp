@@ -351,6 +351,7 @@ bool CatSettingsLayer::init() {
     addCatagory("Hats", "hat", CCSprite::createWithSpriteFrameName("abb2k_cac_closed.png"_spr));
     addCatagory("Glasses", "glasses", CCSprite::createWithSpriteFrameName("abb2k_cac_closed.png"_spr));
     addCatagory("Neck", "neck", CCSprite::createWithSpriteFrameName("abb2k_cac_closed.png"_spr));
+    addCatagory("Shoes", "shoe", CCSprite::createWithSpriteFrameName("abb2k_cac_closed.png"_spr));
     
     return true;
 }

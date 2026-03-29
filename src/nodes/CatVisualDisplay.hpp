@@ -24,4 +24,5 @@ private:
     CatagoryAssetDisplay* hatDisplay;
     CatagoryAssetDisplay* glassesDisplay;
     CatagoryAssetDisplay* neckDisplay;
+    CatagoryAssetDisplay* shoeDisplay;
 };
