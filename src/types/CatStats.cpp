@@ -13,11 +13,11 @@ CatStats CatStats::createDefault(GJGameLevel* relatedLevel){
     newStats.relatedLevel = relatedLevel;
     newStats.name = relatedLevel->m_levelName;
     if (newStats.name == ""){
-        newStats.onAREDLStatsRecieved = [relatedLevel](CatStats* newStats){
-            if (newStats->getLevelDetails() == nullptr) return;
-            if (newStats->getLevelDetails()->level_id != relatedLevel->m_levelID) return;
+        newStats.onAREDLStatsRecieved = [newStats](CatStats* newerStats){
+            if (newerStats->getLevelDetails() == nullptr) return;
+            if (newerStats->getLevelDetails()->level_id != newStats.relatedLevel->m_levelID) return;
 
-            newStats->name = newStats->getLevelDetails()->name;
+            newerStats->name = newerStats->getLevelDetails()->name;
         };
         newStats.loadAREDLLevelData();
     }
