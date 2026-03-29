@@ -12,15 +12,6 @@ CatStats CatStats::createDefault(GJGameLevel* relatedLevel){
     CatStats newStats;
     newStats.relatedLevel = relatedLevel;
     newStats.name = relatedLevel->m_levelName;
-    if (newStats.name == ""){
-        newStats.onAREDLStatsRecieved = [newStats](CatStats* newerStats){
-            if (newerStats->getLevelDetails() == nullptr) return;
-            if (newerStats->getLevelDetails()->level_id != newStats.relatedLevel->m_levelID) return;
-
-            newerStats->name = newerStats->getLevelDetails()->name;
-        };
-        newStats.loadAREDLLevelData();
-    }
     newStats.setCatagoryAsset("cat", 0);
 
     float randomSizeOffset = .2f;

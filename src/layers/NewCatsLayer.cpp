@@ -101,6 +101,9 @@ bool NewCatsLayer::init(const std::vector<CatStats>& newCats) {
     {
         auto tempCat = newCat;
         auto display = LinkedCatDisplay::create(&tempCat);
+        display->onAREDLStatsRecieved = [display](CatStats* newStats){
+            display->setCat(*newStats);
+        };
         display->setNameAboveVisible(true);
         kittyScroll->m_contentLayer->addChild(display);
     }

@@ -15,6 +15,8 @@ public:
 
     void setNameAboveVisible(bool b);
 
+    std::function<void(CatStats*)> onAREDLStatsRecieved = NULL;
+
 private:
     virtual bool init(CatStats* catStats);
 
