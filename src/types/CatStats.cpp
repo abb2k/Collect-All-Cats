@@ -51,6 +51,8 @@ bool CatStats::isEmpty(){
 
 void CatStats::loadAREDLLevelData(){
     if (levelDetails.has_value() && levelDetails.value().level_id == relatedLevel->m_levelID) return;
+
+    log::info("Loading AREDL level data for level id {}", relatedLevel->m_levelID.value());
     
     web::WebRequest req;
     async::spawn(

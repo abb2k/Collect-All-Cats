@@ -36,10 +36,10 @@ bool Cat::init(CCNode* wanderArea, GJGameLevel* relatedLevel) {
         if (refStats->getLevel()->m_levelName == "" && refStats->name != "")
             refStats->name = refStats->getLevelDetails()->name;
 
-        nameLabel->setString(refStats->name.c_str());
-
         if (stats.name == getRealName())
             levelNameLabel->setString("");
+        else
+            levelNameLabel->setString(getRealName().c_str());
     });
     stats.loadAREDLLevelData();
 
