@@ -135,3 +135,7 @@ Result<CatagoryAssetSprites> CatStats::getCatagoryAssetSprites(const std::string
         .noncolor = isNoncolorFallback ? std::nullopt : std::make_optional(std::move(CCSprite::create(fmt::format("{}-{}_2.png"_spr, catagoryResourceName, itemID).c_str()))),
     });
 }
+
+std::string CatStats::getRealName(){
+    return getLevel()->m_levelName == "" ? (getLevelDetails() != nullptr ? getLevelDetails()->name : "Unknown") : getLevel()->m_levelName;
+}

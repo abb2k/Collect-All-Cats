@@ -32,14 +32,11 @@ bool Cat::init(CCNode* wanderArea, GJGameLevel* relatedLevel) {
         if (refStats == nullptr || refStats->getLevelDetails() == nullptr) return;
 
         log::info("name = {}, level name = {}, level id = {}", refStats->name, refStats->getLevel()->m_levelName, refStats->getLevel()->m_levelID.value());
-
-        if (refStats->getLevel()->m_levelName == "" && refStats->name != "")
-            refStats->name = refStats->getLevelDetails()->name;
-
-        if (stats.name == getRealName())
+        
+        if (stats.name == stats.getRealName())
             levelNameLabel->setString("");
         else
-            levelNameLabel->setString(getRealName().c_str());
+            levelNameLabel->setString(stats.getRealName().c_str());
     });
     stats.loadAREDLLevelData();
 
@@ -67,7 +64,7 @@ bool Cat::init(CCNode* wanderArea, GJGameLevel* relatedLevel) {
     nameLabel->setOpacity(200);
     this->addChild(nameLabel);
     
-    levelNameLabel = CCLabelBMFont::create(getRealName().c_str(), "goldFont.fnt");
+    levelNameLabel = CCLabelBMFont::create(stats.getRealName().c_str(), "goldFont.fnt");
     levelNameLabel->setID("level-name-label");
     levelNameLabel->setPosition({this->getContentWidth() / 2, 70});
     levelNameLabel->setScale(.25f);
@@ -76,7 +73,7 @@ bool Cat::init(CCNode* wanderArea, GJGameLevel* relatedLevel) {
 
     getVisualParent()->setRotationY(CatUtils::GetRandomInt(0, 1) == 0 ? 180 : 0);
 
-    if (stats.name == getRealName())
+    if (stats.name == stats.getRealName())
         levelNameLabel->setString("");
 
     this->scheduleUpdate();
@@ -111,10 +108,10 @@ void Cat::setCatStats(const CatStats& newStats){
     nameLabel->setString(stats.name.c_str());
     //log::info("{}, {}, {}", stats.name, stats.getLevel()->m_levelName, stats.getLevel()->m_levelID.value());
 
-    if (stats.name == getRealName())
+    if (stats.name == stats.getRealName())
         levelNameLabel->setString("");
     else
-        levelNameLabel->setString(getRealName().c_str());
+        levelNameLabel->setString(stats.getRealName().c_str());
 
     visualParent->updateVisuals(stats);
 
@@ -190,7 +187,3 @@ void Cat::AIUpdate(float dt){
 }
 
 CCNode* Cat::getVisualParent() { return visualParent; }
-
-std::string Cat::getRealName(){
-    return stats.getLevel()->m_levelName == "" ? (stats.getLevelDetails() != nullptr ? stats.getLevelDetails()->name : "Unknown") : stats.getLevel()->m_levelName;
-}

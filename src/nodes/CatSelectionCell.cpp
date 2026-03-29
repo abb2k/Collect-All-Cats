@@ -37,14 +37,14 @@ bool CatSelectionCell::init(const CatStats& stats) {
     nameLabel->setScale(std::min(0.75f, 100 / nameLabel->getContentWidth()));
     this->addChild(nameLabel);
 
-    levelNameLabel = CCLabelBMFont::create(myCatStats.getLevel()->m_levelName.c_str(), "goldFont.fnt");
+    levelNameLabel = CCLabelBMFont::create(myCatStats.getRealName().c_str(), "goldFont.fnt");
     levelNameLabel->setID("level-name-label");
     levelNameLabel->setPosition({this->getContentWidth() / 2, 95});
     levelNameLabel->setAlignment(CCTextAlignment::kCCTextAlignmentCenter);
     levelNameLabel->setScale(std::min(0.5f, 75 / levelNameLabel->getContentWidth()));
     this->addChild(levelNameLabel);
 
-    if (myCatStats.name == myCatStats.getLevel()->m_levelName){
+    if (myCatStats.name == myCatStats.getRealName()){
         levelNameLabel->setString("");
     }
 
@@ -132,8 +132,8 @@ void CatSelectionCell::onStatsChanged(const CatStats& newStats){
     nameLabel->setString(newStats.name.c_str());
     nameLabel->setScale(std::min(0.75f, 100 / nameLabel->getContentWidth()));
     
-    if (myCatStats.name != myCatStats.getLevel()->m_levelName){
-        levelNameLabel->setString(myCatStats.getLevel()->m_levelName.c_str());
+    if (myCatStats.name != myCatStats.getRealName()){
+        levelNameLabel->setString(myCatStats.getRealName().c_str());
         levelNameLabel->setScale(std::min(0.5f, 75 / levelNameLabel->getContentWidth()));
     }
     else levelNameLabel->setString("");

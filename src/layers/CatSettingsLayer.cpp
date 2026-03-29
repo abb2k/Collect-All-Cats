@@ -95,7 +95,7 @@ bool CatSettingsLayer::init() {
     nameInputField->setCallback([&](const std::string& newText){
         catToModify.name = newText;
 
-        nameResetBtn->setVisible(catToModify.name != catToModify.getLevel()->m_levelName);
+        nameResetBtn->setVisible(catToModify.name != catToModify.getRealName());
 
         updateLivingCat();
     });
@@ -373,7 +373,7 @@ void CatSettingsLayer::show(){
     if (!selPopup) return;
 
     if (catToModify.getLevel() != nullptr)
-        nameResetBtn->setVisible(catToModify.name != catToModify.getLevel()->m_levelName);
+        nameResetBtn->setVisible(catToModify.name != catToModify.getRealName());
 
     selPopup->fadeTo(10, 0.3f);
 }
@@ -411,7 +411,7 @@ void CatSettingsLayer::setToCat(CatStats& stats){
     catsLayer->setFollowTarget(catsLayer->getCatFromStats(stats));
 
     if (catToModify.getLevel() != nullptr)
-        nameResetBtn->setVisible(catToModify.name != catToModify.getLevel()->m_levelName);
+        nameResetBtn->setVisible(catToModify.name != catToModify.getRealName());
 
     updateEditorColors();
     updateSelectedOption();
@@ -454,7 +454,7 @@ void CatSettingsLayer::showWithCat(CatStats& stats){
 
 void CatSettingsLayer::nameReset(CCObject*){
     if (catToModify.getLevel() != nullptr)
-        catToModify.name = catToModify.getLevel()->m_levelName;
+        catToModify.name = catToModify.getRealName();
 
     nameInputField->setString(catToModify.name);
 

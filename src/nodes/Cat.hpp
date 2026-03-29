@@ -39,8 +39,6 @@ private:
 
     CCNode* wanderArea;
 
-    std::string getRealName();
-
     void onCatClicked(CCObject*);
 
     std::map<std::string, std::shared_ptr<CatAIStateBase>> possibleAIStates{};

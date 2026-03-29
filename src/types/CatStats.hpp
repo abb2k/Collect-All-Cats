@@ -67,6 +67,8 @@ struct CatStats{
 
         static Result<CatagoryAssetSprites> getCatagoryAssetSprites(const std::string& catagoryResourceName, unsigned int itemID);
 
+        std::string getRealName();
+
     private:
         GJGameLevel* relatedLevel;
         std::optional<AREDLLevelDetails> levelDetails = std::nullopt;
