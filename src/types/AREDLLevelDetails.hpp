@@ -14,7 +14,10 @@ struct AREDLVerification{
     AREDLUser submitted_by;
     bool mobile;
     std::string video_url;
+    bool hide_video;
+    std::string achived_at;
     std::string created_at;
+    std::string updated_at;
 };
 
 struct AREDLLevelDetails{
@@ -28,9 +31,9 @@ struct AREDLLevelDetails{
     std::vector<std::string> tags;
     std::string description;
     int songID;
-    int edel_enjoyment;
+    float edel_enjoyment;
     bool is_edel_pending;
-    int gddl_tier;
+    float gddl_tier;
     std::string nlw_tier;
     AREDLUser publisher;
     std::vector<AREDLVerification> verifications;

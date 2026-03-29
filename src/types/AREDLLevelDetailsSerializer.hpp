@@ -31,7 +31,10 @@ struct matjson::Serialize<AREDLVerification> {
         GEODE_UNWRAP_INTO(verification.submitted_by, value["submitted_by"].as<AREDLUser>());
         GEODE_UNWRAP_INTO(verification.mobile, value["mobile"].asBool());
         GEODE_UNWRAP_INTO(verification.video_url, value["video_url"].asString());
+        GEODE_UNWRAP_INTO(verification.hide_video, value["hide_video"].asBool());
+        GEODE_UNWRAP_INTO(verification.achived_at, value["achived_at"].asString());
         GEODE_UNWRAP_INTO(verification.created_at, value["created_at"].asString());
+        GEODE_UNWRAP_INTO(verification.updated_at, value["updated_at"].asString());
 
         return Ok(verification);
     }
@@ -56,10 +59,12 @@ struct matjson::Serialize<AREDLLevelDetails> {
         GEODE_UNWRAP_INTO(details.two_player, value["two_player"].asBool());
         GEODE_UNWRAP_INTO(details.tags, value["tags"].as<std::vector<std::string>>());
         GEODE_UNWRAP_INTO(details.description, value["description"].asString());
-        GEODE_UNWRAP_INTO(details.songID, value["song"].asInt());
-        GEODE_UNWRAP_INTO(details.edel_enjoyment, value["edel_enjoyment"].asInt());
+        if (!value["song"].isNull()){
+            GEODE_UNWRAP_INTO(details.songID, value["song"].asInt());
+        }
+        GEODE_UNWRAP_INTO(details.edel_enjoyment, value["edel_enjoyment"].asDouble());
         GEODE_UNWRAP_INTO(details.is_edel_pending, value["is_edel_pending"].asBool());
-        GEODE_UNWRAP_INTO(details.gddl_tier, value["gddl_tier"].asInt());
+        GEODE_UNWRAP_INTO(details.gddl_tier, value["gddl_tier"].asDouble());
         GEODE_UNWRAP_INTO(details.nlw_tier, value["nlw_tier"].asString());
         GEODE_UNWRAP_INTO(details.publisher, value["publisher"].as<AREDLUser>());
         GEODE_UNWRAP_INTO(details.verifications, value["verifications"].as<std::vector<AREDLVerification>>());
