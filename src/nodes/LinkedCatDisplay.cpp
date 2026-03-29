@@ -59,6 +59,15 @@ void LinkedCatDisplay::setCat(const CatStats& catStats){
     this->addChild(nameLabel);
 
     myStats = Ok(catStats);
+    auto& tempStatsRef = myStats.unwrap();
+
+    if (tempStatsRef.getLevelDetails() == nullptr){
+        tempStatsRef.setOnAREDLStatsRecievedCallback([this](CatStats* newStats){
+            this->myStats = Ok(*newStats);
+        });
+        
+        tempStatsRef.loadAREDLLevelData();
+    }
 }
 
 void LinkedCatDisplay::update(float dt){
