@@ -39,14 +39,14 @@ bool Cat::init(CCNode* wanderArea, GJGameLevel* relatedLevel) {
 
     auto btn = CCMenuItem::create(this, menu_selector(Cat::onCatClicked));
     btn->setContentSize(this->getContentSize());
-    btn->setPosition(this->getContentSize() / 2 + ccp(0, 10));
+    btn->setPosition(this->getContentSize() / 2);
     btn->setID("general-interact-range");
     this->addChild(btn);
 
     visualParent = CatVisualDisplay::create();
     visualParent->setID("visual-parent");
     visualParent->setContentSize({0, 0});
-    visualParent->setPosition(this->getContentSize() / 2 + ccp(0, 10));
+    visualParent->setPosition(this->getContentSize() / 2);
     visualParent->ignoreAnchorPointForPosition(false);
     this->addChild(visualParent);
     
@@ -88,7 +88,7 @@ void Cat::onCatClicked(CCObject*){
 };
 
 void Cat::interaction(){
-    FMODAudioEngine::get()->playEffect("meow.mp3"_spr, std::lerp(0.7F, 1.2F, CCRANDOM_0_1()), std::lerp(0.7F, 1.2F, CCRANDOM_0_1()), 1);
+    FMODAudioEngine::get()->playEffect("meow.mp3"_spr, CatUtils::GetRandomFloat(0.7f, 1.2f), CatUtils::GetRandomFloat(0.7f, 1.2f), 1);
 }
 
 CatStats Cat::getStats() { return stats; }
@@ -99,7 +99,7 @@ void Cat::setCatStats(const CatStats& newStats){
     this->setScale(stats.size);
 
     nameLabel->setString(stats.name.c_str());
-    log::info("{}, {}, {}", stats.name, stats.getLevel()->m_levelName, stats.getLevel()->m_levelID.value());
+    //log::info("{}, {}, {}", stats.name, stats.getLevel()->m_levelName, stats.getLevel()->m_levelID.value());
 
     if (stats.name == stats.getLevel()->m_levelName)
         levelNameLabel->setString("");
