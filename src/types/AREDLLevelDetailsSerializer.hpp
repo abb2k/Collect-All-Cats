@@ -83,7 +83,7 @@ struct matjson::Serialize<AREDLLevelDetails> {
         log::info("15");
         GEODE_UNWRAP_INTO(details.publisher, value["publisher"].as<AREDLUser>());
         log::info("16");
-        GEODE_UNWRAP_INTO(details.verifications, value["verifications"].as<std::vector<AREDLVerification>>());
+        //GEODE_UNWRAP_INTO(details.verifications, value["verifications"].as<std::vector<AREDLVerification>>());
         log::info("gg :3");
 
         return Ok(details);
