@@ -8,10 +8,10 @@ using namespace geode::prelude;
 
 class NewCatsLayer : public CCLayer {
 public:
-    static NewCatsLayer* create(std::vector<CatStats>& newCats);
+    static NewCatsLayer* create(const std::vector<CatStats>& newCats);
 
 private:
-    virtual bool init(std::vector<CatStats>& newCats);
+    virtual bool init(const std::vector<CatStats>& newCats);
 
     CCAnimation* lighningAnim;
 

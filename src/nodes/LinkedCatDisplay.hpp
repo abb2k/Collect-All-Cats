@@ -17,6 +17,8 @@ public:
 
     std::function<void(CatStats*)> onAREDLStatsRecieved = NULL;
 
+    Result<CatStats> getStats();
+
 private:
     virtual bool init(CatStats* catStats);
 

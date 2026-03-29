@@ -116,3 +116,7 @@ void LinkedCatDisplay::update(float dt){
 void LinkedCatDisplay::setNameAboveVisible(bool b){
     nameLabel->setVisible(b);
 }
+
+Result<CatStats> LinkedCatDisplay::getStats(){
+    return myStats;
+}

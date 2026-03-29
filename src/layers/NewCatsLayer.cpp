@@ -5,7 +5,7 @@
 #include <utils/Save.hpp>
 #include <layers/CatsLayer.hpp>
 
-NewCatsLayer* NewCatsLayer::create(std::vector<CatStats>& newCats) {
+NewCatsLayer* NewCatsLayer::create(const std::vector<CatStats>& newCats) {
     auto ret = new NewCatsLayer();
     if (ret->init(newCats)) {
         ret->autorelease();
@@ -15,7 +15,7 @@ NewCatsLayer* NewCatsLayer::create(std::vector<CatStats>& newCats) {
     return nullptr;
 }
 
-bool NewCatsLayer::init(std::vector<CatStats>& newCats) {
+bool NewCatsLayer::init(const std::vector<CatStats>& newCats) {
     if (!CCLayer::init()) return false;
 
     Loader::get()->queueInMainThread([&] {
@@ -97,14 +97,12 @@ bool NewCatsLayer::init(std::vector<CatStats>& newCats) {
     );
     this->addChild(kittyScroll);
 
-    for (CatStats& newCat : newCats)
+    for (auto& newCat : newCats)
     {
         auto tempCat = newCat;
         auto display = LinkedCatDisplay::create(&tempCat);
-        display->onAREDLStatsRecieved = [display, &newCat](CatStats* newStats){
+        display->onAREDLStatsRecieved = [display, newCat](CatStats* newStats){
             newStats->name = newStats->getRealName();
-            auto details = newStats->getLevelDetails();
-            newCat.setLevelDetails(*details);
         };
         display->setNameAboveVisible(true);
         kittyScroll->m_contentLayer->addChild(display);
@@ -240,8 +238,12 @@ void NewCatsLayer::keyBackClicked(){
 
     auto catsLayer = CatsLayer::activeCatLayer();
     
-    for (auto& cat : newCats)
+    for (auto& catDisp : kittyScroll->m_contentLayer->getChildrenExt<LinkedCatDisplay*>())
     {
+        auto tempCat = catDisp->getStats();
+        if (tempCat.isErr()) continue;
+        auto cat = tempCat.unwrap();
+
         Save::addPlacedCat(cat.getLevel()->m_levelID.value());
         if (catsLayer != nullptr){
             catsLayer->addCat(cat.getLevel(), cat.getLevelDetails());
