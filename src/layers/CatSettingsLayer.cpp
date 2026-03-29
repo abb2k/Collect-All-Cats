@@ -140,7 +140,7 @@ bool CatSettingsLayer::init() {
     centerContentBG->setOpacity(100);
     this->addChild(centerContentBG);
 
-    auto colorSkinsSwitchMenu = CCMenu::create();
+    colorSkinsSwitchMenu = CCMenu::create();
     colorSkinsSwitchMenu->setID("in-catagory-pages-menu");
     colorSkinsSwitchMenu->setContentSize({105, 17});
     colorSkinsSwitchMenu->setPosition({154, 282});
@@ -349,6 +349,8 @@ bool CatSettingsLayer::init() {
     
     defaultCatagory = addCatagory("Cats", "cat", CCSprite::createWithSpriteFrameName("default_cat.png"_spr));
     addCatagory("Hats", "hat", CCSprite::createWithSpriteFrameName("abb2k_cac_closed.png"_spr));
+    addCatagory("Glasses", "glasses", CCSprite::createWithSpriteFrameName("abb2k_cac_closed.png"_spr));
+    addCatagory("Neck", "neck", CCSprite::createWithSpriteFrameName("abb2k_cac_closed.png"_spr));
     
     return true;
 }
@@ -492,6 +494,7 @@ void CatSettingsLayer::onCatagoryClicked(CCObject* sender){
     selectedPage->setOpacity(255);
 
     catagoryTitle->setString(catagoriesMapped[button].first.c_str());
+    catagoryTitle->setScale(std::min(.75f, (this->getContentWidth() - colorSkinsSwitchMenu->getContentWidth()) / catagoryTitle->getContentWidth()));
 
     updateEditorColors();
 

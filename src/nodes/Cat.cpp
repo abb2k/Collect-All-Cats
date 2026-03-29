@@ -54,11 +54,14 @@ bool Cat::init(CCNode* wanderArea, GJGameLevel* relatedLevel) {
     nameLabel->setID("name-label");
     nameLabel->setPosition({this->getContentWidth() / 2, 80});
     nameLabel->setScale(.5f);
+    nameLabel->setOpacity(200);
     this->addChild(nameLabel);
+    
     levelNameLabel = CCLabelBMFont::create(stats.getLevel()->m_levelName.c_str(), "goldFont.fnt");
     levelNameLabel->setID("level-name-label");
     levelNameLabel->setPosition({this->getContentWidth() / 2, 70});
     levelNameLabel->setScale(.25f);
+    levelNameLabel->setOpacity(200);
     this->addChild(levelNameLabel);
 
     getVisualParent()->setRotationY(CatUtils::GetRandomInt(0, 1) == 0 ? 180 : 0);
@@ -85,7 +88,7 @@ void Cat::onCatClicked(CCObject*){
 };
 
 void Cat::interaction(){
-    FMODAudioEngine::get()->playEffect("meow.mp3"_spr);
+    FMODAudioEngine::get()->playEffect("meow.mp3"_spr, std::lerp(0.7F, 1.2F, CCRANDOM_0_1()), std::lerp(0.7F, 1.2F, CCRANDOM_0_1()), 1);
 }
 
 CatStats Cat::getStats() { return stats; }

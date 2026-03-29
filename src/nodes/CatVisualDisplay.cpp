@@ -22,18 +22,44 @@ bool CatVisualDisplay::init() {
     catDisplay->setPosition(this->getContentSize() / 2);
     this->addChild(catDisplay);
 
+    hatDisplay = CatagoryAssetDisplay::create();
+    hatDisplay->setScale(.7f);
+    hatDisplay->setPosition(this->getContentSize() / 2);
+    this->addChild(hatDisplay);
+
+    glassesDisplay = CatagoryAssetDisplay::create();
+    glassesDisplay->setScale(.7f);
+    glassesDisplay->setPosition(this->getContentSize() / 2);
+    this->addChild(glassesDisplay);
+
+    neckDisplay = CatagoryAssetDisplay::create();
+    neckDisplay->setScale(.7f);
+    neckDisplay->setPosition(this->getContentSize() / 2);
+    this->addChild(neckDisplay);
+
     return true;
 }
 
-void CatVisualDisplay::updateVisuals(CatStats& stats){    
-    if (!current.has_value()){
+void CatVisualDisplay::updateVisuals(CatStats& stats){
+    CatStats* cur = current.has_value() ? &current.value() : nullptr;
+    
+    if (cur == nullptr){
         catDisplay->setAsset(stats.getCatagoryAssetInfo("cat"));
+        glassesDisplay->setAsset(stats.getCatagoryAssetInfo("glasses"));
+        hatDisplay->setAsset(stats.getCatagoryAssetInfo("hat"));
+        neckDisplay->setAsset(stats.getCatagoryAssetInfo("neck"));
     }
     else{
-        updateIfChange("cat", catDisplay, current.value(), stats);
+        updateIfChange("cat", catDisplay, *cur, stats);
+        updateIfChange("hat", hatDisplay, *cur, stats);
+        updateIfChange("glasses", glassesDisplay, *cur, stats);
+        updateIfChange("neck", neckDisplay, *cur, stats);
     }
 
     catDisplay->setPosition(this->getContentSize() / 2);
+    hatDisplay->setPosition(this->getContentSize() / 2);
+    glassesDisplay->setPosition(this->getContentSize() / 2);
+    neckDisplay->setPosition(this->getContentSize() / 2);
 
     current = stats;
 }

@@ -59,6 +59,7 @@ private:
     void onColorSkinsSwitch(CCObject* sender);
     CCMenuItemSpriteExtra* skinsSwitchBtn;
     CCMenuItemSpriteExtra* colorSwitchBtn;
+    CCMenu* colorSkinsSwitchMenu;
     int currentEditingPage = 0;
 
     CCLabelBMFont* catagoryTitle;

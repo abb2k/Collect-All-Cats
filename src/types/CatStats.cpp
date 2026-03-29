@@ -27,14 +27,14 @@ Result<CatStats> CatStats::createFromJson(const matjson::Value& value){
     GEODE_UNWRAP_INTO(stats.size, value["size"].asDouble());
     GEODE_UNWRAP_INTO(stats.customazationAssets, value["catagoryAssets"].as<std::map<std::string, CatagoryAssetInfo>>());
 
-    return Ok(std::move(stats));
+    return Ok(stats);
 }
 
 Result<CatStats> CatStats::createFromJsonWithLevel(const matjson::Value& json, GJGameLevel* level){
     GEODE_UNWRAP_INTO(auto stats, json.as<CatStats>());
     stats.relatedLevel = level;
 
-    return Ok(std::move(stats));
+    return Ok(stats);
 }
 
 GJGameLevel* CatStats::getLevel() { return relatedLevel; }

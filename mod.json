@@ -24,5 +24,11 @@
 		"sprites": [
 			"resources/catSkins/*.png"
 		]
+	},
+	"incompatibilities":{
+		"alk.better-touch-prio":{
+			"breaking": true,
+			"version": ">=1.0.0"
+		}
 	}
 }

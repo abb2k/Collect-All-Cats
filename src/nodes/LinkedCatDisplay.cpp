@@ -64,12 +64,12 @@ void LinkedCatDisplay::setCat(const CatStats& catStats){
 void LinkedCatDisplay::update(float dt){
     nameLabel->setScale(std::clamp(150 / nameLabel->getContentWidth(), .4f, 1.0f));
     
-    if (!myStats.isOk()) return;
+    if (myStats.isErr()) return;
 
     auto catsLayer = CatsLayer::activeCatLayer();
     if (!catsLayer) return;
 
-    auto stats = std::move(myStats.unwrap());
+    auto stats = myStats.unwrap();
     
     auto catRef = catsLayer->getCatFromStats(stats);
     if (catRef == nullptr){
