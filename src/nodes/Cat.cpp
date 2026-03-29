@@ -29,7 +29,7 @@ bool Cat::init(CCNode* wanderArea, GJGameLevel* relatedLevel, AREDLLevelDetails*
     else stats = didLoadCat.unwrap();
     if (details != nullptr){
         stats.setLevelDetails(*details);
-        stats.name = stats.getRealName();
+        stats.name = stats.getLevelDetails()->name;
         auto didCatSave = Save::saveCat(&stats);
     }
     
