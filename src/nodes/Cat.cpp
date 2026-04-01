@@ -100,7 +100,7 @@ void Cat::onCatClicked(CCObject*){
 };
 
 void Cat::interaction(){
-    FMODAudioEngine::get()->playEffect("meow.mp3"_spr, CatUtils::GetRandomFloat(0.7f, 1.2f), CatUtils::GetRandomFloat(0.7f, 1.2f), 1);
+    FMODAudioEngine::get()->playEffect("meow.mp3"_spr, std::lerp(1.9f, 0.3f, (stats.size - CatStats::MIN_SIZE) / CatStats::MAX_SIZE) + CatUtils::GetRandomFloat(-0.1f, 0.1f), 1, 1);
 }
 
 CatStats Cat::getStats() { return stats; }
