@@ -44,4 +44,8 @@ class CatSelectionPopup : public Popup{
         CCMenuItemSpriteExtra* pageLeftBtn;
         CCMenuItemSpriteExtra* pageRightBtn;
         const int PAGE_ARROW_DISABLED_OPACITY = 100;
+
+        void onEnter() override;
+
+        void onExit() override;
 };

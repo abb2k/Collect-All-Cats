@@ -110,8 +110,6 @@ bool CatSelectionPopup::init() {
     pageRightBtn->setPosition({375, catsScrollLayer->getContentHeight() / 2});
     m_buttonMenu->addChild(pageRightBtn);
 
-    CCTouchDispatcher::get()->addPrioTargetedDelegate(m_buttonMenu, -504, true);
-
     this->scheduleUpdate();
 
     CatSelectionPopup::movePage(nullptr);
@@ -274,4 +272,16 @@ void CatSelectionPopup::movePage(CCObject* sender){
         pageRightBtn->setOpacity(255);
         pageRightBtn->setEnabled(true);
     }
+}
+
+void CatSelectionPopup::onEnter(){
+    Popup::onEnter();
+
+    CCTouchDispatcher::get()->addPrioTargetedDelegate(m_buttonMenu, -504, true);
+}
+
+void CatSelectionPopup::onExit(){
+    Popup::onExit();
+
+    CCTouchDispatcher::get()->removeDelegate(m_buttonMenu);
 }

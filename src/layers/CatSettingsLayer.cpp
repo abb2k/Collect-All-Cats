@@ -14,7 +14,6 @@ CatSettingsLayer* CatSettingsLayer::create() {
 }
 
 bool CatSettingsLayer::init() {
-    CCTouchDispatcher::get()->registerForcePrio(this, 3);
     if (!CCLayer::init()) return false;
 
     auto winSize = CCDirector::get()->getWinSize();
@@ -328,12 +327,12 @@ bool CatSettingsLayer::init() {
         ->setGrowCrossAxis(true)
     );
     this->addChild(skinOptionsContainer);
-
+    
     auto blockerMenu = CCMenu::create();
     blockerMenu->setID("touch-blocker-menu");
     blockerMenu->setContentSize(this->getContentSize() - ccp(30, 0));
     blockerMenu->setPosition({0, 0});
-    blockerMenu->setZOrder(100);
+    blockerMenu->setZOrder(-10);
     blockerMenu->setEnabled(true);
     this->addChild(blockerMenu);
 
@@ -736,4 +735,17 @@ void CatSettingsLayer::updateOptionsColors(){
         assetDisplayNode->setPrimaryColor(catagoryInfo.primary);
         assetDisplayNode->setSecondaryColor(catagoryInfo.secondary);
     }
+}
+
+void CatSettingsLayer::onEnter(){
+    CCLayer::onEnter();
+
+    CCTouchDispatcher::get()->registerForcePrio(this, 3);
+}
+
+void CatSettingsLayer::onExit(){
+    CCLayer::onExit();
+
+    CCTouchDispatcher::get()->unregisterForcePrio(this);
+    CCTouchDispatcher::get()->removeDelegate(this);
 }

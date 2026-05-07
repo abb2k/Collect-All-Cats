@@ -1,5 +1,5 @@
 {
-	"geode": "5.4.1",
+	"geode": "5.7.0",
 	"gd": {
 		"win": "2.2081",
 		"android": "2.2081",
@@ -24,11 +24,5 @@
 		"sprites": [
 			"resources/catSkins/*.png"
 		]
-	},
-	"incompatibilities":{
-		"alk.better-touch-prio":{
-			"breaking": true,
-			"version": ">=1.0.0"
-		}
 	}
 }

@@ -24,10 +24,6 @@ private:
         cocos2d::CCTouchDispatcher::get()->addTargetedDelegate(this, -500, false);
     }
 
-    ~CatSettingsLayer() override{
-        CCTouchDispatcher::get()->unregisterForcePrio(this);
-    }
-
     virtual void keyBackClicked() override;
 
     void onBackClicked(CCObject*);
@@ -83,4 +79,8 @@ private:
     void updateSelectedOption();
     void updateOptionsColors();
     int selectedOptionID;
+
+    void onEnter() override;
+
+    void onExit() override;
 };
