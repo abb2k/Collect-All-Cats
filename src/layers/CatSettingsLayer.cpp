@@ -708,7 +708,11 @@ void CatSettingsLayer::createOptionBtn(bool isSelected, CatagoryAssetDisplay* di
         display->setTag(2);
         btn->addChild(display);
         display->setAssetUpdatedCallback([spr](CatagoryAssetDisplay* me){
-            me->setScale(spr->getContentWidth() / me->getContentWidth());
+            me->setScale(spr->getContentWidth() / (
+                me->getContentWidth() == 0 ?
+                    spr->getContentWidth() :
+                    me->getContentWidth()
+            ));
         });
     }
     auto spr2 = CCSprite::create("GJ_button_03.png");
