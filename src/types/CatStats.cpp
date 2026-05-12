@@ -5,6 +5,8 @@
 
 #include <types/AREDLLevelDetailsSerializer.hpp>
 
+#include <abb2k.rig/include/API.hpp>
+
 const float CatStats::MIN_SIZE = .25f;
 const float CatStats::MAX_SIZE = 2.0f;
 
@@ -117,7 +119,24 @@ Result<CatagoryAssetSprites> CatStats::getCatagoryAssetSprites(const std::string
     bool isSecondaryFallback = true;
     bool isNoncolorFallback = true;
 
-    if (!std::filesystem::exists(Mod::get()->getResourcesDir() / fmt::format("{}-{}_0.png", catagoryResourceName, itemID))){
+    CCSprite* primary = nullptr;
+    std::shared_ptr<tinygltf::Model> model = nullptr;
+
+    if (std::filesystem::exists(Mod::get()->getResourcesDir() / fmt::format("{}-{}_0.glb", catagoryResourceName, itemID))){
+        auto modelRes = ModelLoader::loadModel(fmt::format("{}-{}_0.glb"_spr, catagoryResourceName, itemID));
+        if (modelRes.isErr()){
+            return Err("Failed to load model!");
+        }
+        
+        model = modelRes.unwrap().model;
+
+        if (!modelRes.unwrap().warning.empty())
+            log::warn("{}", modelRes.unwrap().warning);
+    }
+    else if (std::filesystem::exists(Mod::get()->getResourcesDir() / fmt::format("{}-{}_0.png", catagoryResourceName, itemID))){
+        primary = CCSprite::create(fmt::format("{}-{}_0.png"_spr, catagoryResourceName, itemID).c_str());
+    }
+    else{
         return Err("No resource for catagory {} of ID {} exists!", catagoryResourceName, itemID);
     }
 
@@ -130,9 +149,10 @@ Result<CatagoryAssetSprites> CatStats::getCatagoryAssetSprites(const std::string
     }
 
     return Ok(CatagoryAssetSprites{
-        .primary = CCSprite::create(fmt::format("{}-{}_0.png"_spr, catagoryResourceName, itemID).c_str()),
+        .primary = primary,
         .secondary = isSecondaryFallback ? std::nullopt : std::make_optional(std::move(CCSprite::create(fmt::format("{}-{}_1.png"_spr, catagoryResourceName, itemID).c_str()))),
         .noncolor = isNoncolorFallback ? std::nullopt : std::make_optional(std::move(CCSprite::create(fmt::format("{}-{}_2.png"_spr, catagoryResourceName, itemID).c_str()))),
+        .model = model
     });
 }
 

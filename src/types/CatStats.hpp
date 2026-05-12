@@ -8,6 +8,8 @@ using namespace geode::prelude;
 
 #include <types/AREDLLevelDetails.hpp>
 
+#include <abb2k.rig/include/API.hpp>
+
 struct CatagoryAssetInfo{
     std::string catagoryResoueceName;
     std::optional<unsigned int> assetID;
@@ -29,6 +31,7 @@ struct CatagoryAssetSprites{
     CCSprite* primary;
     std::optional<CCSprite*> secondary;
     std::optional<CCSprite*> noncolor;
+    std::shared_ptr<tinygltf::Model> model;
 };
 
 struct CatStats{

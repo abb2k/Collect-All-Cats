@@ -34,6 +34,10 @@ void CatagoryAssetDisplay::setAsset(const std::string& catagoryName, const std::
         this->removeChild(m_noncolorSprite, true);
         m_noncolorSprite = nullptr;
     }
+    if (m_model) {
+        this->removeChild(m_model, true);
+        m_model = nullptr;
+    }
 
     if (!itemID.has_value()){
         this->setContentSize({0, 0});
@@ -54,6 +58,22 @@ void CatagoryAssetDisplay::setAsset(const std::string& catagoryName, const std::
                 initSprite(m_primarySprite, "kitty-color-three-sprite-primary");
 
                 this->setContentSize(m_primarySprite->getContentSize());
+
+                setPrimaryColor(currentAsset.primary);
+            }
+
+            log::info("stuff");
+
+            if (sprites.model) {
+                m_model = SkeletonPlayer::create();
+                m_model->loadFromGLTF(sprites.model);
+                m_model->setID("kitty-color-three-sprite-primary");
+                m_model->setContentSize({50, 50});
+                this->addChild(m_model);
+
+                log::info("added model");
+
+                this->setContentSize(m_model->getContentSize());
 
                 setPrimaryColor(currentAsset.primary);
             }
@@ -86,10 +106,12 @@ void CatagoryAssetDisplay::setAsset(const CatagoryAssetInfo& catagoryName){
 
 void CatagoryAssetDisplay::setPrimaryColor(const ccColor4B& primary){
     currentAsset.primary = primary;
-    if (m_primarySprite == nullptr) return;
 
-    m_primarySprite->setColor({primary.r, primary.g, primary.b});
-    m_primarySprite->setOpacity(primary.a);
+    CCRGBAProtocol* rgba = m_model == nullptr ? static_cast<CCRGBAProtocol*>(m_primarySprite) : static_cast<CCRGBAProtocol*>(m_model);
+    if (rgba == nullptr) return;
+
+    rgba->setColor(ccColor3B{primary.r, primary.g, primary.b});
+    rgba->setOpacity(primary.a);
 }
 
 void CatagoryAssetDisplay::setSecondaryColor(const ccColor4B& secondary){

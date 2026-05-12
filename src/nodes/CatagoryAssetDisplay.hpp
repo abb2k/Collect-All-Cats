@@ -6,6 +6,8 @@ using namespace geode::prelude;
 
 #include <types/CatStats.hpp>
 
+#include <abb2k.rig/include/API.hpp>
+
 class CatagoryAssetDisplay : public CCMenu {
 public:
     static CatagoryAssetDisplay* create();
@@ -25,6 +27,7 @@ private:
     CCSprite* m_primarySprite = nullptr;
     CCSprite* m_secondarySprite = nullptr;
     CCSprite* m_noncolorSprite = nullptr;
+    SkeletonPlayer* m_model = nullptr;
 
     void initSprite(CCSprite* spr, const char* id);
 

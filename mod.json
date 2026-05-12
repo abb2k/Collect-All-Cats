@@ -18,11 +18,17 @@
 			]
 		},
 		"files":[
-			"resources/*.mp3",
-			"resources/*.wav"
+			"resources/sounds/*.mp3",
+			"resources/sounds/*.wav",
+			"resources/catModels/*.glb",
+			"resources/cosmeticMetadata/*.json"
 		],
 		"sprites": [
-			"resources/catSkins/*.png"
+			"resources/catTextures/*.png"
 		]
+	},
+	"dependencies": {
+		"geode.node-ids": ">=v1.23.3",
+		"abb2k.rig": ">=v1.0.0"
 	}
 }

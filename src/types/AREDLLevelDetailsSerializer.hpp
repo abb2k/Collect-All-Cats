@@ -50,43 +50,26 @@ template <>
 struct matjson::Serialize<AREDLLevelDetails> {
     static Result<AREDLLevelDetails> fromJson(const matjson::Value& value){
         AREDLLevelDetails details;
-        log::info("1");
         GEODE_UNWRAP_INTO(details.id, value["id"].asString());
-        log::info("2");
         GEODE_UNWRAP_INTO(details.position, value["position"].asInt());
-        log::info("3");
         GEODE_UNWRAP_INTO(details.name, value["name"].asString());
-        log::info("4");
         GEODE_UNWRAP_INTO(details.points, value["points"].asDouble());
-        log::info("5");
         GEODE_UNWRAP_INTO(details.legacy, value["legacy"].asBool());
-        log::info("6");
         GEODE_UNWRAP_INTO(details.level_id, value["level_id"].asInt());
-        log::info("7");
         GEODE_UNWRAP_INTO(details.two_player, value["two_player"].asBool());
-        log::info("8");
         GEODE_UNWRAP_INTO(details.tags, value["tags"].as<std::vector<std::string>>());
-        log::info("9");
         if (!value["description"].isNull()){
             GEODE_UNWRAP_INTO(details.description, value["description"].asString());
         }
-        log::info("10");
         if (!value["song"].isNull()){
             GEODE_UNWRAP_INTO(details.songID, value["song"].asInt());
         }
-        log::info("11");
         GEODE_UNWRAP_INTO(details.edel_enjoyment, value["edel_enjoyment"].asDouble());
-        log::info("12");
         GEODE_UNWRAP_INTO(details.is_edel_pending, value["is_edel_pending"].asBool());
-        log::info("13");
         GEODE_UNWRAP_INTO(details.gddl_tier, value["gddl_tier"].asDouble());
-        log::info("14");
         GEODE_UNWRAP_INTO(details.nlw_tier, value["nlw_tier"].asString());
-        log::info("15");
         GEODE_UNWRAP_INTO(details.publisher, value["publisher"].as<AREDLUser>());
-        log::info("16");
         //GEODE_UNWRAP_INTO(details.verifications, value["verifications"].as<std::vector<AREDLVerification>>());
-        log::info("gg :3");
 
         return Ok(details);
     }
