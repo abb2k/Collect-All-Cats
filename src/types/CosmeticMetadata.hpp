@@ -4,13 +4,19 @@
 
 using namespace geode::prelude;
 
+struct CosmeticOffset{
+    CCPoint posOffset;
+    CCPoint scaleOffset;
+    CCPoint rotationOffset;
+};
+
 struct CosmeticBoneOffset{
     std::string boneName;
-    CCPoint offset;
+    CosmeticOffset offset;
 };
 
 struct CosmeticMetadata{
     std::string renderType; //Model/Texture
     std::map<std::string, CosmeticBoneOffset> boneOffsets; // category - {boneName, offset from bone}
-    CCPoint personalOffset;
+    CosmeticOffset personalOffset;
 };

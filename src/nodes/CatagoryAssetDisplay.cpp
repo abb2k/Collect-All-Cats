@@ -48,47 +48,47 @@ void CatagoryAssetDisplay::setAsset(const std::string& catagoryName, const std::
         geode::queueInMainThread([this, itemID, catagoryName]() {
             auto spritesRes = CatStats::getCatagoryAssetSprites(catagoryName, itemID.value());
             if (spritesRes.isErr()){
+                log::error("Failed to get sprites {}", spritesRes.unwrapErr());
                 this->setContentSize({0, 0});
                 return;
             }
             auto sprites = spritesRes.unwrap();
 
-            if (sprites.primary) {
-                m_primarySprite = sprites.primary;
-                initSprite(m_primarySprite, "kitty-color-three-sprite-primary");
+            currentMetadata = sprites.metadata;
 
-                this->setContentSize(m_primarySprite->getContentSize());
-
-                setPrimaryColor(currentAsset.primary);
-            }
-
-            log::info("stuff");
-
-            if (sprites.model) {
+            if (sprites.model){
                 m_model = SkeletonPlayer::create();
                 m_model->loadFromGLTF(sprites.model);
                 m_model->setID("kitty-color-three-sprite-primary");
-                m_model->setContentSize({50, 50});
                 this->addChild(m_model);
-
-                log::info("added model");
 
                 this->setContentSize(m_model->getContentSize());
 
                 setPrimaryColor(currentAsset.primary);
             }
+            else if (sprites.assets.size()){
+                if (sprites.assets["tex"].primary) {
+                    m_primarySprite = sprites.assets["tex"].primary;
+                    initSprite(m_primarySprite, "kitty-color-three-sprite-primary");
 
-            if (sprites.secondary.has_value()){
-                m_secondarySprite = sprites.secondary.value();
-                initSprite(m_secondarySprite, "kitty-color-three-sprite-secondary");
+                    this->setContentSize(m_primarySprite->getContentSize());
 
-                setSecondaryColor(currentAsset.secondary);
+                    setPrimaryColor(currentAsset.primary);
+                }
+
+                if (sprites.assets["tex"].secondary.has_value()){
+                    m_secondarySprite = sprites.assets["tex"].secondary.value();
+                    initSprite(m_secondarySprite, "kitty-color-three-sprite-secondary");
+
+                    setSecondaryColor(currentAsset.secondary);
+                }
+
+                if (sprites.assets["tex"].noncolor.has_value()){
+                    m_noncolorSprite = sprites.assets["tex"].noncolor.value();
+                    initSprite(m_noncolorSprite, "kitty-color-three-sprite-noncolor");
+                }
             }
-
-            if (sprites.noncolor.has_value()){
-                m_noncolorSprite = sprites.noncolor.value();
-                initSprite(m_noncolorSprite, "kitty-color-three-sprite-noncolor");
-            }
+            
             
             if (onAssetUpdated != NULL)
                 onAssetUpdated(this);
@@ -131,4 +131,39 @@ void CatagoryAssetDisplay::initSprite(CCSprite* spr, const char* id) {
 
 void CatagoryAssetDisplay::setAssetUpdatedCallback(const std::function<void(CatagoryAssetDisplay*)>& onAssetUpdated){
     this->onAssetUpdated = onAssetUpdated;
+}
+
+void CatagoryAssetDisplay::setCategory(const std::string& catagoryName){
+    currentAsset.catagoryResoueceName = catagoryName;
+}
+
+std::optional<CosmeticBoneOffset> CatagoryAssetDisplay::isBoneChild(const std::string& categoryName){
+    if (currentMetadata.boneOffsets.contains(categoryName)){
+        return currentMetadata.boneOffsets[categoryName];
+    }
+    return std::nullopt;
+}
+
+CCNode* CatagoryAssetDisplay::getSkeletonBone(const std::string& boneName){
+    if (!m_model) return nullptr;
+
+    auto bones = m_model->getBoneNodes();
+    for (const auto& bone : bones)
+    {
+        if (bone->getID() != boneName) continue;
+
+        return bone;
+    }
+    
+    return nullptr;
+}
+
+void CatagoryAssetDisplay::applyOffset(const CosmeticOffset& off){
+    this->setPosition(this->getPosition() + off.posOffset);
+    this->setRotationX(this->getRotationX() + off.rotationOffset.x);
+    this->setRotationY(this->getRotationY() + off.rotationOffset.y);
+    this->setScaleX(this->getScaleX() + off.scaleOffset.x);
+    this->setScaleY(this->getScaleY() + off.scaleOffset.y);
+
+    log::info("poff {}", off.scaleOffset);
 }

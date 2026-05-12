@@ -619,8 +619,8 @@ void CatSettingsLayer::updateCatagorySkinButtons(){
     for (const auto& entry : std::filesystem::directory_iterator(Mod::get()->getResourcesDir())) {
         if (!entry.is_regular_file()) continue;
         
-        auto filename = entry.path().filename().string();
-        if (filename.starts_with(prefix)) {
+        auto filename = utils::string::pathToString(entry.path().stem());
+        if (filename.starts_with(prefix) && entry.path().extension() == ".json"){
             auto pos = filename.find('_');
             
             auto itemIDStr = filename.substr(prefix.size(), pos - prefix.size());

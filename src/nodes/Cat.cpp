@@ -36,7 +36,7 @@ bool Cat::init(CCNode* wanderArea, GJGameLevel* relatedLevel, AREDLLevelDetails*
     stats.setOnAREDLStatsRecievedCallback([this](CatStats* refStats){
         if (refStats == nullptr || refStats->getLevelDetails() == nullptr) return;
 
-        log::info("name = {}, level name = {}, level id = {}", refStats->name, refStats->getLevel()->m_levelName, refStats->getLevel()->m_levelID.value());
+        //log::info("name = {}, level name = {}, level id = {}", refStats->name, refStats->getLevel()->m_levelName, refStats->getLevel()->m_levelID.value());
         
         if (stats.name == stats.getRealName())
             levelNameLabel->setString("");

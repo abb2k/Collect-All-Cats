@@ -20,9 +20,22 @@ public:
 
     void setAssetUpdatedCallback(const std::function<void(CatagoryAssetDisplay*)>& onAssetUpdated);
 
+    CosmeticMetadata getMetadata() const { return currentMetadata; }
+
+    void setCategory(const std::string& catagoryName);
+    std::string getCategory() const { return currentAsset.catagoryResoueceName; }
+
+    std::optional<CosmeticBoneOffset> isBoneChild(const std::string& categoryName);
+
+    CCNode* getSkeletonBone(const std::string& boneName);
+
+    void applyOffset(const CosmeticOffset& off);
+
 private:
 
     CatagoryAssetInfo currentAsset;
+
+    CosmeticMetadata currentMetadata;
 
     CCSprite* m_primarySprite = nullptr;
     CCSprite* m_secondarySprite = nullptr;

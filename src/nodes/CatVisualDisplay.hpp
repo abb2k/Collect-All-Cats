@@ -20,9 +20,5 @@ private:
 
     std::optional<CatStats> current;
 
-    CatagoryAssetDisplay* catDisplay;
-    CatagoryAssetDisplay* hatDisplay;
-    CatagoryAssetDisplay* glassesDisplay;
-    CatagoryAssetDisplay* neckDisplay;
-    CatagoryAssetDisplay* shoeDisplay;
+    std::vector<CatagoryAssetDisplay*> displays;
 };

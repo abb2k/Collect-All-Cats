@@ -7,6 +7,7 @@
 using namespace geode::prelude;
 
 #include <types/AREDLLevelDetails.hpp>
+#include <types/CosmeticMetadata.hpp>
 
 #include <abb2k.rig/include/API.hpp>
 
@@ -27,11 +28,16 @@ struct CatagoryAssetInfo{
     }
 };
 
-struct CatagoryAssetSprites{
+struct AssetSprites{
     CCSprite* primary;
     std::optional<CCSprite*> secondary;
     std::optional<CCSprite*> noncolor;
+};
+
+struct CatagoryAssetData{
+    CosmeticMetadata metadata;
     std::shared_ptr<tinygltf::Model> model;
+    std::map<std::string, AssetSprites> assets;
 };
 
 struct CatStats{
@@ -70,7 +76,7 @@ struct CatStats{
         void setCatagoryAssetPrimary(const std::string& catagoryResourceName, const ccColor4B& primary);
         void setCatagoryAssetSecondary(const std::string& catagoryResourceName, const ccColor4B& secondary);
 
-        static Result<CatagoryAssetSprites> getCatagoryAssetSprites(const std::string& catagoryResourceName, unsigned int itemID);
+        static Result<CatagoryAssetData> getCatagoryAssetSprites(const std::string& catagoryResourceName, unsigned int itemID);
 
         std::string getRealName();
 

@@ -1,0 +1,11 @@
+{
+    "renderType": "model",
+    "boneOffsets":{
+
+    },
+    "personalOffset": {
+        "posOffset":{ "x": 0, "y": 0},
+        "scaleOffset":{ "x": -0.2, "y": -0.2},
+        "rotationOffset":{ "x": 0, "y": 0}
+    }
+}
