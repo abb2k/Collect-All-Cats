@@ -14,6 +14,8 @@ public:
 
     void updateVisuals(CatStats& stats);
 
+    CatagoryAssetDisplay* getAssetForCategory(const std::string& catagoryName);
+
 private:
 
     void updateIfChange(const std::string& catagoryName, CatagoryAssetDisplay* display, CatStats& oldS, CatStats& newS);

@@ -14,9 +14,18 @@ void CatWanderState::step(float dt){
 
     //log::info("duration: {} | movement speed: {} | dir: {}", duration, moveSpeed, moveDir);
 
-    if (duration <= 0) endState();
+    if (duration <= 0) {
+        endState();
+        return;
+    }
 
     target->setPosition(target->getPosition() + moveDir * moveSpeed * dt);
+
+    auto model = target->getVisualParent()->getAssetForCategory("cat")->getModel();
+
+    if (model){
+        model->setAnimSpeedMultiplier(1 / target->getScale());
+    }
 }
 
 void CatWanderState::onStateStart(){
@@ -27,4 +36,10 @@ void CatWanderState::onStateStart(){
     duration = CatUtils::GetRandomFloat(minMaxDuration.x, minMaxDuration.y);
 
     target->getVisualParent()->setRotationY(moveDir.x < 0 ? 0 : 180);
+    auto model = target->getVisualParent()->getAssetForCategory("cat")->getModel();
+
+    if (model){
+        model->setAnimSpeedMultiplier(1 / target->getScale());
+        model->playAnimation("walking", .15f);
+    }
 }

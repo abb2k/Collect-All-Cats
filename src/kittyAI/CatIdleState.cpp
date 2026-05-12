@@ -16,4 +16,10 @@ void CatIdleState::step(float dt){
 
 void CatIdleState::onStateStart(){
     duration = CatUtils::GetRandomFloat(minMaxDuration.x, minMaxDuration.y);
+    auto model = target->getVisualParent()->getAssetForCategory("cat")->getModel();
+
+    if (model){
+        model->playAnimation("wave", .15f);
+        model->setAnimSpeedMultiplier(1);
+    }
 }

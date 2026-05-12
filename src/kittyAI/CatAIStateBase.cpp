@@ -25,6 +25,7 @@ void CatAIStateBase::onStateEndedCallback(const std::function<void(CatAIStateBas
 }
 
 void CatAIStateBase::update(float dt){
-    if (isOngoing)
+    if (isOngoing){
         step(dt);
+    }
 }

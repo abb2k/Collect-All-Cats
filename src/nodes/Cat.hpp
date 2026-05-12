@@ -30,7 +30,7 @@ public:
 
     void update(float dt) override;
 
-    CCNode* getVisualParent();
+    CatVisualDisplay* getVisualParent();
 
 private:
     virtual bool init(CCNode* wanderArea, GJGameLevel* relatedLevel, AREDLLevelDetails* details);
@@ -53,4 +53,6 @@ private:
     CCLabelBMFont* levelNameLabel;
 
     void interaction();
+
+    virtual void onEnter() override;
 };

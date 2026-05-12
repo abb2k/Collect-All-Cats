@@ -114,3 +114,10 @@ void CatVisualDisplay::updateIfChange(const std::string& catagoryName, CatagoryA
     if (currentCatAssetInfo.secondary != newCatAssetInfo.secondary)
         display->setSecondaryColor(newCatAssetInfo.secondary);
 }
+
+CatagoryAssetDisplay* CatVisualDisplay::getAssetForCategory(const std::string& catagoryName){
+    for (const auto& display : displays)
+        if (display->getCategory() == catagoryName)
+            return display;
+    return nullptr;
+}

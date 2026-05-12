@@ -191,4 +191,10 @@ void Cat::AIUpdate(float dt){
         currentAIState->update(dt);
 }
 
-CCNode* Cat::getVisualParent() { return visualParent; }
+CatVisualDisplay* Cat::getVisualParent() { return visualParent; }
+
+void Cat::onEnter(){
+    CCMenu::onEnter();
+
+    startAI();
+}

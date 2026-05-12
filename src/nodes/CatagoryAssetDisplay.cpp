@@ -34,10 +34,6 @@ void CatagoryAssetDisplay::setAsset(const std::string& catagoryName, const std::
         this->removeChild(m_noncolorSprite, true);
         m_noncolorSprite = nullptr;
     }
-    if (m_model) {
-        this->removeChild(m_model, true);
-        m_model = nullptr;
-    }
 
     if (!itemID.has_value()){
         this->setContentSize({0, 0});
@@ -57,12 +53,28 @@ void CatagoryAssetDisplay::setAsset(const std::string& catagoryName, const std::
             currentMetadata = sprites.metadata;
 
             if (sprites.model){
-                m_model = SkeletonPlayer::create();
-                m_model->loadFromGLTF(sprites.model);
-                m_model->setID("kitty-color-three-sprite-primary");
-                this->addChild(m_model);
 
-                this->setContentSize(m_model->getContentSize());
+                bool isSameModel = false;
+
+                if (m_model) {
+                    if (m_model->getModel() != sprites.model){
+                        this->removeChild(m_model, true);
+                        m_model = nullptr;
+                    }
+                    else{
+                        isSameModel = true;
+                    }
+                }
+
+                if (!isSameModel){
+                    m_model = SkeletonPlayer::create();
+                    m_model->loadFromGLTF(sprites.model);
+                    m_model->setID("kitty-color-three-sprite-primary");
+                    this->addChild(m_model);
+                    this->setContentSize(m_model->getContentSize());
+                }
+
+                /// update model textures
 
                 setPrimaryColor(currentAsset.primary);
             }
@@ -164,6 +176,4 @@ void CatagoryAssetDisplay::applyOffset(const CosmeticOffset& off){
     this->setRotationY(this->getRotationY() + off.rotationOffset.y);
     this->setScaleX(this->getScaleX() + off.scaleOffset.x);
     this->setScaleY(this->getScaleY() + off.scaleOffset.y);
-
-    log::info("poff {}", off.scaleOffset);
 }

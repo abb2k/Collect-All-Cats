@@ -31,6 +31,8 @@ public:
 
     void applyOffset(const CosmeticOffset& off);
 
+    SkeletonPlayer* getModel() const { return m_model; }
+
 private:
 
     CatagoryAssetInfo currentAsset;
