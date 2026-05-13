@@ -149,3 +149,10 @@ void Save::saveDoorOpened(bool b){
 bool Save::getDoorOpened(){
     return Mod::get()->getSavedValue<bool>("DoorOpened", false);
 }
+
+void Save::saveUnlockedAccessories(const std::vector<std::string>& unlocks){
+    Mod::get()->setSavedValue("unlocks", unlocks);
+}
+std::vector<std::string> Save::getUnlockedAccessories(){
+    return Mod::get()->getSavedValue<std::vector<std::string>>("unlocks", {});
+}

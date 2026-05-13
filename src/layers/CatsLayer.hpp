@@ -65,4 +65,6 @@ class CatsLayer : public CCLayer {
         CCLabelBMFont* editorModelabel;
 
         bool isInEditor;
+
+        geode::comm::ListenerHandle buyListener;
 };

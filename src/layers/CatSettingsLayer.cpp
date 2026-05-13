@@ -3,6 +3,9 @@
 #include <layers/CatsLayer.hpp>
 #include <utils/Save.hpp>
 
+#include <types/CosmeticMetadataSerializer.hpp>
+#include <utils/CoinManager.hpp>
+
 CatSettingsLayer* CatSettingsLayer::create() {
     auto ret = new CatSettingsLayer();
     if (ret->init()) {
@@ -652,8 +655,46 @@ void CatSettingsLayer::onSkinOptionClicked(CCObject* option){
     if (!catagoriesMapped.contains(selectedPage)) return;
 
     auto catagoryName = catagoriesMapped[selectedPage].second;
+    auto displayName = catagoriesMapped[selectedPage].first;
 
     auto nodeOption = static_cast<CCMenuItemSpriteExtra*>(option);
+
+    if (nodeOption->getTag() != 0){
+        auto coins = CoinManager::getCoinCount();
+
+        if (nodeOption->getTag() > coins){
+            FLAlertLayer::create(
+                "Not Enough Coins!",
+                fmt::format(
+                    "You dont have enough <cy>Cat Coins</c> to buy this {}.",
+                    displayName
+                ),
+                "OK"
+            )->show();
+        }
+        else{
+            auto nodeItemID = nodeOption->getID();
+            geode::createQuickPopup(
+                fmt::format("Buy this {}?", displayName).c_str(),
+                fmt::format("Are you sure you want to buy this {} for {} coins?", displayName, nodeOption->getTag()),
+                "NO",
+                "YES",
+                [&, catagoryName, nodeItemID, nodeOption](auto me, bool didClickYes){
+                    if (!didClickYes) return;
+
+                    CoinManager::buyItem(catagoryName, nodeItemID);
+                    nodeOption->setTag(0);
+                    nodeOption->setColor({255, 255, 255});
+                    nodeOption->getChildByID("coin-spr")->setVisible(false);
+                    nodeOption->getChildByID("coin-label")->setVisible(false);
+
+                    this->onSkinOptionClicked(nodeOption);
+                }
+            );
+        }
+        
+        return;
+    }
 
     auto currentlySelectedOptionNode = static_cast<CCMenuItemSpriteExtra*>(skinOptionsContainer->getChildByID(std::to_string(selectedOptionID)));
 
@@ -724,6 +765,53 @@ void CatSettingsLayer::createOptionBtn(bool isSelected, CatagoryAssetDisplay* di
     btn->setID(id);
     btn->setEnabled(!isSelected);
     skinOptionsContainer->addChild(btn);
+    
+    auto unlocks = Save::getUnlockedAccessories();
+    auto toInsert = fmt::format("{}-{}", catagoriesMapped[selectedPage].second, id);
+
+    if (std::find(unlocks.begin(), unlocks.end(), toInsert) == unlocks.end()){
+        auto metaLoc = Mod::get()->getResourcesDir() / fmt::format("{}-{}.json", catagoriesMapped[selectedPage].second, id);
+        if (!std::filesystem::exists(metaLoc)){
+            btn->setTag(-1);
+            return;
+        }
+
+        auto readRes = file::readFromJson<CosmeticMetadata>(metaLoc);
+        if (readRes.isErr()){
+            btn->setTag(-1);
+            return;
+        }
+
+        btn->setTag(readRes.unwrap().cost);
+        if (btn->getTag() == 0) return;
+
+        btn->setColor({ 255, 166, 111 });
+
+        auto coinSpr = CCSprite::createWithSpriteFrameName("secretCoinUI2_001.png");
+        coinSpr->setAnchorPoint({1, .5f});
+        coinSpr->setScale(.3f);
+        coinSpr->setCascadeColorEnabled(false);
+        coinSpr->setID("coin-spr");
+        btn->addChild(coinSpr);
+
+        auto coinCountLabel = CCLabelBMFont::create(fmt::format("{}", readRes.unwrap().cost).c_str(), "bigFont.fnt");
+        coinCountLabel->setAnchorPoint({0, .5f});
+        coinCountLabel->setScale(coinSpr->getScale());
+        coinCountLabel->setID("coin-label");
+        btn->addChild(coinCountLabel);
+
+        coinSpr->setPosition({
+            btn->getContentWidth() / 2,
+            5
+        });
+        coinCountLabel->setPosition({
+            btn->getContentWidth() / 2,
+            5
+        });
+    }
+    else{
+        btn->setTag(0);
+    }
 }
 
 void CatSettingsLayer::updateOptionsColors(){

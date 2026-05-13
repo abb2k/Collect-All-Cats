@@ -46,4 +46,7 @@ class Save{
 
         static void saveDoorOpened(bool b);
         static bool getDoorOpened();
+
+        static void saveUnlockedAccessories(const std::vector<std::string>& unlocks);
+        static std::vector<std::string> getUnlockedAccessories();
 };

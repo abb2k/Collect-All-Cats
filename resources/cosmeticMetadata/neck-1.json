@@ -4,5 +4,6 @@
         "posOffset":{ "x": 0, "y": 0},
         "scaleOffset":{ "x": 0, "y": 0},
         "rotationOffset":{ "x": 0, "y": 0}
-    }
+    },
+    "cost": 65
 }

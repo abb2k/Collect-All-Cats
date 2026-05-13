@@ -6,6 +6,8 @@
 #include <kittyAI/CatWanderState.hpp>
 #include <kittyAI/CatIdleState.hpp>
 #include <layers/NewCatsLayer.hpp>
+#include <utils/CoinManager.hpp>
+#include <utils/BuyItemEvent.hpp>
 
 CatsLayer* CatsLayer::sharedInstance = nullptr;
 
@@ -44,11 +46,6 @@ bool CatsLayer::init() {
     ScrollNode->scrollMovement = false;
 
     ScrollNode->toggleVerticalScrollbar(false);
-
-    ScrollNode->horizontalBar->setPosition({238, 307});
-    ScrollNode->horizontalBar->setScaleX(1);
-    ScrollNode->horizontalBar->setScaleY(0.65f);
-    ScrollNode->horizontalBar->setZOrder(1);
 
     this->addChild(ScrollNode);
 
@@ -93,7 +90,7 @@ bool CatsLayer::init() {
     buttonsMenu->addChild(exitBtn);
     
     topRightMenu = CCMenu::create();
-    topRightMenu->setContentSize({250, 40});
+    topRightMenu->setContentSize({130, 40});
     topRightMenu->setID("top-right-menu");
     topRightMenu->setPosition(winSize - ccp(5, 5));
     topRightMenu->setAnchorPoint({1, 1});
@@ -173,6 +170,36 @@ bool CatsLayer::init() {
         this->addChild(newCats);
     }
 
+    ScrollNode->horizontalBar->setScaleX(1);
+    ScrollNode->horizontalBar->setPosition({exitBtn->getContentWidth() + 20 + ScrollNode->horizontalBar->getScaledContentHeight() / 2, 307});
+    ScrollNode->horizontalBar->setScaleY(0.65f);
+    ScrollNode->horizontalBar->setZOrder(1);
+
+    auto coinCount = CoinManager::getCoinCount();
+
+    auto coinSpr = CCSprite::createWithSpriteFrameName("secretCoinUI2_001.png");
+    coinSpr->setAnchorPoint({0, 1});
+    coinSpr->setPosition({
+        5,
+        winSize.height - 10 - exitBtn->getContentHeight()
+    });
+    coinSpr->setScale(.5f);
+    this->addChild(coinSpr);
+
+    auto coinCountLabel = CCLabelBMFont::create(fmt::format("{}", coinCount).c_str(), "bigFont.fnt");
+    coinCountLabel->setAnchorPoint({0, 1});
+    coinCountLabel->setPosition(coinSpr->getPosition() + ccp(
+        coinSpr->getScaledContentWidth() + 5,
+        0
+    ));
+    coinCountLabel->setScale(coinSpr->getScale());
+    this->addChild(coinCountLabel);
+
+    buyListener = BuyItemEvent().listen([coinCountLabel](int newAmount){
+        coinCountLabel->setString(fmt::format("{}", newAmount).c_str());
+        return false;
+    });
+
     return true;
 }
 
@@ -194,7 +221,7 @@ void CatsLayer::update(float dt){
 void CatsLayer::onBackClicked(CCObject*) { keyBackClicked(); }
 
 void CatsLayer::onCatsMenuClicked(CCObject*){
-    currentSelectionPopup= CatSelectionPopup::create();
+    currentSelectionPopup = CatSelectionPopup::create();
     if (!currentSelectionPopup) log::info("Failed to open cat selection menu!");
     currentSelectionPopup->show();
 }
@@ -269,7 +296,7 @@ void CatsLayer::createCatSettingsNode(CCScene* scene){
     if (catSettingsNode != nullptr) return;
     catSettingsNode = CatSettingsLayer::create();
     catSettingsNode->setScale(.6f);
-    catSettingsNode->setPosition({658, 35});
+    catSettingsNode->setPosition({CCDirector::get()->getWinSize().width + catSettingsNode->getScaledContentWidth() / 2 + 15, 35});
     scene->addChild(catSettingsNode, 100);
 }
 

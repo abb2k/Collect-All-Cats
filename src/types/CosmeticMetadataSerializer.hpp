@@ -89,7 +89,7 @@ struct matjson::Serialize<CosmeticMetadata> {
     static Result<CosmeticMetadata> fromJson(const matjson::Value& value){
         CosmeticMetadata meta;
         GEODE_UNWRAP_INTO(meta.renderType, value["renderType"].asString());
-
+        
         auto boneOffRes = value["boneOffsets"].as<std::map<std::string, CosmeticBoneOffset>>();
         if (boneOffRes.isOk()){
             meta.boneOffsets = boneOffRes.unwrap();
@@ -108,6 +108,15 @@ struct matjson::Serialize<CosmeticMetadata> {
             if (mSizeRes.isOk()) meta.modelSize = mSizeRes.unwrap();
             else meta.modelSize = CCSize{0, 0};
         }
+
+        auto costRes = value["cost"].asInt();
+
+        if (costRes.isOk()){
+            meta.cost = costRes.unwrap();
+            if (meta.cost < 0) meta.cost = 0;
+        }
+        else
+            meta.cost = 0;
 
         return Ok(meta);
     }

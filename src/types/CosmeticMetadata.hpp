@@ -27,4 +27,5 @@ struct CosmeticMetadata{
     std::map<std::string, CosmeticBoneOffset> boneOffsets; // category - {boneName, offset from bone}
     CosmeticOffset personalOffset;
     CCSize modelSize;
+    int cost;
 };
