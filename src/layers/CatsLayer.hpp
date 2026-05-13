@@ -11,7 +11,7 @@
 
 using namespace geode::prelude;
 
-class CatsLayer : public CCLayer {
+class CatsLayer : public CCLayer, public DialogDelegate {
     public:
         static CatsLayer* create();
 
@@ -43,13 +43,13 @@ class CatsLayer : public CCLayer {
 
         const bool getIsInEditor(){return isInEditor;}
     private:
-        virtual bool init();
+        virtual bool init() override;
 
-        virtual void keyBackClicked();
+        virtual void keyBackClicked() override;
 
         static CatsLayer* sharedInstance;
 
-        void update(float dt);
+        void update(float dt) override;
 
         Cat* followTarget = nullptr;
 
@@ -67,4 +67,11 @@ class CatsLayer : public CCLayer {
         bool isInEditor;
 
         geode::comm::ListenerHandle buyListener;
+
+        void bankruptScene();
+        CCLayer* evilPrioStealer;
+        DialogLayer* dialogue;
+        void startBankruptDialogue();
+
+        void dialogClosed(DialogLayer* layer) override;
 };

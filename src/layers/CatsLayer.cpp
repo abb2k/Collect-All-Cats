@@ -6,8 +6,10 @@
 #include <kittyAI/CatWanderState.hpp>
 #include <kittyAI/CatIdleState.hpp>
 #include <layers/NewCatsLayer.hpp>
+#include <nodes/popup/BankruptPopup.hpp>
 #include <utils/CoinManager.hpp>
 #include <utils/BuyItemEvent.hpp>
+#include <hooks/DialogLayer.hpp>
 
 CatsLayer* CatsLayer::sharedInstance = nullptr;
 
@@ -200,6 +202,8 @@ bool CatsLayer::init() {
         return false;
     });
 
+    if (coinCount < 0) bankruptScene();
+
     return true;
 }
 
@@ -345,4 +349,38 @@ Cat* CatsLayer::getCatFromStats(const CatStats& stats){
     auto levelID = relatedLevel->m_levelID.value();
     
     return !spawnedCats.contains(levelID) ? nullptr : spawnedCats[levelID];
+}
+
+void CatsLayer::bankruptScene(){
+    evilPrioStealer = CCLayer::create();
+    CCTouchDispatcher::get()->addTargetedDelegate(evilPrioStealer, -999, true);
+    this->addChild(evilPrioStealer);
+
+    this->setTouchEnabled(false);
+    this->setKeypadEnabled(false);
+    this->runAction(CCSequence::create(CCDelayTime::create(1.5f), CCCallFunc::create(this, callfunc_selector(CatsLayer::startBankruptDialogue)), nullptr));
+}
+
+void CatsLayer::startBankruptDialogue(){
+    auto array = CCArray::create();
+
+    array->addObject(DialogObject::create("The Cats", "Very interesting...", 999, 1, false, ccColor3B{ 255, 255, 255 }));
+    array->addObject(DialogObject::create("The Cats", "You seem to have lost some cats of yours..", 999, 1, false, ccColor3B{ 255, 255, 255 }));
+    array->addObject(DialogObject::create("The Cats", "For that we have taken away some of the money we game you!", 999, 1, false, ccColor3B{ 255, 255, 255 }));
+    array->addObject(DialogObject::create("The Cats", "And we will <s260><cr>BAN</c></s> you from entry if you dont pay it back!", 999, 1, false, ccColor3B{ 255, 255, 255 }));
+    array->addObject(DialogObject::create("The Cats", "And to pay it back you must sell some of your items you bought!", 999, 1, false, ccColor3B{ 255, 255, 255 }));
+    array->addObject(DialogObject::create("The Cats", "Well? <d040>What are you waiting for? <d040>go go! <d040>sell!", 999, 1, false, ccColor3B{ 255, 255, 255 }));
+
+    dialogue = CACDialogLayer::createWithTaggedSprites(array, 1, {{"default_cat.png"_spr, 999, .65f}});
+    dialogue->m_delegate = this;
+    CCTouchDispatcher::get()->addTargetedDelegate(dialogue, -1000, true);
+    this->addChild(dialogue, 100);
+    CCTouchDispatcher::get()->removeDelegate(evilPrioStealer);
+    evilPrioStealer->removeMeAndCleanup();
+}
+
+void CatsLayer::dialogClosed(DialogLayer* layer){
+    BankruptPopup::create()->show();
+    this->setTouchEnabled(true);
+    this->setKeypadEnabled(true);
 }
