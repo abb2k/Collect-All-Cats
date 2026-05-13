@@ -1,6 +1,8 @@
 #include "BankruptPopup.hpp"
 
 #include <layers/CatsLayer.hpp>
+#include <nodes/SellCell.hpp>
+#include <utils/Save.hpp>
 
 BankruptPopup* BankruptPopup::create() {
     auto ret = new BankruptPopup();
@@ -19,8 +21,22 @@ bool BankruptPopup::init() {
 
     auto catsLayer = CatsLayer::activeCatLayer();
     if (!catsLayer) return false;
-    
-    
+
+    ScrollLayer* scrollLayer = ScrollLayer::create(m_size / 1.2f - ccp(0, 20));
+    m_mainLayer->addChild(scrollLayer);
+
+    auto accessO = Save::getUnlockedAccessories();
+
+    for (const auto& entry : accessO) {
+
+        auto splitStr = utils::string::split(entry, "-");
+        if (splitStr.size() != 2) continue;
+
+        auto sellCell = SellCell::create(splitStr[0], splitStr[1]);
+        if (sellCell == nullptr) continue;
+
+        scrollLayer->m_contentLayer->addChild(sellCell);
+    }
 
     return true;
 }

@@ -772,7 +772,7 @@ void CatSettingsLayer::createOptionBtn(bool isSelected, CatagoryAssetDisplay* di
     if (std::find(unlocks.begin(), unlocks.end(), toInsert) == unlocks.end()){
         auto metaLoc = Mod::get()->getResourcesDir() / fmt::format("{}-{}.json", catagoriesMapped[selectedPage].second, id);
         if (!std::filesystem::exists(metaLoc)){
-            btn->setTag(-1);
+            btn->setTag(0);
             return;
         }
 

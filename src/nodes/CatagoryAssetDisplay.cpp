@@ -40,12 +40,14 @@ void CatagoryAssetDisplay::setAsset(const std::string& catagoryName, const std::
         return;
     }
 
+    this->retain();
     std::thread([this, itemID, catagoryName]() {
         geode::queueInMainThread([this, itemID, catagoryName]() {
             auto spritesRes = CatStats::getCatagoryAssetSprites(catagoryName, itemID.value());
             if (spritesRes.isErr()){
                 log::error("Failed to get sprites {}", spritesRes.unwrapErr());
                 this->setContentSize({0, 0});
+                this->release();
                 return;
             }
             auto sprites = spritesRes.unwrap();
@@ -109,6 +111,8 @@ void CatagoryAssetDisplay::setAsset(const std::string& catagoryName, const std::
             
             if (onAssetUpdated != NULL)
                 onAssetUpdated(this);
+
+            this->release();
         });
 
     }).detach();
