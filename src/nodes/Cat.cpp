@@ -143,6 +143,11 @@ void Cat::addAIStateTransition(const std::string& originStateName, const std::st
     AIStatesTransitions[originStateName].push_back(targetStateName);
 }
 
+void Cat::addAIBackAndForthTransition(const std::string& originStateName, const std::string& targetStateName){
+    addAIStateTransition(originStateName, targetStateName);
+    addAIStateTransition(targetStateName, originStateName);
+}
+
 void Cat::setDefaultState(const std::string& stateName){
     defaultState = stateName;
 }

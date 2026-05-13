@@ -245,8 +245,7 @@ Cat* CatsLayer::addCat(GJGameLevel* catLevel, AREDLLevelDetails* details){
     cat->addAIState("idle", CatIdleState::create({1, 4}));
     cat->addAIStateTransition("wander", "wander");
     cat->addAIStateTransition("idle", "idle");
-    cat->addAIStateTransition("idle", "wander");
-    cat->addAIStateTransition("wander", "idle");
+    cat->addAIBackAndForthTransition("idle", "wander");
     cat->setDefaultState(CatUtils::GetRandomInt(0, 1) == 0 ? "idle" : "wander");
     catContainer->addChild(cat);
     spawnedCats.insert({catLevel->m_levelID.value(), cat});

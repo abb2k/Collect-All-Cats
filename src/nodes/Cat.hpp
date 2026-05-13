@@ -20,6 +20,7 @@ public:
 
     void addAIState(const std::string& stateName, std::shared_ptr<CatAIStateBase> state);
     void addAIStateTransition(const std::string& originStateName, const std::string& targetStateName);
+    void addAIBackAndForthTransition(const std::string& originStateName, const std::string& targetStateName);
 
     void setDefaultState(const std::string& stateName);
 

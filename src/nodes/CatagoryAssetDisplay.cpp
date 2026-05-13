@@ -76,8 +76,11 @@ void CatagoryAssetDisplay::setAsset(const std::string& catagoryName, const std::
                     this->setContentSize(sprites.metadata.modelSize);
                 }
 
-                /// update model textures
-
+                for (const auto& [texName, spr] : sprites.assets)
+                {
+                    m_model->setTextureForMesh(texName, spr.primary->getTexture());
+                }
+                
                 setPrimaryColor(currentAsset.primary);
             }
             else if (sprites.assets.size()){

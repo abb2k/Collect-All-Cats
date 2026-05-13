@@ -166,8 +166,6 @@ Result<CatagoryAssetData> CatStats::getCatagoryAssetSprites(const std::string& c
     }
     else{
         for (const auto& node : data.model->nodes) {
-            if (node.mesh <= 0) continue;
-
             if (std::filesystem::exists(Mod::get()->getResourcesDir() / fmt::format("{}-{}_0-{}.png", catagoryResourceName, itemID, node.name))){
                 data.assets[node.name].primary = CCSprite::create(fmt::format("{}-{}_0-{}.png"_spr, catagoryResourceName, itemID, node.name).c_str());
             }
