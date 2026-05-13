@@ -24,6 +24,26 @@ struct matjson::Serialize<CCPoint> {
     }
 };
 
+
+template <>
+struct matjson::Serialize<CCSize> {
+    static Result<CCSize> fromJson(const matjson::Value& value){
+        CCSize size;
+        GEODE_UNWRAP_INTO(size.width, value["width"].asDouble());
+        GEODE_UNWRAP_INTO(size.height, value["height"].asDouble());
+
+        return Ok(size);
+    }
+
+    static matjson::Value toJson(const CCSize& value){
+        matjson::Value obj = matjson::makeObject({
+            { "width", value.width },
+            { "height", value.height }
+        });
+        return obj;
+    }
+};
+
 template <>
 struct matjson::Serialize<CosmeticOffset> {
     static Result<CosmeticOffset> fromJson(const matjson::Value& value){
@@ -80,6 +100,15 @@ struct matjson::Serialize<CosmeticMetadata> {
 
         GEODE_UNWRAP_INTO(meta.personalOffset, value["personalOffset"].as<CosmeticOffset>());
 
+        if (meta.renderType == RENDER_TYPE_MODEL){
+            GEODE_UNWRAP_INTO(meta.modelSize, value["modelSize"].as<CCSize>());
+        }
+        else{
+            auto mSizeRes = value["modelSize"].as<CCSize>();
+            if (mSizeRes.isOk()) meta.modelSize = mSizeRes.unwrap();
+            else meta.modelSize = CCSize{0, 0};
+        }
+
         return Ok(meta);
     }
 
@@ -87,7 +116,8 @@ struct matjson::Serialize<CosmeticMetadata> {
         matjson::Value obj = matjson::makeObject({
             { "renderType", value.renderType },
             { "boneOffsets", value.boneOffsets },
-            { "personalOffset", value.personalOffset }
+            { "personalOffset", value.personalOffset },
+            { "modelSize", value.modelSize }
         });
         return obj;
     }

@@ -71,7 +71,9 @@ void CatagoryAssetDisplay::setAsset(const std::string& catagoryName, const std::
                     m_model->loadFromGLTF(sprites.model);
                     m_model->setID("kitty-color-three-sprite-primary");
                     this->addChild(m_model);
-                    this->setContentSize(m_model->getContentSize());
+                    m_model->setAnchorPoint({.5f, .5f});
+                    m_model->setPosition(sprites.metadata.modelSize / 2);
+                    this->setContentSize(sprites.metadata.modelSize);
                 }
 
                 /// update model textures

@@ -14,5 +14,9 @@
         "posOffset":{ "x": 0, "y": 0},
         "scaleOffset":{ "x": 0, "y": 0},
         "rotationOffset":{ "x": 0, "y": 0}
+    },
+    "modelSize": {
+        "width": 150,
+        "height": 150
     }
 }

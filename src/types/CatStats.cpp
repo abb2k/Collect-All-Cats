@@ -133,7 +133,7 @@ Result<CatagoryAssetData> CatStats::getCatagoryAssetSprites(const std::string& c
     CatagoryAssetData data;
     data.metadata = readRes.unwrap();
 
-    bool isModel = data.metadata.renderType == "model";
+    bool isModel = data.metadata.renderType == RENDER_TYPE_MODEL;
 
     if (isModel && std::filesystem::exists(Mod::get()->getResourcesDir() / fmt::format("{}-{}_0.glb", catagoryResourceName, itemID))){
         auto modelRes = ModelLoader::loadModel(fmt::format("{}-{}_0.glb"_spr, catagoryResourceName, itemID));

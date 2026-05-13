@@ -4,6 +4,9 @@
 
 using namespace geode::prelude;
 
+#define RENDER_TYPE_MODEL "model"
+#define RENDER_TYPE_TEXTURE "texture"
+
 struct CosmeticOffset{
     CCPoint posOffset;
     CCPoint scaleOffset;
@@ -16,7 +19,8 @@ struct CosmeticBoneOffset{
 };
 
 struct CosmeticMetadata{
-    std::string renderType; //Model/Texture
+    std::string renderType; //model/texture
     std::map<std::string, CosmeticBoneOffset> boneOffsets; // category - {boneName, offset from bone}
     CosmeticOffset personalOffset;
+    CCSize modelSize;
 };
