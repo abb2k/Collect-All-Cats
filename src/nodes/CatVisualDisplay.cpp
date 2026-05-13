@@ -52,13 +52,8 @@ bool CatVisualDisplay::init() {
 
             bool didFindParent = false;
 
-            for (const auto& otherDisplay : displays){
-                auto boneCheckRes = otherDisplay->isBoneChild(display->getCategory());
-                if (!boneCheckRes.has_value()) continue;
-                auto offData = boneCheckRes.value();
-
-                auto bone = otherDisplay->getSkeletonBone(offData.boneName);
-                if (bone == nullptr) continue;
+            auto parentToBone = [&](CCNode* bone, const CosmeticOffset& offset) -> bool {
+                if (bone == nullptr) return false;
 
                 didFindParent = true;
 
@@ -67,7 +62,26 @@ bool CatVisualDisplay::init() {
                 bone->addChild(display);
                 display->release();
                 display->setPosition({0, 0});
-                display->applyOffset(offData.offset);
+                display->applyOffset(offset);
+
+                return true;
+            };
+
+            for (const auto& otherDisplay : displays){
+                auto boneCheckRes = otherDisplay->isBoneChild(display->getCategory());
+                if (!boneCheckRes.has_value()) continue;
+                auto offData = boneCheckRes.value();
+
+                auto bone = otherDisplay->getSkeletonBone(offData.boneName);
+                if (!parentToBone(bone, offData.offset)) continue;
+                
+                break;
+            }
+
+            for (const auto& otherDisplay : displays){
+
+                auto bone = otherDisplay->getSkeletonBone(display->getCategory());
+                if (!parentToBone(bone, CosmeticOffset::none())) continue;
                 
                 break;
             }

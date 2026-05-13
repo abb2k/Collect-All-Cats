@@ -11,6 +11,10 @@ struct CosmeticOffset{
     CCPoint posOffset;
     CCPoint scaleOffset;
     CCPoint rotationOffset;
+
+    static CosmeticOffset none(){
+        return CosmeticOffset{};
+    }
 };
 
 struct CosmeticBoneOffset{
