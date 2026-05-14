@@ -42,10 +42,10 @@ class CatsLayer : public CCLayer, public DialogDelegate {
         Cat* getCatFromStats(const CatStats& stats);
 
         const bool getIsInEditor(){return isInEditor;}
-    private:
-        virtual bool init() override;
 
         virtual void keyBackClicked() override;
+    private:
+        virtual bool init() override;
 
         static CatsLayer* sharedInstance;
 

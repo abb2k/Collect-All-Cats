@@ -57,3 +57,19 @@ void CoinManager::buyItem(const std::string& itemCategory, const std::string& it
 
     BuyItemEvent().send(getCoinCount());
 }
+
+void CoinManager::sellItem(const std::string& itemCategory, const std::string& itemID){
+    auto unlocks = Save::getUnlockedAccessories();
+
+    auto toInsert = fmt::format("{}-{}", itemCategory, itemID);
+
+    auto find = std::find(unlocks.begin(), unlocks.end(), toInsert);
+
+    if (find == unlocks.end()) return;
+
+    unlocks.erase(find);
+
+    Save::saveUnlockedAccessories(unlocks);
+
+    BuyItemEvent().send(getCoinCount());
+}

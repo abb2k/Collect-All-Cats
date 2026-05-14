@@ -29,6 +29,8 @@ class OptionSwitcher : public CCMenu {
         void setValue(int index, bool runCallback = false);
         void setValue(E e, bool runCallback = false);
 
+        void setBGColor(ccColor3B const& color);
+
     private:
         std::vector<CCLabelBMFont*> labels{};
         std::vector<E> values{};
@@ -38,6 +40,8 @@ class OptionSwitcher : public CCMenu {
         int currentOption = 0;
 
         geode::Function<void(E)> callback = nullptr;
+
+        CCScale9Sprite* bg;
 };
 
 
@@ -61,10 +65,11 @@ bool OptionSwitcher<E>::init(float width, const std::vector<NamedEnumValue<E>>& 
     this->setPosition({ 0, 0 });
     this->ignoreAnchorPointForPosition(false);
 
-    auto bg = CCScale9Sprite::create("square02_small.png");
+    bg = CCScale9Sprite::create("square02b_small.png");
     bg->setContentSize(this->getContentSize());
     bg->setAnchorPoint({ 0, 0 });
     bg->setOpacity(90);
+    bg->setColor({0,0,0});
     this->addChild(bg);
 
     auto labelsHolder = CCNode::create();
@@ -147,4 +152,9 @@ void OptionSwitcher<E>::setValue(E e, bool runCallback){
         setValue(i, runCallback);
         return;
     }
+}
+
+template<typename E>
+void OptionSwitcher<E>::setBGColor(ccColor3B const& color){
+    bg->setColor(color);
 }

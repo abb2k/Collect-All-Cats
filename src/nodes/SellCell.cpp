@@ -3,6 +3,8 @@
 #include <nodes/CatagoryAssetDisplay.hpp>
 #include <nodes/OptionSwitcher.hpp>
 
+#include <utils/CoinManager.hpp>
+
 SellCell* SellCell::create(const std::string& itemCategory, const std::string& itemID){
     auto ret = new SellCell();
     if (ret && ret->init(itemCategory, itemID)) {
@@ -30,7 +32,7 @@ bool SellCell::init(const std::string& itemCategory, const std::string& itemID){
     display->setAnchorPoint({.5f, 1});
     this->addChild(display);
 
-    display->setAssetUpdatedCallback([&](CatagoryAssetDisplay* display){
+    display->setAssetUpdatedCallback([&, itemCategory, itemID](CatagoryAssetDisplay* display){
         auto meta = display->getMetadata();
 
         auto coinSpr = CCSprite::createWithSpriteFrameName("secretCoinUI2_001.png");
@@ -51,8 +53,16 @@ bool SellCell::init(const std::string& itemCategory, const std::string& itemID){
             NamedEnumValue<bool>(true, "Retrieve")
         });
         switcher->setScale(.5f);
-        switcher->setCallback([&](bool isRetrieve){
-
+        switcher->setBGColor({ 0, 155, 103 });
+        switcher->setCallback([&, itemCategory, itemID](bool isRetrieve){
+            if (isRetrieve){
+                CoinManager::sellItem(itemCategory, itemID);
+                this->setColor({ 255, 133, 133 });
+            }
+            else{
+                CoinManager::buyItem(itemCategory, itemID);
+                this->setColor({ 255, 255, 255 });
+            }
         });
         switcher->setAnchorPoint({.5f, 0});
         switcher->setPosition({this->getContentWidth() / 2, 4});
@@ -62,7 +72,9 @@ bool SellCell::init(const std::string& itemCategory, const std::string& itemID){
         coinCountLabel->setPosition({this->getContentWidth() / 2 - coinCountLabel->getScaledContentWidth() / 2, 4 + 3 + switcher->getScaledContentHeight() + coinSpr->getScaledContentHeight() / 2});
 
         display->setPosition({this->getContentWidth() / 2, this->getContentHeight() - 5});
-        display->setScale((this->getContentWidth() - 5) / display->getContentWidth());
+        auto desiredXScale = (this->getContentWidth() - 5) / display->getContentWidth();
+        auto desiredYScale = (this->getContentHeight() - 5 - coinSpr->getPositionY() - coinSpr->getScaledContentHeight() / 2) / display->getContentHeight();
+        display->setScale(desiredXScale < desiredYScale ? desiredXScale : desiredYScale);
     });
 
     return true;

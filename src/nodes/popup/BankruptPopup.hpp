@@ -15,7 +15,8 @@ class BankruptPopup : public Popup{
 
         virtual void onClose(CCObject*) override;
 
-        void onEnter() override;
+        std::vector<std::string> oldItemsBackup{};
 
-        void onExit() override;
+        void onBail(CCObject*);
+        void onConfirm(CCObject*);
 };

@@ -173,8 +173,9 @@ bool CatsLayer::init() {
     }
 
     ScrollNode->horizontalBar->setScaleX(1);
-    ScrollNode->horizontalBar->setPosition({exitBtn->getContentWidth() + 20 + ScrollNode->horizontalBar->getScaledContentHeight() / 2, 307});
     ScrollNode->horizontalBar->setScaleY(0.65f);
+    ScrollNode->horizontalBar->setPosition({exitBtn->getContentWidth() + 20, 307});
+    ScrollNode->horizontalBar->setAnchorPoint({.5f, 0});
     ScrollNode->horizontalBar->setZOrder(1);
 
     auto coinCount = CoinManager::getCoinCount();
