@@ -123,13 +123,45 @@ void CatSelectionPopup::show(){
 }
 
 void CatSelectionPopup::onSelectAllClicked(CCObject*){
-    for (const auto& catSelCell : CCArrayExt<CatSelectionCell*>(catsScrollLayer->m_contentLayer->getChildren()))
+    auto catsLayer = CatsLayer::activeCatLayer();
+
+    std::set<int> wentOverCats{};
+
+    for (const auto& catSelCell : CCArrayExt<CatSelectionCell*>(catsScrollLayer->m_contentLayer->getChildren())){
         catSelCell->togglePlaced(true, true);
+        wentOverCats.insert(catSelCell->getStats().getLevel()->m_levelID.value());
+    }
+
+    for (const auto& level : catsLayer->beatenExtremes){
+        if (wentOverCats.contains(level->m_levelID.value())) continue;
+
+        auto placedCats = Save::getPlacedCats();
+        std::set<int> placedCatsSet(placedCats.begin(), placedCats.end());
+        bool containsMe = placedCatsSet.contains(level->m_levelID.value());
+
+        if (!containsMe){
+            Save::addPlacedCat(level->m_levelID.value());
+            catsLayer->addCat(level);
+        }
+    }
 }
 
 void CatSelectionPopup::onDeselectAllClicked(CCObject*){
-    for (const auto& catSelCell : CCArrayExt<CatSelectionCell*>(catsScrollLayer->m_contentLayer->getChildren()))
+    auto catsLayer = CatsLayer::activeCatLayer();
+
+    std::set<int> wentOverCats{};
+
+    for (const auto& catSelCell : CCArrayExt<CatSelectionCell*>(catsScrollLayer->m_contentLayer->getChildren())){
         catSelCell->togglePlaced(false, true);
+        wentOverCats.insert(catSelCell->getStats().getLevel()->m_levelID.value());
+    }
+
+    for (const auto& level : catsLayer->beatenExtremes){
+        if (wentOverCats.contains(level->m_levelID.value())) continue;
+
+        Save::removePlacedCats(level->m_levelID.value());
+        catsLayer->removeCat(level->m_levelID.value());
+    }
 }
 
 void CatSelectionPopup::onClose(CCObject*){

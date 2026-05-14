@@ -2,7 +2,6 @@
 
 #include <utils/Save.hpp>
 #include <types/CosmeticMetadataSerializer.hpp>
-#include <utils/BuyItemEvent.hpp>
 
 int CoinManager::COINS_PER_LVL = 150;
 
@@ -55,7 +54,8 @@ void CoinManager::buyItem(const std::string& itemCategory, const std::string& it
 
     Save::saveUnlockedAccessories(unlocks);
 
-    BuyItemEvent().send(getCoinCount());
+    MoneyChangedEvent().send(getCoinCount());
+    BuyItemEvent().send(itemCategory, itemID);
 }
 
 void CoinManager::sellItem(const std::string& itemCategory, const std::string& itemID){
@@ -71,5 +71,6 @@ void CoinManager::sellItem(const std::string& itemCategory, const std::string& i
 
     Save::saveUnlockedAccessories(unlocks);
 
-    BuyItemEvent().send(getCoinCount());
+    MoneyChangedEvent().send(getCoinCount());
+    SellItemEvent().send(itemCategory, itemID);
 }

@@ -53,6 +53,11 @@ private:
     CCLabelBMFont* nameLabel;
     CCLabelBMFont* levelNameLabel;
 
+    geode::comm::ListenerHandle sellListener;
+    geode::comm::ListenerHandle exitEditingListener;
+
+    CCSprite* selectIndicator;
+
     void interaction();
 
     virtual void onEnter() override;

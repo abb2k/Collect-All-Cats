@@ -8,7 +8,6 @@
 #include <layers/NewCatsLayer.hpp>
 #include <nodes/popup/BankruptPopup.hpp>
 #include <utils/CoinManager.hpp>
-#include <utils/BuyItemEvent.hpp>
 #include <hooks/DialogLayer.hpp>
 
 CatsLayer* CatsLayer::sharedInstance = nullptr;
@@ -198,7 +197,7 @@ bool CatsLayer::init() {
     coinCountLabel->setScale(coinSpr->getScale());
     this->addChild(coinCountLabel);
 
-    buyListener = BuyItemEvent().listen([coinCountLabel](int newAmount){
+    buyListener = MoneyChangedEvent().listen([coinCountLabel](int newAmount){
         coinCountLabel->setString(fmt::format("{}", newAmount).c_str());
         return false;
     });

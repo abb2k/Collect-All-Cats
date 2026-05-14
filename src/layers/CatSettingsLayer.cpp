@@ -386,6 +386,8 @@ void CatSettingsLayer::hide(){
     this->runAction(CCEaseBackIn::create(CCMoveBy::create(0.4f, ccp(this->getContentWidth() - 30, 0))));
 
     CatsLayer::activeCatLayer()->setFollowTarget(nullptr);
+    if (!catToModify.isEmpty())
+        OnExitedCatEditingEvent().send(catToModify);
 
     this->setTouchEnabled(false);
     this->setKeyboardEnabled(false);
@@ -403,6 +405,9 @@ void CatSettingsLayer::keyBackClicked(){
 }
 
 void CatSettingsLayer::setToCat(CatStats& stats){
+    if (!catToModify.isEmpty() && stats.getLevel()->m_levelID.value() != catToModify.getLevel()->m_levelID.value())
+        OnExitedCatEditingEvent().send(catToModify);
+
     catToModify = stats;
     sizeScroll->setValue((stats.size - CatStats::MIN_SIZE) / (CatStats::MAX_SIZE - CatStats::MIN_SIZE));
     sizeInputField->setString(fmt::format("{:.2f}", stats.size));

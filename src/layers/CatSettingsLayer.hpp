@@ -6,6 +6,11 @@
 
 using namespace geode::prelude;
 
+class OnExitedCatEditingEvent : public Event<OnExitedCatEditingEvent, bool(const CatStats& cat)> {
+public:
+    using Event::Event;
+};
+
 class CatSettingsLayer : public CCLayer, public ColorPickerDelegate {
 public:
     static CatSettingsLayer* create();

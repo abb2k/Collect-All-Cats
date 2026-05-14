@@ -5,6 +5,7 @@
 #include <layers/CatsLayer.hpp>
 #include <kittyAI/CatAIStateBase.hpp>
 #include <utils/CatUtils.hpp>
+#include <utils/CoinManager.hpp>
 
 Cat* Cat::create(CCNode* wanderArea, GJGameLevel* relatedLevel, AREDLLevelDetails* details) {
     auto ret = new Cat();
@@ -61,6 +62,16 @@ bool Cat::init(CCNode* wanderArea, GJGameLevel* relatedLevel, AREDLLevelDetails*
     visualParent->setPosition(this->getContentSize() / 2);
     visualParent->ignoreAnchorPointForPosition(false);
     this->addChild(visualParent);
+
+    selectIndicator = CCSprite::createWithSpriteFrameName("huePickerBackground.png");
+    selectIndicator->setPosition(visualParent->getPosition());
+    selectIndicator->setOpacity(80);
+    selectIndicator->setZOrder(-1);
+    selectIndicator->runAction(CCRepeatForever::create(
+        CCRotateBy::create(1, 360)
+    ));
+    selectIndicator->setScale(0);
+    this->addChild(selectIndicator);
     
     nameLabel = CCLabelBMFont::create(stats.name.c_str(), "bigFont.fnt");
     nameLabel->setID("name-label");
@@ -85,13 +96,32 @@ bool Cat::init(CCNode* wanderArea, GJGameLevel* relatedLevel, AREDLLevelDetails*
 
     Cat::setCatStats(stats);
 
+    sellListener = SellItemEvent().listen([&](const std::string& itemCategory, const std::string& itemID){
+        auto stats = getStats();
+        stats.setCatagoryAsset(itemCategory, itemCategory == "cat" ? 0 : -1);
+        setCatStats(stats);
+    });
+
+    exitEditingListener = OnExitedCatEditingEvent().listen([&](const CatStats& stats){
+        if (this != CatsLayer::activeCatLayer()->getCatFromStats(stats)) return;
+
+        selectIndicator->stopActionByTag(2);
+        auto action = CCEaseInOut::create(CCScaleTo::create(.2f, 0), 2);
+        action->setTag(2);
+        selectIndicator->runAction(action);
+    });
+
     return true;
 }
 
 void Cat::onCatClicked(CCObject*){
 
     if (CatsLayer::activeCatLayer()->getIsInEditor()){
-        visualParent->runAction(CCSequence::create(CCTintTo::create(0, 0, 255, 0), CCTintTo::create(0.5f, 255, 255, 255), nullptr));
+        selectIndicator->stopActionByTag(2);
+        auto action = CCEaseInOut::create(CCScaleTo::create(.2f, 1), 2);
+        action->setTag(2);
+        selectIndicator->runAction(action);
+
         CatsLayer::activeCatLayer()->catSettingsNode->showWithCat(stats);
     }
     else{

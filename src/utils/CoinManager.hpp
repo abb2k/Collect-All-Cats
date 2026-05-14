@@ -4,6 +4,19 @@
 
 using namespace geode::prelude;
 
+class MoneyChangedEvent : public Event<MoneyChangedEvent, bool(int newCoinAmount)> {
+public:
+    using Event::Event;
+};
+class BuyItemEvent : public Event<BuyItemEvent, bool(std::string itemCategory, std::string itemID)> {
+public:
+    using Event::Event;
+};
+class SellItemEvent : public Event<SellItemEvent, bool(std::string itemCategory, std::string itemID)> {
+public:
+    using Event::Event;
+};
+
 class CoinManager{
     public:
         static int getCoinCount();

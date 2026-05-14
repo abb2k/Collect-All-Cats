@@ -4,6 +4,7 @@
 #include <nodes/SellCell.hpp>
 #include <utils/Save.hpp>
 #include <utils/CoinManager.hpp>
+#include <hooks/DialogLayer.hpp>
 
 BankruptPopup* BankruptPopup::create() {
     auto ret = new BankruptPopup();
@@ -123,10 +124,22 @@ void BankruptPopup::onBail(CCObject*){
 }
 
 void BankruptPopup::onConfirm(CCObject*){
-    if (CoinManager::getCoinCount() < 0){
+    auto array = CCArray::create();
 
+    if (CoinManager::getCoinCount() < 0){
+        array->addObject(DialogObject::create("The Cats", "You cannot enter until you get out og debt!", 999, 1, false, ccColor3B{ 255, 255, 255 }));
+        array->addObject(DialogObject::create("The Cats", "Come on! Keep selling!", 999, 1, false, ccColor3B{ 255, 255, 255 }));
+
+        auto dialogue = CACDialogLayer::createWithTaggedSprites(array, 1, {{"default_cat.png"_spr, 999, .65f}});
+        this->addChild(dialogue, 100);
         return;
     }
+
+    array->addObject(DialogObject::create("The Cats", "Thank you very much for your cooperation!", 999, 1, false, ccColor3B{ 255, 255, 255 }));
+    array->addObject(DialogObject::create("The Cats", "You may now enter our home! As you no longer owe us anything!", 999, 1, false, ccColor3B{ 255, 255, 255 }));
+
+    auto dialogue = CACDialogLayer::createWithTaggedSprites(array, 1, {{"default_cat.png"_spr, 999, .65f}});
+    CatsLayer::activeCatLayer()->addChild(dialogue, 100);
 
     Popup::onClose(nullptr);
 }
