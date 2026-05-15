@@ -16,21 +16,37 @@ RoomSettingsPopup* RoomSettingsPopup::create() {
 
 bool RoomSettingsPopup::init() {
     // @geode-ignore(unknown-resource)
-    if (!Popup::init(400, 300, "geode.loader/GE_square03.png")) return false;
+    if (!Popup::init(400, 130, "geode.loader/GE_square03.png")) return false;
     
     m_bgSprite->setOpacity(220);
     m_closeBtn->setPosition({m_closeBtn->getPositionX() + m_closeBtn->getContentWidth() / 2, m_closeBtn->getPositionY() - m_closeBtn->getContentHeight() / 2});
     setCloseButtonSpr(CCSprite::createWithSpriteFrameName("GJ_arrow_02_001.png"), .75f);
 
-    auto menu = CCMenu::create();
-    menu->setLayout(RowLayout::create()
+    setTitle("Room Options");
+
+    auto menuBG = CCMenu::create();
+    menuBG->setLayout(RowLayout::create()
         ->setGap(50)
         ->setCrossAxisAlignment(AxisAlignment::End)
         ->setGrowCrossAxis(true)
     );
-    menu->setContentWidth(300);
-    menu->setPosition({m_size.width / 2, 250});
-    m_mainLayer->addChild(menu);
+    menuBG->setContentWidth(120);
+    menuBG->setPosition({35, 40});
+    menuBG->setAnchorPoint({0, 0.5f});
+    menuBG->ignoreAnchorPointForPosition(false);
+    m_mainLayer->addChild(menuBG);
+
+    auto menuG = CCMenu::create();
+    menuG->setLayout(RowLayout::create()
+        ->setGap(50)
+        ->setCrossAxisAlignment(AxisAlignment::End)
+        ->setGrowCrossAxis(true)
+    );
+    menuG->setContentWidth(120);
+    menuG->setPosition({m_size.width - 35, 40});
+    menuG->setAnchorPoint({1, 0.5f});
+    menuG->ignoreAnchorPointForPosition(false);
+    m_mainLayer->addChild(menuG);
 
     auto BGSelectBtnSprite = CCSprite::createWithSpriteFrameName("bgIcon_01_001.png");
     BGSelectBtn = CCMenuItemSpriteExtra::create(
@@ -39,7 +55,7 @@ bool RoomSettingsPopup::init() {
         this,
         menu_selector(RoomSettingsPopup::openBGSelect)
     );
-    menu->addChild(BGSelectBtn);
+    menuBG->addChild(BGSelectBtn);
 
     auto GroundSelectBtnSprite = CCSprite::createWithSpriteFrameName("bgIcon_01_001.png");
     GroundSelectBtn = CCMenuItemSpriteExtra::create(
@@ -48,7 +64,7 @@ bool RoomSettingsPopup::init() {
         this,
         menu_selector(RoomSettingsPopup::openGroundSelect)
     );
-    menu->addChild(GroundSelectBtn);
+    menuG->addChild(GroundSelectBtn);
 
     updateBGButton(Save::getBackground());
     updateGroundButton(Save::getGround());
@@ -63,7 +79,7 @@ bool RoomSettingsPopup::init() {
         this,
         menu_selector(RoomSettingsPopup::openBGColorSelect)
     );
-    menu->addChild(BGColorSelectBtn);
+    menuBG->addChild(BGColorSelectBtn);
     
     ccColor3B currGroundColor = Save::getGroundColor();
 
@@ -75,9 +91,22 @@ bool RoomSettingsPopup::init() {
         this,
         menu_selector(RoomSettingsPopup::openGroundColorSelect)
     );
-    menu->addChild(GroundColorSelectBtn);
+    menuG->addChild(GroundColorSelectBtn);
 
-    menu->updateLayout();
+    menuG->updateLayout();
+    menuBG->updateLayout();
+
+    auto BGLabel = CCLabelBMFont::create("Background", "bigFont.fnt");
+    BGLabel->setAnchorPoint({.5f, 0});
+    BGLabel->setPosition(menuBG->getPosition() + menuBG->getContentSize() / 2 + ccp(0, 5));
+    BGLabel->setScale(.6f);
+    m_mainLayer->addChild(BGLabel);
+
+    auto GLabel = CCLabelBMFont::create("Ground", "bigFont.fnt");
+    GLabel->setAnchorPoint({.5f, 0});
+    GLabel->setScale(.6f);
+    GLabel->setPosition(menuG->getPosition() + ccp(-menuG->getContentWidth() / 2, menuG->getContentHeight() / 2 + 5));
+    m_mainLayer->addChild(GLabel);
 
     return true;
 }
