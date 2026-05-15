@@ -16,7 +16,7 @@ RoomSettingsPopup* RoomSettingsPopup::create() {
 
 bool RoomSettingsPopup::init() {
     // @geode-ignore(unknown-resource)
-    if (!Popup::init(400, 130, "geode.loader/GE_square03.png")) return false;
+    if (!Popup::init(400, 300, "geode.loader/GE_square03.png")) return false;
     
     m_bgSprite->setOpacity(220);
     m_closeBtn->setPosition({m_closeBtn->getPositionX() + m_closeBtn->getContentWidth() / 2, m_closeBtn->getPositionY() - m_closeBtn->getContentHeight() / 2});
@@ -31,7 +31,7 @@ bool RoomSettingsPopup::init() {
         ->setGrowCrossAxis(true)
     );
     menuBG->setContentWidth(120);
-    menuBG->setPosition({35, 40});
+    menuBG->setPosition({35, 210});
     menuBG->setAnchorPoint({0, 0.5f});
     menuBG->ignoreAnchorPointForPosition(false);
     m_mainLayer->addChild(menuBG);
@@ -43,7 +43,7 @@ bool RoomSettingsPopup::init() {
         ->setGrowCrossAxis(true)
     );
     menuG->setContentWidth(120);
-    menuG->setPosition({m_size.width - 35, 40});
+    menuG->setPosition({m_size.width - 35, 210});
     menuG->setAnchorPoint({1, 0.5f});
     menuG->ignoreAnchorPointForPosition(false);
     m_mainLayer->addChild(menuG);
