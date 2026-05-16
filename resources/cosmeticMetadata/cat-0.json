@@ -1,14 +1,6 @@
 {
     "renderType": "model",
     "boneOffsets":{
-        "hat": {
-            "boneName": "Bone.007",
-            "offset": {
-                "posOffset":{ "x": 0, "y": 0},
-                "scaleOffset":{ "x": 0, "y": 0},
-                "rotationOffset":{ "x": 0, "y": 0}
-            }
-        }
     },
     "personalOffset": {
         "posOffset":{ "x": 0, "y": 0},
