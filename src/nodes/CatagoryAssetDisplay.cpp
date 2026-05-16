@@ -45,7 +45,7 @@ void CatagoryAssetDisplay::setAsset(const std::string& catagoryName, const std::
         geode::queueInMainThread([this, itemID, catagoryName]() {
             auto spritesRes = CatStats::getCatagoryAssetSprites(catagoryName, itemID.value());
             if (spritesRes.isErr()){
-                log::error("Failed to get sprites {}", spritesRes.unwrapErr());
+                // log::error("Failed to get sprites {}", spritesRes.unwrapErr());
                 this->setContentSize({0, 0});
                 this->release();
                 return;
